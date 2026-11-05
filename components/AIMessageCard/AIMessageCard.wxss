@@ -1,0 +1,103 @@
+/* components/AIMessageCard/AIMessageCard.wxss */
+
+.ai-card {
+  width: 85%;
+  background: #FFFFFF;
+  border-radius: 20px;
+  border-top-left-radius: 8rpx;
+  padding: 24rpx 28rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+.ai-card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.ai-card-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #FF8FA3;
+}
+
+.ai-card-body {
+  font-size: 28rpx;
+  color: #333333;
+  line-height: 1.6;
+}
+
+.ai-card-text {
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin-bottom: 10rpx;
+}
+
+.ai-card-text:last-child {
+  margin-bottom: 0;
+}
+
+.ai-card-toggle {
+  margin-top: 6rpx;
+  font-size: 24rpx;
+  color: #FF8FA3;
+  display: flex;
+  align-items: center;
+}
+
+.ai-card-toggle-arrow {
+  margin-left: 4rpx;
+  font-size: 20rpx;
+}
+
+/* 建议模块：淡粉背景打底，用✓符号做要点 */
+.ai-card-suggestions {
+  margin-top: 18rpx;
+  padding: 18rpx 20rpx;
+  background: #FFF0F3;
+  border-radius: 16px;
+}
+
+.ai-card-suggestion-item {
+  display: flex;
+  align-items: flex-start;
+  font-size: 26rpx;
+  color: #555555;
+  line-height: 1.5;
+}
+
+.ai-card-suggestion-item + .ai-card-suggestion-item {
+  margin-top: 8rpx;
+}
+
+.ai-card-suggestion-check {
+  color: #FF8FA3;
+  font-weight: 600;
+  margin-right: 10rpx;
+  flex-shrink: 0;
+}
+
+/* 底部操作按钮：粉色描边，圆角12px */
+.ai-card-actions {
+  display: flex;
+  gap: 12rpx;
+  margin-top: 20rpx;
+}
+
+.ai-card-action-btn {
+  flex: 1;
+  text-align: center;
+  font-size: 22rpx;
+  color: #FF8FA3;
+  background: #FFFFFF;
+  border: 1rpx solid #FF8FA3;
+  border-radius: 12px;
+  padding: 12rpx 0;
+}
+
+.ai-card-action-btn:active {
+  background: #FFF0F3;
+}
+
+.ai-card { width:100%; box-shadow:none; border-radius:26rpx; }.ai-card-title,.ai-card-suggestion-check { color:#ff4089; }

@@ -1,0 +1,13 @@
+<!--components/UserMessage/UserMessage.wxml-->
+<view class="user-msg">
+  <view wx:if="{{imageUrl}}" class="user-msg-image-wrap">
+    <image class="user-msg-image" src="{{imageUrl}}" mode="aspectFill" />
+  </view>
+
+  <view wx:elif="{{voiceUrl}}" class="user-msg-voice" bindtap="onPlayVoice">
+    <text class="user-msg-voice-icon">{{playing ? '⏸' : '🔊'}}</text>
+    <text class="user-msg-voice-duration">{{voiceDuration}}″</text>
+  </view>
+
+  <view wx:if="{{content}}" class="{{imageUrl || voiceUrl ? 'user-msg-caption' : ''}}">{{content}}</view>
+</view>

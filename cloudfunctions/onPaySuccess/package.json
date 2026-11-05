@@ -1,0 +1,9 @@
+{
+  "name": "onPaySuccess",
+  "version": "1.0.0",
+  "description": "支付成功回调-更新订单与会员状态",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

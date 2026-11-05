@@ -1,0 +1,34 @@
+/* pages/assessment/assessment.wxss */
+
+.q-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.q-options {
+  display: flex;
+  flex-direction: column;
+}
+
+.q-option {
+  padding: 20rpx 24rpx;
+  border-radius: 16rpx;
+  background: #F9F9F9;
+  color: #666666;
+  font-size: 27rpx;
+  margin-bottom: 16rpx;
+  border: 2rpx solid transparent;
+}
+
+.q-option-active {
+  background: #FFF0EC;
+  border: 2rpx solid #FF9E9E;
+  color: #FF9E9E;
+  font-weight: 600;
+}
+
+.submit-bar {
+  margin-top: 32rpx;
+  padding-bottom: 40rpx;
+}

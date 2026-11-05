@@ -1,0 +1,24 @@
+<!--components/ImagePicker/ImagePicker.wxml-->
+<view class="ip-mask" wx:if="{{show}}" bindtap="onMaskTap">
+  <view class="ip-sheet" catchtap="noop">
+    <view class="ip-sheet-title">图片咨询</view>
+
+    <view class="ip-option" bindtap="onSelect" data-action="album">
+      <view class="ip-option-icon">🖼️</view>
+      <view class="ip-option-text">
+        <view class="ip-option-name">图片咨询</view>
+        <view class="ip-option-desc">从相册选择一张图片，比如排卵试纸、检查报告</view>
+      </view>
+    </view>
+
+    <view class="ip-option" bindtap="onSelect" data-action="camera">
+      <view class="ip-option-icon">📷</view>
+      <view class="ip-option-text">
+        <view class="ip-option-name">拍摄图片</view>
+        <view class="ip-option-desc">直接拍照上传，方便快捷</view>
+      </view>
+    </view>
+
+    <view class="ip-cancel" bindtap="onCancel">取消</view>
+  </view>
+</view>

@@ -1,0 +1,32 @@
+/* components/QuickQuestionBar/QuickQuestionBar.wxss */
+/* 胶囊按钮：背景#FFF0F3，圆角20px */
+
+.qq-bar {
+  white-space: nowrap;
+  padding: 12rpx 24rpx;
+  background: #FFFFFF;
+}
+
+.qq-bar-item {
+  display: inline-block;
+  font-size: 24rpx;
+  color: #FF8FA3;
+  background: #FFF0F3;
+  border-radius: 20px;
+  padding: 10rpx 24rpx;
+  margin-right: 16rpx;
+}
+
+.qq-bar-item:active {
+  background: #FFE0E8;
+}
+
+.qq-bar-item-action {
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #FFB3C1 0%, #FF8FA3 100%);
+  font-weight: 500;
+}
+
+.qq-bar-item-action:active {
+  opacity: 0.85;
+}

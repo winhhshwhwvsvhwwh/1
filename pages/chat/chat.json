@@ -1,0 +1,16 @@
+{
+  "navigationBarTitleText": "AI咨询",
+  "usingComponents": {
+    "xiaonuan-avatar": "../../components/XiaoNuanAvatar/XiaoNuanAvatar",
+    "xiaonuan-header": "../../components/XiaoNuanHeader/XiaoNuanHeader",
+    "user-message": "../../components/UserMessage/UserMessage",
+    "ai-message-card": "../../components/AIMessageCard/AIMessageCard",
+    "risk-warning-card": "../../components/RiskWarningCard/RiskWarningCard",
+    "quick-question-bar": "../../components/QuickQuestionBar/QuickQuestionBar",
+    "chat-input": "../../components/ChatInput/ChatInput",
+    "image-picker": "../../components/ImagePicker/ImagePicker",
+    "image-preview-card": "../../components/ImagePreviewCard/ImagePreviewCard",
+    "ai-image-message": "../../components/AIImageMessage/AIImageMessage"
+  },
+  "enablePullDownRefresh": false
+}

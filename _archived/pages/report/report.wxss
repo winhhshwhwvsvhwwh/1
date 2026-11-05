@@ -1,0 +1,248 @@
+/* pages/report/report.wxss */
+/* 配色沿用全局主色 #FF9E9E / #FFC1A1，和首页、评估页保持一致 */
+
+/* ---------- 空状态 ---------- */
+.empty-state-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 100rpx 40rpx;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+}
+
+.empty-title {
+  margin-top: 20rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.empty-desc {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: #999999;
+  text-align: center;
+}
+
+/* ---------- 综合评分卡 ---------- */
+.score-card {
+  background: linear-gradient(135deg, #FFE1D6 0%, #FFF6F3 100%);
+}
+
+.score-card-top {
+  display: flex;
+  align-items: center;
+}
+
+.score-ring {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.score-ring-inner {
+  width: 108rpx;
+  height: 108rpx;
+  border-radius: 50%;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-ring-num {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #FF9E9E;
+  line-height: 1.2;
+}
+
+.score-ring-label {
+  font-size: 18rpx;
+  color: #999999;
+  margin-top: 2rpx;
+}
+
+.score-card-info {
+  flex: 1;
+  margin-left: 24rpx;
+}
+
+.score-card-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.score-card-time {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #999999;
+}
+
+.score-card-tag {
+  display: inline-block;
+  margin-top: 12rpx;
+  padding: 4rpx 18rpx;
+  font-size: 22rpx;
+  color: #FF9E9E;
+  background: #FFFFFF;
+  border-radius: 20rpx;
+}
+
+.score-card-summary {
+  margin-top: 24rpx;
+  padding-top: 20rpx;
+  border-top: 2rpx solid rgba(255, 255, 255, 0.6);
+  font-size: 26rpx;
+  color: #8A6A5F;
+  line-height: 1.6;
+}
+
+/* ---------- 核心指标 ---------- */
+.indicator-row {
+  display: flex;
+  align-items: center;
+  margin-top: 28rpx;
+}
+
+.indicator-row:first-of-type {
+  margin-top: 20rpx;
+}
+
+.indicator-icon {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: #FFF6F3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  flex-shrink: 0;
+}
+
+.indicator-main {
+  flex: 1;
+  margin: 0 20rpx;
+}
+
+.indicator-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.indicator-name {
+  font-size: 27rpx;
+  color: #333333;
+  font-weight: 500;
+}
+
+.indicator-level {
+  font-size: 20rpx;
+  padding: 2rpx 14rpx;
+  border-radius: 16rpx;
+}
+
+.level-good {
+  color: #4CAF50;
+  background: #E8F5E9;
+}
+
+.level-mid {
+  color: #FF9E9E;
+  background: #FFF0EC;
+}
+
+.level-low {
+  color: #E0603F;
+  background: #FFEDE8;
+}
+
+.indicator-bar-bg {
+  height: 14rpx;
+  background: #F5F5F5;
+  border-radius: 8rpx;
+  margin-top: 12rpx;
+  overflow: hidden;
+}
+
+.indicator-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #FF9E9E 0%, #FFC1A1 100%);
+  border-radius: 8rpx;
+}
+
+.indicator-score {
+  width: 56rpx;
+  text-align: right;
+  font-size: 28rpx;
+  color: #FF9E9E;
+  font-weight: 700;
+}
+
+/* ---------- AI建议 ---------- */
+.suggestion-item {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 20rpx;
+}
+
+.suggestion-item:first-of-type {
+  margin-top: 20rpx;
+}
+
+.suggestion-check {
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FF9E9E 0%, #FFC1A1 100%);
+  color: #FFFFFF;
+  font-size: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2rpx;
+}
+
+.suggestion-text {
+  flex: 1;
+  margin-left: 16rpx;
+  font-size: 27rpx;
+  color: #555555;
+  line-height: 1.6;
+}
+
+/* ---------- 底部行动入口 ---------- */
+.report-actions {
+  margin-top: 8rpx;
+}
+
+.btn-outline {
+  background: #FFFFFF;
+  color: #FF9E9E;
+  border: 2rpx solid #FF9E9E;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  line-height: 76rpx;
+  height: 80rpx;
+  text-align: center;
+}
+
+.report-disclaimer {
+  margin-top: 24rpx;
+  padding-bottom: 24rpx;
+  text-align: center;
+  font-size: 22rpx;
+  color: #B0B0B0;
+}

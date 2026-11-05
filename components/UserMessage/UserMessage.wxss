@@ -1,0 +1,48 @@
+/* components/UserMessage/UserMessage.wxss */
+
+.user-msg {
+  max-width: 70%;
+  padding: 20rpx 24rpx;
+  background: #FFD6DE;
+  color: #333333;
+  border-radius: 16px;
+  border-bottom-right-radius: 6rpx;
+  font-size: 28rpx;
+  line-height: 1.5;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+.user-msg-image-wrap {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.user-msg-image {
+  width: 320rpx;
+  height: 320rpx;
+  display: block;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.user-msg-caption {
+  margin-top: 12rpx;
+}
+
+.user-msg-voice {
+  display: flex;
+  align-items: center;
+  min-width: 160rpx;
+}
+
+.user-msg-voice-icon {
+  font-size: 32rpx;
+}
+
+.user-msg-voice-duration {
+  margin-left: 10rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.user-msg { background:#ff4089; color:white; border-radius:40rpx 0 40rpx 40rpx; max-width:100%; }

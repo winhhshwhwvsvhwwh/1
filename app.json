@@ -1,0 +1,16 @@
+{
+  "pages": [
+    "pages/chat/chat",
+    "pages/record/record"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#f5ddef",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "小暖AI备孕助手",
+    "backgroundColor": "#f5f5f6",
+    "backgroundTextStyle": "dark",
+    "enablePullDownRefresh": false
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2"
+}

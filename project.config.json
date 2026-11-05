@@ -1,0 +1,47 @@
+{
+  "description": "小暖AI备孕助手 - 微信小程序项目配置",
+  "packOptions": {
+    "ignore": [
+      {
+        "type": "folder",
+        "value": "_archived"
+      }
+    ],
+    "include": []
+  },
+  "setting": {
+    "urlCheck": true,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "preloadBackgroundData": false,
+    "minified": true,
+    "newFeature": true,
+    "coverView": true,
+    "nodeModules": false,
+    "autoAudits": false,
+    "showShadowRootInWxmlPanel": true,
+    "scopeDataCheck": false,
+    "uglifyFileName": false,
+    "checkInvalidKey": true,
+    "checkSiteMap": true,
+    "uploadWithSourceMap": true,
+    "compileHotReLoad": false,
+    "useMultiFrameRuntime": true,
+    "useApiHook": true,
+    "useApiHostProcess": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "lazyloadPlaceholderEnable": false,
+    "skylineRenderEnable": false
+  },
+  "compileType": "miniprogram",
+  "libVersion": "3.2.0",
+  "appid": "touristappid",
+  "projectname": "xiaonuan-ai-pregnancy-assistant",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "condition": {}
+}

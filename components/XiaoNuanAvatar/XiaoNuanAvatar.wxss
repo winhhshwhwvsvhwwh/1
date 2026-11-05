@@ -1,0 +1,16 @@
+/* components/XiaoNuanAvatar/XiaoNuanAvatar.wxss */
+
+.xn-avatar {
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #FFF0F3;
+  box-shadow: 0 2rpx 12rpx rgba(255, 143, 163, 0.35);
+  flex-shrink: 0;
+}
+
+.xn-avatar-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}

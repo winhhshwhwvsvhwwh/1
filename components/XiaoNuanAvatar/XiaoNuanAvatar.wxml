@@ -1,0 +1,9 @@
+<!--components/XiaoNuanAvatar/XiaoNuanAvatar.wxml-->
+<!-- 小暖头像：使用真实IP形象图，圆形裁切 -->
+<view class="xn-avatar" style="width:{{sizeRpx}}rpx;height:{{sizeRpx}}rpx;">
+  <image
+    class="xn-avatar-img"
+    src="/images/xiaonuan-avatar.png"
+    mode="aspectFill"
+  />
+</view>

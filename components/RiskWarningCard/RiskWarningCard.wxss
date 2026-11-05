@@ -1,0 +1,50 @@
+/* components/RiskWarningCard/RiskWarningCard.wxss */
+/* 浅粉背景，和普通AI卡片区分开，但依然在整体柔和的视觉体系内，不做成刺眼的红色警告 */
+
+.risk-card {
+  width: 85%;
+  margin-top: 16rpx;
+  background: #FFF0F3;
+  border: 1rpx solid #FFC9D6;
+  border-radius: 20px;
+  padding: 22rpx 26rpx;
+  box-sizing: border-box;
+}
+
+.risk-card-title {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #E0577A;
+}
+
+.risk-card-desc {
+  margin-top: 8rpx;
+  font-size: 26rpx;
+  color: #8A5B66;
+  line-height: 1.5;
+}
+
+.risk-card-actions {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 18rpx;
+}
+
+.risk-card-btn {
+  flex: 1;
+  text-align: center;
+  font-size: 24rpx;
+  border-radius: 12px;
+  padding: 12rpx 0;
+}
+
+.risk-card-btn-secondary {
+  color: #E0577A;
+  background: #FFFFFF;
+  border: 1rpx solid #FFC9D6;
+}
+
+.risk-card-btn-primary {
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #FF8FA3 0%, #E0577A 100%);
+}

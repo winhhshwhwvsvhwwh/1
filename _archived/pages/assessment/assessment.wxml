@@ -1,0 +1,35 @@
+<!--pages/assessment/assessment.wxml-->
+<view class="container">
+
+  <view class="card">
+    <view class="title">备孕状态评估</view>
+    <view class="subtitle mt-16">请如实填写以下问题，帮助AI更准确地评估你的备孕状态</view>
+  </view>
+
+  <view wx:if="{{questions.length === 0}}" class="empty-state">
+    问卷加载中...
+  </view>
+
+  <view class="card" wx:for="{{questions}}" wx:key="id" wx:for-item="q" wx:for-index="qIndex">
+    <view class="q-title">{{qIndex + 1}}. {{q.title}}</view>
+    <view class="q-options mt-16">
+      <view
+        wx:for="{{q.options}}"
+        wx:key="*this"
+        wx:for-item="option"
+        wx:for-index="optIndex"
+        class="q-option {{answers[q.id] === optIndex ? 'q-option-active' : ''}}"
+        data-qid="{{q.id}}"
+        data-optindex="{{optIndex}}"
+        bindtap="onSelectOption"
+      >
+        {{option}}
+      </view>
+    </view>
+  </view>
+
+  <view class="submit-bar" wx:if="{{questions.length > 0}}">
+    <view class="btn-primary" bindtap="onSubmit">{{submitting ? '提交中...' : '提交评估'}}</view>
+  </view>
+
+</view>

@@ -1,0 +1,27 @@
+<!--components/XiaoNuanHeader/XiaoNuanHeader.wxml-->
+<view class="xn-header" style="padding-top: {{statusBarHeight}}px;">
+  <view class="xn-header-row">
+    <!-- 左侧：返回按钮 -->
+    <view class="xn-header-back" bindtap="onBack">
+      <text wx:if="{{showBack}}" class="xn-header-back-icon">‹</text>
+    </view>
+
+    <!-- 中间：头像 + 名称 + 状态 + 副标题 -->
+    <view class="xn-header-center">
+      <xiaonuan-avatar size="48" />
+      <view class="xn-header-info">
+        <view class="xn-header-name-row">
+          <text class="xn-header-name">小暖AI备孕助手</text>
+          <view class="xn-header-dot"></view>
+          <text class="xn-header-status">在线陪伴中</text>
+        </view>
+        <view class="xn-header-sub">陪你记录每一步备孕过程</view>
+      </view>
+    </view>
+
+    <!-- 右侧：更多按钮 -->
+    <view class="xn-header-more" bindtap="onMore">
+      <text class="xn-header-more-icon">⋯</text>
+    </view>
+  </view>
+</view>

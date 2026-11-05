@@ -1,0 +1,38 @@
+<!--components/AIImageMessage/AIImageMessage.wxml-->
+<view class="aim-card">
+
+  <view class="aim-header">
+    <text class="aim-title">🌸 小暖分析</text>
+  </view>
+
+  <!-- 识别：基于用户文字描述判断的图片类型（如实标注，不是真的读取了图片像素） -->
+  <view class="aim-section">
+    <view class="aim-section-label">识别</view>
+    <view class="aim-section-text">{{recognition}}</view>
+  </view>
+
+  <!-- 分析 -->
+  <view class="aim-section">
+    <view class="aim-section-label">分析</view>
+    <view class="aim-section-text">{{analysis}}</view>
+  </view>
+
+  <!-- 建议 -->
+  <view wx:if="{{suggestions && suggestions.length > 0}}" class="aim-suggestions">
+    <view class="aim-suggestion-item" wx:for="{{suggestions}}" wx:key="*this">
+      <text class="aim-suggestion-check">✓</text>
+      <text class="aim-suggestion-text">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 安全提示：图片分析必须带这句话 -->
+  <view class="aim-disclaimer">{{riskNotice}}</view>
+
+  <!-- 底部按钮：继续咨询 / 查看周期 / 咨询医生 -->
+  <view class="aim-actions">
+    <view class="aim-action-btn" data-action="continue" bindtap="onActionTap">继续咨询</view>
+    <view class="aim-action-btn" data-action="viewCycle" bindtap="onActionTap">查看周期</view>
+    <view class="aim-action-btn aim-action-btn-primary" data-action="doctor" bindtap="onActionTap">咨询医生</view>
+  </view>
+
+</view>

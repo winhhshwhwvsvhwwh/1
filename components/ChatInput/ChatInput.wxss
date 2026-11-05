@@ -1,0 +1,99 @@
+/* components/ChatInput/ChatInput.wxss */
+/* 固定底部，白色背景，圆角24px（作用在输入框本体上） */
+
+.chat-input-bar {
+  display: flex;
+  align-items: center;
+  padding: 14rpx 20rpx;
+  padding-bottom: calc(14rpx + env(safe-area-inset-bottom));
+  background: #FFFFFF;
+  border-top: 1rpx solid #F5F5F5;
+}
+
+.chat-input-icon {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.chat-input-icon-text {
+  font-size: 36rpx;
+  color: #999999;
+}
+
+.chat-input-plus {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.voice-icon-active {
+  background: #FFF0F3;
+  border-radius: 50%;
+}
+
+.voice-icon-active .chat-input-icon-text {
+  color: #F8A7B8;
+}
+
+.chat-input-box {
+  flex: 1;
+  height: 72rpx;
+  background: #FFF8FA;
+  border-radius: 24px;
+  padding: 0 28rpx;
+  font-size: 28rpx;
+  margin: 0 8rpx;
+}
+
+/* ============ 语音录制浮层：按住说话时展示 ============ */
+
+.voice-recording-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none; /* 不拦截手指移动，触摸事件继续由麦克风按钮本身接收 */
+}
+
+.voice-recording-panel {
+  width: 320rpx;
+  padding: 48rpx 0 36rpx;
+  background: rgba(40, 40, 40, 0.88);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: background-color 0.15s;
+}
+
+.voice-recording-panel-cancel {
+  background: rgba(224, 87, 63, 0.92);
+}
+
+.voice-recording-icon {
+  font-size: 64rpx;
+}
+
+.voice-recording-timer {
+  margin-top: 16rpx;
+  font-size: 32rpx;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.voice-recording-hint {
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.chat-input-bar { background:#f5f5f6; border:0; }.chat-input-box { background:white; font-size:26rpx; }.chat-input-icon-text { color:#333; }

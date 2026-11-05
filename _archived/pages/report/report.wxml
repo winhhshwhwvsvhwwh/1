@@ -1,0 +1,75 @@
+<!--pages/report/report.wxml-->
+<view class="container">
+
+  <view wx:if="{{!report}}" class="empty-state-wrap">
+    <view class="empty-icon">📋</view>
+    <view class="empty-title">暂无报告数据</view>
+    <view class="empty-desc">完成一次AI备孕评估，就能生成你的专属报告</view>
+    <view class="btn-primary mt-24" bindtap="onGoAssessment">去做一次评估</view>
+  </view>
+
+  <block wx:else>
+
+    <!-- 综合评分卡：环形图 + 摘要 -->
+    <view class="card score-card">
+      <view class="score-card-top">
+        <view class="score-ring" style="background: conic-gradient(#FF9E9E 0deg, #FF9E9E {{overallScore * 3.6}}deg, #FFE8E1 {{overallScore * 3.6}}deg);">
+          <view class="score-ring-inner">
+            <view class="score-ring-num">{{overallScore}}</view>
+            <view class="score-ring-label">综合评分</view>
+          </view>
+        </view>
+        <view class="score-card-info">
+          <view class="score-card-title">AI备孕评估报告</view>
+          <view class="score-card-time">生成时间：{{report.generateTime}}</view>
+          <view class="score-card-tag">
+            {{overallScore >= 85 ? '状态优秀 ✓' : (overallScore >= 70 ? '状态良好' : '仍有提升空间')}}
+          </view>
+        </view>
+      </view>
+      <view class="score-card-summary">{{report.summary}}</view>
+    </view>
+
+    <!-- 核心指标 -->
+    <view class="card">
+      <view class="title">核心指标</view>
+      <view class="indicator-row" wx:for="{{report.indicators}}" wx:key="name">
+        <view class="indicator-icon">
+          {{item.name === '身体状态' ? '💪' : (item.name === '心理状态' ? '🧠' : '🌿')}}
+        </view>
+        <view class="indicator-main">
+          <view class="indicator-top">
+            <view class="indicator-name">{{item.name}}</view>
+            <view class="indicator-level {{item.score >= 85 ? 'level-good' : (item.score >= 70 ? 'level-mid' : 'level-low')}}">
+              {{item.score >= 85 ? '优秀' : (item.score >= 70 ? '良好' : '待改善')}}
+            </view>
+          </view>
+          <view class="indicator-bar-bg">
+            <view class="indicator-bar-fill" style="width: {{item.score}}%;"></view>
+          </view>
+        </view>
+        <view class="indicator-score">{{item.score}}</view>
+      </view>
+    </view>
+
+    <!-- AI建议 -->
+    <view class="card">
+      <view class="title">AI建议</view>
+      <view class="suggestion-item" wx:for="{{report.suggestions}}" wx:key="*this">
+        <view class="suggestion-check">✓</view>
+        <view class="suggestion-text">{{item}}</view>
+      </view>
+    </view>
+
+    <!-- 底部行动入口 -->
+    <view class="report-actions">
+      <view class="btn-outline" bindtap="onGoAssessment">重新评估</view>
+    </view>
+
+    <view class="report-disclaimer">
+      以上内容为AI科普分析参考，不能替代医生诊断
+    </view>
+
+  </block>
+
+</view>

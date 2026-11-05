@@ -1,0 +1,40 @@
+<!--components/ChatInput/ChatInput.wxml-->
+<view class="chat-input-bar">
+  <!-- 左侧：语音按钮，按住说话，上滑取消 -->
+  <view
+    class="chat-input-icon voice-icon {{recording ? 'voice-icon-active' : ''}}"
+    bindtouchstart="onVoiceTouchStart"
+    bindtouchmove="onVoiceTouchMove"
+    bindtouchend="onVoiceTouchEnd"
+    bindtouchcancel="onVoiceTouchEnd"
+  >
+    <text class="chat-input-icon-text">🎤</text>
+  </view>
+
+  <!-- 中间：输入框 -->
+  <input
+    class="chat-input-box"
+    placeholder="输入你的问题..."
+    value="{{value}}"
+    bindinput="onInput"
+    confirm-type="send"
+    bindconfirm="onConfirm"
+  />
+
+  <!-- 右侧：表情按钮 + 加号按钮 -->
+  <view class="chat-input-icon" bindtap="onEmoji">
+    <text class="chat-input-icon-text">🙂</text>
+  </view>
+  <view class="chat-input-icon" bindtap="onPlus">
+    <text class="chat-input-icon-text chat-input-plus">＋</text>
+  </view>
+</view>
+
+<!-- 录音中的浮层提示：按住说话时展示，参考微信语音消息的交互习惯 -->
+<view wx:if="{{recording}}" class="voice-recording-mask">
+  <view class="voice-recording-panel {{willCancel ? 'voice-recording-panel-cancel' : ''}}">
+    <view class="voice-recording-icon">{{willCancel ? '🗑️' : '🎙️'}}</view>
+    <view class="voice-recording-timer">{{recordSeconds}}″</view>
+    <view class="voice-recording-hint">{{willCancel ? '松开手指，取消发送' : '手指上滑，取消发送'}}</view>
+  </view>
+</view>

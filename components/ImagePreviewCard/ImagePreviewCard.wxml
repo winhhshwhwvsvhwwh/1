@@ -1,0 +1,24 @@
+<!--components/ImagePreviewCard/ImagePreviewCard.wxml-->
+<view class="pc-mask" wx:if="{{show}}">
+  <view class="pc-sheet">
+    <view class="pc-header">
+      <text class="pc-title">图片咨询</text>
+      <text class="pc-close" bindtap="onCancel">×</text>
+    </view>
+
+    <image class="pc-image" src="{{imageUrl}}" mode="aspectFit" />
+
+    <view class="pc-caption-label">补充你的问题（可选）</view>
+    <input
+      class="pc-caption-input"
+      placeholder="例如：帮我看看这个排卵试纸结果"
+      value="{{caption}}"
+      bindinput="onCaptionInput"
+    />
+
+    <view class="pc-actions">
+      <view class="pc-btn pc-btn-cancel" bindtap="onCancel">取消</view>
+      <view class="pc-btn pc-btn-send" bindtap="onSend">发送给小暖分析</view>
+    </view>
+  </view>
+</view>

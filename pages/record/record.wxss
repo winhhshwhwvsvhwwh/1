@@ -1,0 +1,105 @@
+/* pages/record/record.wxss */
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #FF9E9E;
+  padding-bottom: 12rpx;
+  border-bottom: 2rpx solid #FFF0EC;
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-size: 26rpx;
+  color: #666666;
+  margin-bottom: 12rpx;
+}
+
+.picker-value {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 76rpx;
+  padding: 0 24rpx;
+  background: #F9F9F9;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  color: #333333;
+}
+
+.picker-arrow {
+  color: #CCCCCC;
+  font-size: 30rpx;
+}
+
+.input-field {
+  height: 76rpx;
+  padding: 0 24rpx;
+  background: #F9F9F9;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+
+.symptom-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.symptom-tag {
+  padding: 16rpx 28rpx;
+  border-radius: 30rpx;
+  background: #F9F9F9;
+  color: #666666;
+  font-size: 26rpx;
+  margin-right: 16rpx;
+  margin-bottom: 16rpx;
+  border: 2rpx solid transparent;
+}
+
+.symptom-tag-active {
+  background: #FFF0EC;
+  border: 2rpx solid #FF9E9E;
+  color: #FF9E9E;
+  font-weight: 600;
+}
+
+/* ---------- 历史记录 ---------- */
+.record-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.record-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #F5F5F5;
+}
+
+.record-item:last-child {
+  border-bottom: none;
+}
+
+.record-date {
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: 600;
+}
+
+.record-meta {
+  font-size: 22rpx;
+  color: #AAAAAA;
+  margin-top: 6rpx;
+}
+
+.record-delete {
+  font-size: 24rpx;
+  color: #FF9E9E;
+  padding: 8rpx 16rpx;
+}

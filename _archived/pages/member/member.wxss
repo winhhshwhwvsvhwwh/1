@@ -1,0 +1,78 @@
+/* pages/member/member.wxss */
+
+.member-header {
+  background: linear-gradient(135deg, #FFE1D6 0%, #FFF6F3 100%);
+}
+
+.avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: #F0F0F0;
+}
+
+.ml-24 {
+  margin-left: 24rpx;
+}
+
+.benefit-item {
+  font-size: 27rpx;
+  color: #666666;
+  line-height: 1.9;
+  margin-top: 8rpx;
+}
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #F5F5F5;
+  font-size: 28rpx;
+  color: #333333;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-arrow {
+  color: #CCCCCC;
+  font-size: 32rpx;
+}
+
+/* ---------- 会员套餐 ---------- */
+.plan-list {
+  display: flex;
+}
+
+.plan-item {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  border-radius: 16rpx;
+  background: #F9F9F9;
+  border: 2rpx solid transparent;
+  margin-right: 16rpx;
+}
+
+.plan-item:last-child {
+  margin-right: 0;
+}
+
+.plan-item-active {
+  background: #FFF0EC;
+  border: 2rpx solid #FF9E9E;
+}
+
+.plan-name {
+  font-size: 26rpx;
+  color: #333333;
+  font-weight: 600;
+}
+
+.plan-price {
+  font-size: 24rpx;
+  color: #FF9E9E;
+  margin-top: 8rpx;
+}

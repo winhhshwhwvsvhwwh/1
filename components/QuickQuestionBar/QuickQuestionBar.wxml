@@ -1,0 +1,12 @@
+<!--components/QuickQuestionBar/QuickQuestionBar.wxml-->
+<scroll-view class="qq-bar" scroll-x enable-flex>
+  <view
+    class="qq-bar-item {{item === '人工咨询' ? 'qq-bar-item-action' : ''}}"
+    wx:for="{{questions}}"
+    wx:key="*this"
+    data-question="{{item}}"
+    bindtap="onTap"
+  >
+    {{item}}
+  </view>
+</scroll-view>

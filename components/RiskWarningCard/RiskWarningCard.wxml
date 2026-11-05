@@ -1,0 +1,11 @@
+<!--components/RiskWarningCard/RiskWarningCard.wxml-->
+<view class="risk-card">
+  <view class="risk-card-title">⚠️ 小暖提醒</view>
+  <view class="risk-card-desc">
+    根据你的情况，建议进一步咨询专业医生。
+  </view>
+  <view class="risk-card-actions">
+    <view class="risk-card-btn risk-card-btn-secondary" bindtap="onContinue">继续AI了解</view>
+    <view class="risk-card-btn risk-card-btn-primary" bindtap="onDoctor">咨询专业医生</view>
+  </view>
+</view>

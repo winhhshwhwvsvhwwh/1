@@ -1,0 +1,66 @@
+<!--pages/member/member.wxml-->
+<view class="container">
+
+  <!-- 用户信息卡片 -->
+  <view class="card member-header">
+    <view class="flex-row">
+      <image
+        class="avatar"
+        src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}"
+        mode="aspectFill"
+      />
+      <view class="flex-col ml-24">
+        <view class="title">{{userInfo.nickName || '未登录'}}</view>
+        <view class="subtitle mt-16">
+          {{memberInfo.isMember ? memberLevelText + ' · 到期时间 ' + memberInfo.expireDate : '普通用户'}}
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{!isLogin}}" class="btn-primary mt-24" bindtap="onLogin">微信一键登录</view>
+  </view>
+
+  <!-- 会员权益 -->
+  <view class="card">
+    <view class="title">会员权益</view>
+    <view class="benefit-item" wx:for="{{benefits}}" wx:key="*this">
+      ✓ {{item}}
+    </view>
+  </view>
+
+  <!-- 会员套餐 -->
+  <view class="card">
+    <view class="title">选择套餐</view>
+    <view class="plan-list mt-16">
+      <view
+        wx:for="{{plans}}"
+        wx:key="id"
+        class="plan-item {{selectedPlanId === item.id ? 'plan-item-active' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="onSelectPlan"
+      >
+        <view class="plan-name">{{item.name}}</view>
+        <view class="plan-price">{{item.priceText}}</view>
+      </view>
+    </view>
+    <view class="btn-primary mt-24" bindtap="onUpgrade">
+      {{memberInfo.isMember ? '续费会员' : '立即开通会员'}}
+    </view>
+  </view>
+
+  <!-- 其他功能 -->
+  <view class="card">
+    <view class="menu-item" bindtap="onGoReportList">
+      <view>历史AI报告</view>
+      <view class="menu-arrow">›</view>
+    </view>
+    <view class="menu-item" bindtap="onGoChatHistory">
+      <view>历史咨询记录</view>
+      <view class="menu-arrow">›</view>
+    </view>
+    <view class="menu-item" bindtap="onContact">
+      <view>联系客服</view>
+      <view class="menu-arrow">›</view>
+    </view>
+  </view>
+
+</view>

@@ -1,0 +1,40 @@
+<!--components/AIMessageCard/AIMessageCard.wxml-->
+<view class="ai-card">
+
+  <!-- 顶部：icon + 标题 -->
+  <view class="ai-card-header">
+    <text class="ai-card-title">🌸 小暖分析</text>
+  </view>
+
+  <!-- 内容区域：支持长文本展开/收起 -->
+  <view class="ai-card-body">
+    <block wx:if="{{expanded || !isLong}}">
+      <view class="ai-card-text" wx:if="{{understanding}}">{{understanding}}</view>
+      <view class="ai-card-text" wx:if="{{analysis}}">{{analysis}}</view>
+      <view class="ai-card-text" wx:if="{{!understanding && !analysis && fallbackContent}}">{{fallbackContent}}</view>
+    </block>
+    <block wx:else>
+      <view class="ai-card-text">{{previewText}}</view>
+    </block>
+
+    <view wx:if="{{isLong}}" class="ai-card-toggle" bindtap="onToggleExpand">
+      {{expanded ? '收起' : '展开全部'}}
+      <text class="ai-card-toggle-arrow">{{expanded ? '︿' : '﹀'}}</text>
+    </view>
+  </view>
+
+  <!-- 建议：小暖建议 -->
+  <view wx:if="{{suggestions && suggestions.length > 0}}" class="ai-card-suggestions">
+    <view class="ai-card-suggestion-item" wx:for="{{suggestions}}" wx:key="*this">
+      <text class="ai-card-suggestion-check">✓</text>
+      <text class="ai-card-suggestion-text">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 底部操作按钮：周期记录 / 继续咨询（原"查看我的周期"和"记录今天状态"跳转的是同一个页面，合并成一个按钮） -->
+  <view class="ai-card-actions">
+    <view class="ai-card-action-btn" data-action="record" bindtap="onActionTap">周期记录</view>
+    <view class="ai-card-action-btn" data-action="continue" bindtap="onActionTap">继续咨询</view>
+  </view>
+
+</view>

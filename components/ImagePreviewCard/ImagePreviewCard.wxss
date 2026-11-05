@@ -1,0 +1,90 @@
+/* components/ImagePreviewCard/ImagePreviewCard.wxss */
+
+.pc-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 110;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pc-sheet {
+  width: 84%;
+  background: #FFF8FA;
+  border-radius: 16px;
+  padding: 24rpx;
+  box-sizing: border-box;
+}
+
+.pc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pc-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.pc-close {
+  font-size: 36rpx;
+  color: #999999;
+  line-height: 1;
+  padding: 0 8rpx;
+}
+
+.pc-image {
+  width: 100%;
+  height: 400rpx;
+  margin-top: 16rpx;
+  border-radius: 16px;
+  background: #FFFFFF;
+}
+
+.pc-caption-label {
+  margin-top: 20rpx;
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.pc-caption-input {
+  margin-top: 10rpx;
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 18rpx 24rpx;
+  font-size: 27rpx;
+  color: #333333;
+}
+
+.pc-actions {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+
+.pc-btn {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx 0;
+  border-radius: 16px;
+  font-size: 27rpx;
+}
+
+.pc-btn-cancel {
+  background: #FFFFFF;
+  color: #999999;
+  border: 1rpx solid #EEEEEE;
+}
+
+.pc-btn-send {
+  background: linear-gradient(135deg, #F8A7B8 0%, #FF7195 100%);
+  color: #FFFFFF;
+  font-weight: 500;
+}

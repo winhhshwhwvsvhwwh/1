@@ -1,0 +1,102 @@
+<!--pages/record/record.wxml-->
+<view class="container">
+
+  <!-- 记录表单 -->
+  <view class="card">
+    <view class="title">我的周期记录</view>
+    <view class="subtitle mt-16">记录经期与身体状态，帮助你更了解自己的备孕情况</view>
+
+    <!-- 第一部分：月经记录 -->
+    <view class="section-title mt-32">月经记录</view>
+
+    <view class="form-item mt-16">
+      <view class="form-label">经期开始日期</view>
+      <picker mode="date" value="{{startDate}}" end="{{today}}" bindchange="onStartDateChange">
+        <view class="picker-value">
+          {{startDate || '请选择日期'}}
+          <view class="picker-arrow">›</view>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item mt-24">
+      <view class="form-label">经期结束日期</view>
+      <picker mode="date" value="{{endDate}}" end="{{today}}" bindchange="onEndDateChange">
+        <view class="picker-value">
+          {{endDate || '请选择日期'}}
+          <view class="picker-arrow">›</view>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 第二部分：周期参数 -->
+    <view class="section-title mt-32">周期参数</view>
+
+    <view class="form-item mt-16">
+      <view class="form-label">平均周期长度（天）</view>
+      <input
+        class="input-field"
+        type="number"
+        placeholder="例如 28"
+        value="{{cycleLength}}"
+        bindinput="onCycleLengthInput"
+      />
+    </view>
+
+    <view class="form-item mt-24">
+      <view class="form-label">经期长度（天）</view>
+      <input
+        class="input-field"
+        type="number"
+        placeholder="例如 5"
+        value="{{periodLength}}"
+        bindinput="onPeriodLengthInput"
+      />
+    </view>
+
+    <!-- 第三部分：身体状态 -->
+    <view class="section-title mt-32">身体状态</view>
+    <view class="subtitle mt-16">可多选</view>
+
+    <view class="symptom-list mt-16">
+      <view
+        wx:for="{{symptomOptions}}"
+        wx:key="*this"
+        class="symptom-tag {{symptoms.indexOf(item) > -1 ? 'symptom-tag-active' : ''}}"
+        data-value="{{item}}"
+        bindtap="onSymptomToggle"
+      >
+        {{item}}
+      </view>
+    </view>
+
+    <!-- 第四部分：保存数据 -->
+    <view class="btn-primary mt-32" bindtap="onSave">保存记录</view>
+  </view>
+
+  <!-- 历史记录 -->
+  <view class="card">
+    <view class="flex-between">
+      <view class="title">历史记录</view>
+      <view class="subtitle" wx:if="{{records.length}}">共 {{records.length}} 条</view>
+    </view>
+
+    <view wx:if="{{records.length === 0}}" class="empty-state">
+      还没有记录，保存第一条数据试试吧～
+    </view>
+
+    <view wx:else class="record-list mt-16">
+      <view class="record-item" wx:for="{{records}}" wx:key="id">
+        <view class="record-item-main">
+          <view class="record-date">{{item.startDate}} 至 {{item.endDate}}</view>
+          <view class="record-meta">
+            周期 {{item.cycleLength}} 天 · 经期 {{item.periodLength}} 天
+            <block wx:if="{{item.symptoms.length}}"> · {{item.symptoms.join('、')}}</block>
+          </view>
+        </view>
+        <view class="record-delete" data-id="{{item.id}}" bindtap="onDeleteRecord">删除</view>
+      </view>
+    </view>
+  </view>
+
+</view>

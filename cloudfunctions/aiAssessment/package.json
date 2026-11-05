@@ -1,0 +1,9 @@
+{
+  "name": "aiAssessment",
+  "version": "1.0.0",
+  "description": "AI评估-生成结构化备孕报告",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

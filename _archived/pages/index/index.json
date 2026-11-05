@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "小暖AI备孕助手",
+  "usingComponents": {
+    "xiaonuan-avatar": "../../components/XiaoNuanAvatar/XiaoNuanAvatar"
+  }
+}

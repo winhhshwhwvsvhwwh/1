@@ -1,0 +1,101 @@
+/* components/AIImageMessage/AIImageMessage.wxss */
+/* 保持和AIMessageCard一致的视觉语言：白卡片+粉色强调 */
+
+.aim-card {
+  width: 85%;
+  background: #FFFFFF;
+  border-radius: 20px;
+  border-top-left-radius: 8rpx;
+  padding: 24rpx 28rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+.aim-header {
+  margin-bottom: 12rpx;
+}
+
+.aim-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #F8A7B8;
+}
+
+.aim-section {
+  margin-top: 14rpx;
+}
+
+.aim-section:first-of-type {
+  margin-top: 0;
+}
+
+.aim-section-label {
+  font-size: 22rpx;
+  color: #F8A7B8;
+  font-weight: 600;
+  margin-bottom: 4rpx;
+}
+
+.aim-section-text {
+  font-size: 27rpx;
+  color: #333333;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.aim-suggestions {
+  margin-top: 18rpx;
+  padding: 18rpx 20rpx;
+  background: #FFF0F3;
+  border-radius: 16px;
+}
+
+.aim-suggestion-item {
+  display: flex;
+  align-items: flex-start;
+  font-size: 26rpx;
+  color: #555555;
+  line-height: 1.5;
+}
+
+.aim-suggestion-item + .aim-suggestion-item {
+  margin-top: 8rpx;
+}
+
+.aim-suggestion-check {
+  color: #F8A7B8;
+  font-weight: 600;
+  margin-right: 10rpx;
+  flex-shrink: 0;
+}
+
+.aim-disclaimer {
+  margin-top: 16rpx;
+  font-size: 22rpx;
+  color: #B08890;
+  line-height: 1.5;
+}
+
+.aim-actions {
+  display: flex;
+  gap: 10rpx;
+  margin-top: 20rpx;
+}
+
+.aim-action-btn {
+  flex: 1;
+  text-align: center;
+  font-size: 21rpx;
+  color: #F8A7B8;
+  background: #FFFFFF;
+  border: 1rpx solid #F8A7B8;
+  border-radius: 12px;
+  padding: 12rpx 0;
+}
+
+.aim-action-btn-primary {
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #F8A7B8 0%, #FF7195 100%);
+  border: none;
+}

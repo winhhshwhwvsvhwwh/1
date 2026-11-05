@@ -1,0 +1,69 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+
+  <!-- AI IP 问候区 -->
+  <view class="ip-banner">
+    <xiaonuan-avatar size="48" />
+    <view class="flex-col ml-20">
+      <view class="ip-name">小暖</view>
+      <view class="ip-greeting">{{greeting}}</view>
+    </view>
+  </view>
+
+  <!-- 今日备孕状态卡片 -->
+  <view class="card status-card">
+    <view class="flex-between">
+      <view class="title">今日备孕状态</view>
+      <view class="status-tag" wx:if="{{hasRecord}}">周期 Day{{cycleStatus.cycleDay}}</view>
+    </view>
+
+    <block wx:if="{{hasRecord}}">
+      <view class="progress-bg mt-24">
+        <view class="progress-fill" style="width: {{cycleStatus.progress}}%;"></view>
+      </view>
+
+      <view class="status-detail mt-24">
+        <view class="status-item">
+          <view class="status-item-label">当前阶段</view>
+          <view class="status-item-value">{{cycleStatus.phase}}</view>
+        </view>
+        <view class="status-item">
+          <view class="status-item-label">距离排卵</view>
+          <view class="status-item-value">{{cycleStatus.daysToOvulation}}天</view>
+        </view>
+      </view>
+    </block>
+
+    <view wx:else class="status-empty mt-24">
+      <view class="subtitle">还没有周期记录，记一笔才能生成你的备孕状态～</view>
+      <view class="btn-secondary mt-24" bindtap="onEntryTap" data-path="/pages/record/record" data-ready="{{true}}">去记录</view>
+    </view>
+  </view>
+
+  <!-- 四宫格功能入口 -->
+  <view class="grid">
+    <view
+      class="grid-item"
+      wx:for="{{entries}}"
+      wx:key="path"
+      bindtap="onEntryTap"
+      data-path="{{item.path}}"
+      data-ready="{{item.ready}}"
+    >
+      <view class="grid-icon">{{item.icon}}</view>
+      <view class="grid-text">{{item.name}}</view>
+      <view class="grid-desc">{{item.desc}}</view>
+      <view wx:if="{{!item.ready}}" class="grid-badge">开发中</view>
+    </view>
+  </view>
+
+  <!-- 会员入口 -->
+  <view class="member-banner" bindtap="onMemberTap">
+    <view class="flex-col">
+      <view class="member-banner-title">升级会员</view>
+      <view class="member-banner-desc">获得AI深度分析，解锁无限咨询</view>
+    </view>
+    <view class="member-banner-arrow">›</view>
+  </view>
+
+</view>
