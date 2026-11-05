@@ -12,7 +12,7 @@
     scroll-with-animation
   >
 
-    <view wx:if="{{messages.length === 0 &amp;&amp; !assessmentMode}}" class="welcome">
+    <view wx:if="{{messages.length === 0 ? !assessmentMode : false}}" class="welcome">
       <view class="hero"><view><view class="hero-title">Hi,我是小暖</view><view class="hero-copy">随时为你提供孕期知识和科学建议，陪你记录每一步备孕过程～</view></view><xiaonuan-avatar size="100" /></view>
       <view class="welcome-grid">
         <view class="welcome-card" data-question="帮我制定一个备孕计划" bindtap="onWelcomeCardTap"><view class="feature-icon">▤</view><view>备孕计划</view></view>
