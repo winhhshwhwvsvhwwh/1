@@ -33,6 +33,7 @@ Page({
     loading: false,
     scrollToId: '',
     showScrollShortcut: false,
+    scrollShortcutBottom: 140,
 
     // ============ AI咨询兜底机制状态 ============
     unresolvedStreak: 0,   // AI连续判定"无法有效解决"的次数
@@ -53,26 +54,37 @@ Page({
     const query = wx.createSelectorQuery().in(this);
     query.select('.msg-list').boundingClientRect();
     query.select('.scroll-content').boundingClientRect();
+    query.select('.bottom-dock').boundingClientRect();
     query.exec(rects => {
       if (!rects[0] || !rects[1]) return;
       this._scrollViewportHeight = rects[0].height;
+      if (rects[2]) {
+        const windowInfo = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
+        this.setData({ scrollShortcutBottom: windowInfo.windowHeight - rects[2].top + 20 });
+      }
       const eligible = this.data.pageMode === 'consult' || this.data.pageMode === 'chat' || (this.data.pageMode === 'assessment' && this.data.assessmentMode === 'result');
-      this.setData({ showScrollShortcut: eligible && rects[1].bottom - rects[0].bottom > 30 });
+      this.setData({ showScrollShortcut: eligible && !this.data.showDimensions && !this._scrollingToEnd && rects[1].bottom - rects[0].bottom > 16 });
     });
   },
   onMessageScroll(e) {
     const eligible = this.data.pageMode === 'consult' || this.data.pageMode === 'chat' || (this.data.pageMode === 'assessment' && this.data.assessmentMode === 'result');
-    if (!eligible) {
+    if (!eligible || this.data.showDimensions) {
       if (this.data.showScrollShortcut) this.setData({ showScrollShortcut: false });
       return;
     }
     if (!this._scrollViewportHeight) { this.refreshScrollShortcut(); return; }
-    const show = e.detail.scrollHeight - e.detail.scrollTop - this._scrollViewportHeight > 30;
+    const remaining = e.detail.scrollHeight - e.detail.scrollTop - this._scrollViewportHeight;
+    if (this._scrollingToEnd && remaining <= 16) this._scrollingToEnd = false;
+    const show = !this._scrollingToEnd && remaining > 16;
     if (show !== this.data.showScrollShortcut) this.setData({ showScrollShortcut: show });
   },
   onScrollShortcut() {
+    this._scrollingToEnd = true;
     this.setData({ scrollToId: '', showScrollShortcut: false }, () => this.setData({ scrollToId: 'chat-bottom' }));
   },
+  onScrollTouchStart() { this._scrollingToEnd = false; },
+  onReady() { this.refreshScrollShortcut(); },
+  onResize() { this.refreshScrollShortcut(); },
   changeConsultTab(e) { this.setData({ consultTab: e.currentTarget.dataset.tab }); },
   onPageBack() {
     if (this.data.assessmentSubmitting) return;
@@ -87,7 +99,7 @@ Page({
     if (!this.data.messages.length) { wx.showToast({ title: '暂无咨询记录', icon: 'none' }); return; }
     this.setData({ pageMode: 'chat' }); this.scrollToBottom();
   },
-  openConsult() { this.setData({ pageMode: 'consult', assessmentMode: '', scrollToId: 'consult-top' }, () => this.refreshScrollShortcut()); },
+  openConsult() { this._scrollingToEnd = false; this.setData({ pageMode: 'consult', assessmentMode: '', scrollToId: 'consult-top' }, () => this.refreshScrollShortcut()); },
   refreshQuestions() {
     const first = this.data.welcomeQuestions[0] === '备孕多久正常？';
     this.setData({ welcomeQuestions: first ? ['排卵日总是算不准怎么办？','孕前检查有哪些项目？','备孕时如何调整作息？'] : ['备孕多久正常？','如何提高受孕几率？','备孕期间需要补充什么营养？'] });
@@ -98,6 +110,7 @@ Page({
   onReadUnavailable() { wx.showToast({ title: '语音朗读暂未接入', icon: 'none' }); },
   onCopy(e) { wx.setClipboardData({ data: e.currentTarget.dataset.content || (this.data.assessmentReport && this.data.assessmentReport.summary) || '' }); },
   openAssessment() {
+    this._scrollingToEnd = false;
     if (this.data.assessmentSubmitting) return;
     this.setData({ pageMode: 'assessment', assessmentMode: 'intro', showScrollShortcut: false, questionIndex: 0, scrollToId: 'assessment-top' });
   },
@@ -159,9 +172,9 @@ Page({
     finally { this.setData({ assessmentSubmitting: false }); }
   },
   openReportDimensions() {
-    this.setData({ showDimensions: true }, () => wx.nextTick(() => this.drawRadar()));
+    this.setData({ showDimensions: true, showScrollShortcut: false }, () => wx.nextTick(() => this.drawRadar()));
   },
-  closeReportDimensions() { this.setData({ showDimensions: false }); },
+  closeReportDimensions() { this.setData({ showDimensions: false }, () => this.refreshScrollShortcut()); },
   drawRadar() {
     const query = wx.createSelectorQuery().in(this);
     query.select('#radar-canvas').fields({ node: true, size: true }).exec(res => {
@@ -334,7 +347,7 @@ Page({
    * 调用的还是原来的 api.sendChatMessage，接口和数据处理没有变化。
    */
   sendMessage(content) {
-    this.setData({ pageMode: 'chat', assessmentMode: '' });
+    this.setData({ pageMode: 'chat', assessmentMode: '' }, () => this.refreshScrollShortcut());
     const userMsg = {
       id: nextId(),
       role: 'user',
@@ -514,7 +527,7 @@ Page({
    */
   onVoiceSend(e) {
     const { tempFilePath, duration } = e.detail;
-    this.setData({ pageMode: 'chat', assessmentMode: '' });
+    this.setData({ pageMode: 'chat', assessmentMode: '' }, () => this.refreshScrollShortcut());
     if (!tempFilePath || this.data.loading) return;
 
     const userMsg = {

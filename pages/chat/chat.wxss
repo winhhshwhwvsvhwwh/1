@@ -906,26 +906,19 @@ page {
   position:fixed;
   z-index:20;
   left:50%;
-  bottom:calc(170rpx + env(safe-area-inset-bottom));
   transform:translateX(-50%);
-  width:246rpx;
-  height:246rpx;
-  pointer-events:none;
-}
-.scroll-shortcut image {
-  display:block;
-  width:246rpx;
-  height:246rpx;
-  pointer-events:none;
-}
-.scroll-shortcut-hit {
-  position:absolute;
   width:80rpx;
   height:80rpx;
-  left:83rpx;
-  top:83rpx;
   border-radius:50%;
-  pointer-events:auto;
+}
+.scroll-shortcut image {
+  position:absolute;
+  display:block;
+  left:-83rpx;
+  top:-83rpx;
+  width:246rpx;
+  height:246rpx;
+  pointer-events:none;
 }
 
 /* Latest 3x page references: keep logical display sizes independent of bitmap pixels. */

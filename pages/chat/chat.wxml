@@ -1,6 +1,6 @@
 <view class="chat-page">
 <xiaonuan-header bindback="onPageBack" bindnew="onNewConversation" bindhistory="onHistoryClick" bindmore="onHeaderMore"/>
-<scroll-view class="msg-list" scroll-y scroll-into-view="{{scrollToId}}" scroll-with-animation bindscroll="onMessageScroll">
+<scroll-view class="msg-list" scroll-y scroll-into-view="{{scrollToId}}" scroll-with-animation bindscroll="onMessageScroll" bindtouchstart="onScrollTouchStart">
 <view class="scroll-content">
 <view wx:if="{{pageMode === 'home'}}" id="home-top" class="home-content">
  <view class="welcome-banner">
@@ -254,7 +254,7 @@
 </view>
 </view>
 </scroll-view>
-<view wx:if="{{showScrollShortcut}}" class="scroll-shortcut" role="button" aria-label="滚动到底部"><image src="/images/campaign/scroll-down.png" mode="aspectFit"/><view class="scroll-shortcut-hit" bindtap="onScrollShortcut"></view></view>
+<view wx:if="{{showScrollShortcut}}" class="scroll-shortcut" style="bottom:{{scrollShortcutBottom}}px" role="button" aria-label="滚动到底部" bindtap="onScrollShortcut"><image src="/images/campaign/scroll-down.png" mode="aspectFit"/></view>
   <!-- AI咨询兜底提示卡：命中触发条件后展示 -->
   <view wx:if="{{showHandoffBanner}}" class="handoff-banner">
     <view class="handoff-banner-close" bindtap="onCloseHandoffBanner">×</view>
