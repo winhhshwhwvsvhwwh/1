@@ -5,6 +5,13 @@ const imageAnalysis = require('../../utils/imageAnalysis.js');
 const { buildAssessmentReport } = require('../../utils/assessmentReport.js');
 
 const ASSESSMENT_QUESTIONS = [{"title": "你的年龄是？", "options": ["A.20–24岁(较年轻阶段)", "B.25–29岁(适合建立规律备孕习惯)", "C.30–34岁(建议更关注周期和排卵)", "D.其他以上(建议结合专业指导备孕)"]}, {"title": "目前备孕多久了？", "options": ["A.<3个月(处于初期尝试阶段)", "B.3–6个月(已建立初期尝试阶段)", "C.6–12个月(建议更关注周期和排卵)", "D.>12个月(可考虑寻求专业评估)"]}, {"title": "你的月经周期通常规律吗？", "options": ["A.很规律(每月时间基本稳定)", "B.偶尔波动(偶尔提前或推迟几天)", "C.经常不规律(周期变化比较明显)", "D.不确定(暂时没有持续记录)"]}, {"title": "每次经期通常持续多久？", "options": ["A.1–2天(经期持续时间较短)", "B.3–7天(常见持续时间)", "C.>7天(持续时间相对较长)", "D.不确定(建议记录开始和结束日期)"]}, {"title": "最近生活状态怎么样？", "options": ["A.规律健康(作息和状态比较稳定)", "B.偶尔熬夜或压力大(整体状态尚可)", "C.经常熬夜或焦虑(生活节奏需调整)", "D.状态较差(建议优先改善休息与管理)"]}, {"title": "是否有想关注的生理问题？", "options": ["A.没有问题(目前没有明显异常)", "B.异常出血(出现非经期出血等情况)", "C.明显或持续疼痛(出现异常的疼痛)", "D.其他不适(还有其他身体状况)"]}];
+const FEEDBACK_LABELS = {
+  positive: ['已解决','理解力强','清晰易懂','对话高效','操作方便','专业全面','耐心体贴','功能齐全'],
+  negative: ['答非所问','内容有误','表达难懂','建议太泛','忽略记录','感到业余','语气不舒服']
+};
+function feedbackTagsFor(positive, selected = []) {
+  return FEEDBACK_LABELS[positive ? 'positive' : 'negative'].map(label => ({ label, selected: selected.includes(label) }));
+}
 let msgId = 0;
 function nextId() {
   msgId += 1;
@@ -26,7 +33,8 @@ Page({
     assessmentAnswers: [], assessmentSubmitting: false, assessmentReport: null,
     isDemo: !require('../../utils/constants.js').USE_CLOUD,
     showFeedback: false, feedbackPositive: true, feedbackText: '', feedbackMessageId: null,
-    feedbackTags: ['已解决','理解力强','清晰易懂','对话高效','操作方便','专业全面','耐心体贴','功能齐全'].map(label => ({label, selected:false})),
+    feedbackTags: feedbackTagsFor(true),
+    feedbackSelections: { positive: [], negative: [] },
     currentQuestion: {},
     messages: [],
     inputValue: '',
@@ -210,16 +218,24 @@ Page({
     this.sendMessage('请结合以下填写情况提供备孕生活计划：' + context);
   },
   openFeedback(e) {
-    const id = e.currentTarget.dataset.id;
-    this.setData({ showFeedback: true, feedbackMessageId: id || null, feedbackText: '', feedbackPositive: e.currentTarget.dataset.positive !== false && e.currentTarget.dataset.positive !== 'false',
-      feedbackTags: this.data.feedbackTags.map(t => ({ ...t, selected: false })) });
+    const { id, positive } = e.currentTarget.dataset;
+    const feedbackPositive = positive !== false && positive !== 'false';
+    this.setData({ showFeedback: true, feedbackMessageId: id || null, feedbackText: '', feedbackPositive,
+      feedbackSelections: { positive: [], negative: [] }, feedbackTags: feedbackTagsFor(feedbackPositive) });
   },
   closeFeedback() { this.setData({ showFeedback: false }); },
   stopTap() {},
-  chooseSentiment(e) { this.setData({ feedbackPositive: e.currentTarget.dataset.positive === true || e.currentTarget.dataset.positive === 'true' }); },
+  chooseSentiment(e) {
+    const positive = e.currentTarget.dataset.positive === true || e.currentTarget.dataset.positive === 'true';
+    const key = positive ? 'positive' : 'negative';
+    this.setData({ feedbackPositive: positive, feedbackTags: feedbackTagsFor(positive, this.data.feedbackSelections[key]) });
+  },
   toggleFeedbackTag(e) {
     const i = Number(e.currentTarget.dataset.index);
-    this.setData({ feedbackTags: this.data.feedbackTags.map((t, index) => index === i ? { ...t, selected: !t.selected } : t) });
+    if (!Number.isInteger(i) || i < 0 || i >= this.data.feedbackTags.length) return;
+    const feedbackTags = this.data.feedbackTags.map((t, index) => index === i ? { ...t, selected: !t.selected } : t);
+    const key = this.data.feedbackPositive ? 'positive' : 'negative';
+    this.setData({ feedbackTags, feedbackSelections: { ...this.data.feedbackSelections, [key]: feedbackTags.filter(t => t.selected).map(t => t.label) } });
   },
   onFeedbackInput(e) { this.setData({ feedbackText: e.detail.value }); },
   submitFeedback() {

@@ -290,13 +290,13 @@
 <view class="sentiment">
 <view data-positive="{{true}}" bindtap="chooseSentiment">
 <view class="sentiment-circle {{feedbackPositive ? 'chosen' : ''}}">
-<image src="{{feedbackPositive ? '/images/ui/like-pink.svg' : '/images/ui/like-gray.svg'}}"/>
+<image src="{{feedbackPositive ? '/images/ui/feedback-like-pink.svg' : '/images/ui/feedback-like-gray.svg'}}"/>
 </view>
 <text class="{{feedbackPositive ? 'sentiment-label-active' : ''}}">满意</text>
 </view>
 <view data-positive="{{false}}" bindtap="chooseSentiment">
 <view class="sentiment-circle {{!feedbackPositive ? 'chosen' : ''}}">
-<image class="dislike-icon" src="{{!feedbackPositive ? '/images/ui/like-pink.svg' : '/images/ui/like-gray.svg'}}"/>
+<image class="dislike-icon" src="{{!feedbackPositive ? '/images/ui/feedback-like-pink.svg' : '/images/ui/feedback-like-gray.svg'}}"/>
 </view>
 <text class="{{!feedbackPositive ? 'sentiment-label-active' : ''}}">不满意</text>
 </view>

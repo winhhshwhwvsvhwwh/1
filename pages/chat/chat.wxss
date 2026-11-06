@@ -728,15 +728,17 @@ page {
 .sentiment-circle.chosen {
   background:#fff4f9}
 .sentiment-circle image {
-  width:64rpx;
-  height:64rpx}
+  width:72rpx;
+  height:72rpx}
 .sentiment text {
   display:block;
   font-size:24rpx;
   color:#b5b5b5;
   margin-top:18rpx}
 .sentiment .sentiment-label-active {
-  color:#222}
+  color:#222;
+  font-weight:600;
+}
 .feedback-tags {
   display:grid;
   grid-template-columns:repeat(3,1fr);
@@ -746,7 +748,9 @@ page {
   text-align:center;
   border-radius:40rpx;
   padding:10rpx 0;
-  font-size:25rpx}
+  font-size:26rpx;
+  line-height:36rpx;
+}
 .feedback-tag.active {
   background:#ffe5ef;
   color:#ff4089}
@@ -755,6 +759,8 @@ page {
   color:#ccc;
   margin:30rpx 0}
 .feedback-textarea {
+  border:0;
+  outline:none;
   background:#fafafa;
   border-radius:12rpx;
   box-sizing:border-box;

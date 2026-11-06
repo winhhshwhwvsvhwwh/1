@@ -1,0 +1,17 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+let definition, stored, dissatisfiedId, failStorage = false;
+const wx = { getStorageSync: () => stored || [], setStorageSync: (k,v) => { if (failStorage) throw Error('full'); stored=v; }, showToast() {} };
+vm.runInNewContext(fs.readFileSync(require.resolve('../pages/chat/chat.js'),'utf8'), { require: () => ({}), wx, Page: p => { definition=p; } });
+const p = { ...definition, data: JSON.parse(JSON.stringify(definition.data)), setData(d,cb) { Object.assign(this.data,d); if(cb)cb(); }, onDissatisfied(e) { dissatisfiedId=e.currentTarget.dataset.id; } };
+const event = dataset => ({ currentTarget: { dataset } });
+p.openFeedback(event({id:7,positive:false}));assert.equal(p.data.feedbackPositive,false);assert.equal(p.data.feedbackTags.length,7);assert.equal(p.data.feedbackTags[0].label,'答非所问');
+p.toggleFeedbackTag(event({index:0}));p.toggleFeedbackTag(event({index:1}));p.onFeedbackInput({detail:{value:'这条回答没有考虑我的记录'}});
+p.chooseSentiment(event({positive:true}));assert.equal(p.data.feedbackTags.length,8);assert.equal(p.data.feedbackTags[0].label,'已解决');assert(p.data.feedbackTags.every(t=>!t.selected));
+p.toggleFeedbackTag(event({index:2}));p.chooseSentiment(event({positive:false}));assert(p.data.feedbackTags[0].selected&&p.data.feedbackTags[1].selected);assert.equal(p.data.feedbackText,'这条回答没有考虑我的记录');
+p.submitFeedback();assert.equal(stored.length,1);assert.equal(stored[0].positive,false);assert.deepEqual(Array.from(stored[0].tags),['答非所问','内容有误']);assert.equal(dissatisfiedId,7);assert.equal(p.data.showFeedback,false);
+p.openFeedback(event({}));assert.equal(p.data.feedbackPositive,true);assert(p.data.feedbackTags.every(t=>!t.selected));assert.equal(p.data.feedbackText,'');
+p.toggleFeedbackTag(event({index:4}));p.submitFeedback();assert.deepEqual(Array.from(stored[1].tags),['操作方便']);assert.equal(stored[1].positive,true);
+p.openFeedback(event({positive:'false'}));assert.equal(p.data.feedbackPositive,false);assert(p.data.feedbackTags.every(t=>!t.selected));failStorage=true;p.submitFeedback();assert.equal(p.data.showFeedback,true);
+console.log('PASS positive/negative entry, independent tag drafts, text preservation, correct sentiment storage, reopen reset and storage failure');
