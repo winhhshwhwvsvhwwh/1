@@ -32,6 +32,7 @@ Page({
     inputValue: '',
     loading: false,
     scrollToId: '',
+    showScrollShortcut: false,
 
     // ============ AI咨询兜底机制状态 ============
     unresolvedStreak: 0,   // AI连续判定"无法有效解决"的次数
@@ -44,21 +45,49 @@ Page({
     pendingCaption: ''      // 图片预览时用户补充的文字说明
   },
 
+  onMedicationAdvice() {
+    if (!this.data.loading) this.sendMessage('备孕期间用药有哪些注意事项？');
+  },
+  refreshScrollShortcut() {
+    if (typeof wx.createSelectorQuery !== 'function') return;
+    const query = wx.createSelectorQuery().in(this);
+    query.select('.msg-list').boundingClientRect();
+    query.select('.scroll-content').boundingClientRect();
+    query.exec(rects => {
+      if (!rects[0] || !rects[1]) return;
+      this._scrollViewportHeight = rects[0].height;
+      const eligible = this.data.pageMode === 'consult' || this.data.pageMode === 'chat' || (this.data.pageMode === 'assessment' && this.data.assessmentMode === 'result');
+      this.setData({ showScrollShortcut: eligible && rects[1].bottom - rects[0].bottom > 30 });
+    });
+  },
+  onMessageScroll(e) {
+    const eligible = this.data.pageMode === 'consult' || this.data.pageMode === 'chat' || (this.data.pageMode === 'assessment' && this.data.assessmentMode === 'result');
+    if (!eligible) {
+      if (this.data.showScrollShortcut) this.setData({ showScrollShortcut: false });
+      return;
+    }
+    if (!this._scrollViewportHeight) { this.refreshScrollShortcut(); return; }
+    const show = e.detail.scrollHeight - e.detail.scrollTop - this._scrollViewportHeight > 30;
+    if (show !== this.data.showScrollShortcut) this.setData({ showScrollShortcut: show });
+  },
+  onScrollShortcut() {
+    this.setData({ scrollToId: '', showScrollShortcut: false }, () => this.setData({ scrollToId: 'chat-bottom' }));
+  },
   changeConsultTab(e) { this.setData({ consultTab: e.currentTarget.dataset.tab }); },
   onPageBack() {
     if (this.data.assessmentSubmitting) return;
     if (this.data.showDimensions) { this.closeReportDimensions(); return; }
-    this.setData({ pageMode: 'home', assessmentMode: '', scrollToId: 'home-top' });
+    this.setData({ pageMode: 'home', assessmentMode: '', showScrollShortcut: false, scrollToId: 'home-top' });
   },
   onNewConversation() {
     if (this.data.loading || this.data.assessmentSubmitting) return;
-    this.setData({ pageMode: 'home', assessmentMode: '', messages: [], showDimensions: false, scrollToId: '', unresolvedStreak: 0, showHandoffBanner: false });
+    this.setData({ pageMode: 'home', assessmentMode: '', showScrollShortcut: false, messages: [], showDimensions: false, scrollToId: '', unresolvedStreak: 0, showHandoffBanner: false });
   },
   onHistoryClick() {
     if (!this.data.messages.length) { wx.showToast({ title: '暂无咨询记录', icon: 'none' }); return; }
     this.setData({ pageMode: 'chat' }); this.scrollToBottom();
   },
-  openConsult() { this.setData({ pageMode: 'consult', assessmentMode: '', scrollToId: 'consult-top' }); },
+  openConsult() { this.setData({ pageMode: 'consult', assessmentMode: '', scrollToId: 'consult-top' }, () => this.refreshScrollShortcut()); },
   refreshQuestions() {
     const first = this.data.welcomeQuestions[0] === '备孕多久正常？';
     this.setData({ welcomeQuestions: first ? ['排卵日总是算不准怎么办？','孕前检查有哪些项目？','备孕时如何调整作息？'] : ['备孕多久正常？','如何提高受孕几率？','备孕期间需要补充什么营养？'] });
@@ -70,7 +99,7 @@ Page({
   onCopy(e) { wx.setClipboardData({ data: e.currentTarget.dataset.content || (this.data.assessmentReport && this.data.assessmentReport.summary) || '' }); },
   openAssessment() {
     if (this.data.assessmentSubmitting) return;
-    this.setData({ pageMode: 'assessment', assessmentMode: 'intro', questionIndex: 0, scrollToId: 'assessment-top' });
+    this.setData({ pageMode: 'assessment', assessmentMode: 'intro', showScrollShortcut: false, questionIndex: 0, scrollToId: 'assessment-top' });
   },
   setQuestion(index) {
     const q = ASSESSMENT_QUESTIONS[index];
@@ -81,7 +110,7 @@ Page({
       optionItems: q.options.map((label, i) => ({ label, selected: selectedOptions.indexOf(i) >= 0 })) });
   },
   beginAssessment() {
-    this.setData({ pageMode: 'assessment', assessmentMode: 'quiz', assessmentAnswers: [], scrollToId: 'assessment-panel' });
+    this.setData({ pageMode: 'assessment', assessmentMode: 'quiz', showScrollShortcut: false, assessmentAnswers: [], scrollToId: 'assessment-panel' });
     this.setQuestion(0);
   },
   restartAssessment() { if (!this.data.assessmentSubmitting) this.beginAssessment(); },
@@ -125,7 +154,7 @@ Page({
       const data = { ...report.data, ...calculated };
       const a = this.data.assessmentAnswers;
       const reportAnalysis = [{ title:'周期状态', content:a[2].answer.slice(2) }, { title:'备孕时间', content:a[1].answer.slice(2) }, { title:'生活状态', content:a[4].answer.slice(2) }];
-      this.setData({ assessmentReport: data, reportScore: calculated.score, scoreLabel: calculated.label, pointerAngle: calculated.pointerAngle, reportAnalysis, assessmentMode: 'result', scrollToId: 'assessment-report' });
+      this.setData({ assessmentReport: data, reportScore: calculated.score, scoreLabel: calculated.label, pointerAngle: calculated.pointerAngle, reportAnalysis, assessmentMode: 'result', scrollToId: 'assessment-report' }, () => this.refreshScrollShortcut());
     } catch (err) { wx.showToast({ title: '报告生成失败，点击确认可重试', icon: 'none' }); }
     finally { this.setData({ assessmentSubmitting: false }); }
   },
@@ -616,6 +645,6 @@ Page({
     const list = this.data.messages;
     if (!list.length) return;
     const lastId = list[list.length - 1].id;
-    this.setData({ scrollToId: '' }, () => { this.setData({ scrollToId: `msg-${lastId}` }); });
+    this.setData({ scrollToId: '', showScrollShortcut: false }, () => { this.setData({ scrollToId: `msg-${lastId}` }); });
   }
 });

@@ -1,6 +1,7 @@
 <view class="chat-page">
 <xiaonuan-header bindback="onPageBack" bindnew="onNewConversation" bindhistory="onHistoryClick" bindmore="onHeaderMore"/>
-<scroll-view class="msg-list" scroll-y scroll-into-view="{{scrollToId}}" scroll-with-animation>
+<scroll-view class="msg-list" scroll-y scroll-into-view="{{scrollToId}}" scroll-with-animation bindscroll="onMessageScroll">
+<view class="scroll-content">
 <view wx:if="{{pageMode === 'home'}}" id="home-top" class="home-content">
  <view class="welcome-banner">
 <view class="hero-copy">
@@ -10,23 +11,11 @@
 <image class="hero-ip" src="/images/campaign/xiaonuan-heart.png" mode="aspectFit"/>
 </view>
  <view class="feature-grid">
-<view class="feature-tile" data-question="帮我制定一个备孕计划" bindtap="onWelcomeCardTap">
-<view class="feature-art">
-<image src="/images/ui/plan-pink.svg"/>
-</view>
-<text>备孕计划</text>
-</view>
-<view class="feature-tile" bindtap="openRecordPage">
-<view class="feature-art">
-<image src="/images/ui/calendar-pink.svg"/>
-</view>
-<text>排卵周期</text>
-</view>
-<view class="feature-tile" data-question="备孕知识科普" bindtap="onWelcomeCardTap">
-<view class="feature-art">
-<image src="/images/ui/book-pink.svg"/>
-</view>
-<text>知识科普</text>
+<image class="feature-strip" src="/images/campaign/home-features.png" mode="widthFix"/>
+<view class="feature-hit-grid">
+<view role="button" aria-label="备孕计划" data-question="帮我制定一个备孕计划" bindtap="onWelcomeCardTap"></view>
+<view role="button" aria-label="排卵周期" bindtap="openRecordPage"></view>
+<view role="button" aria-label="知识科普" data-question="备孕知识科普" bindtap="onWelcomeCardTap"></view>
 </view>
 </view>
  <view class="faq-heading">
@@ -182,7 +171,7 @@
  <view wx:if="{{assessmentMode !== 'result'}}" id="assessment-panel" class="assessment-card">
 <view class="assessment-head">
 <view class="assessment-icon">
-<image src="/images/ui/calendar-pink.svg"/>
+<image src="/images/campaign/assessment-calendar.png" mode="aspectFit"/>
 </view>
 <view class="assessment-heading">备孕状态评估表<view class="muted">请根据您的实际情况进行填写</view>
 </view>
@@ -211,7 +200,7 @@
 <text>自测完成：备孕状态评估表</text>
 <view>已完成检测，将结合询问给出建议</view>
 </view>
-<image class="completion-check" src="/images/ui/check-pink.svg"/>
+<image class="completion-check" src="/images/campaign/report-complete.png" mode="aspectFit"/>
 </view>
 <view class="request-row">
 <view class="request-bubble">▤ 已完成自测</view>
@@ -242,6 +231,8 @@
 <view wx:for="{{assessmentReport.suggestions}}" wx:key="*this" class="report-copy">
 <text class="analysis-title">{{index + 1}}. </text>{{item}}</view>
 <view class="muted report-disclaimer">建议由Demo规则模板生成，仅供参考；持续不适请及时就医</view>
+<view class="report-footer">
+<image class="report-star" src="/images/campaign/report-star.png" mode="aspectFit"/>
 <view class="rating">
 <text>☺ 你对本次备孕评估满意吗？</text>
 <view bindtap="openFeedback">★★★★★</view>
@@ -253,12 +244,15 @@
 <image class="dislike-icon" src="/images/ui/like.svg" data-positive="{{false}}" bindtap="openFeedback"/>
 </view>
 </view>
+</view>
 </block>
 </view>
 <view wx:if="{{loading}}" class="loading-bubble">小暖正在思考中...</view>
 <view id="chat-bottom" class="scroll-end">
 </view>
+</view>
 </scroll-view>
+<view wx:if="{{showScrollShortcut}}" class="scroll-shortcut" role="button" aria-label="滚动到底部"><image src="/images/campaign/scroll-down.png" mode="aspectFit"/><view class="scroll-shortcut-hit" bindtap="onScrollShortcut"></view></view>
   <!-- AI咨询兜底提示卡：命中触发条件后展示 -->
   <view wx:if="{{showHandoffBanner}}" class="handoff-banner">
     <view class="handoff-banner-close" bindtap="onCloseHandoffBanner">×</view>
@@ -275,14 +269,11 @@
 <view class="bottom-dock">
 <scroll-view scroll-x class="service-bar" show-scrollbar="{{false}}">
 <view class="service-track">
-<view class="service-chip" bindtap="openConsult">
-<image src="/images/ui/chat-white.svg" class="chip-icon"/><text class="service-label">咨询备孕师</text></view>
-<view class="service-chip" bindtap="openAssessment">
-<image src="/images/ui/calendar-pink.svg"/><text class="service-label">AI备孕评估</text></view>
-<view class="service-chip" bindtap="onPlusClick">
-<image src="/images/ui/plan-pink.svg"/><text class="service-label">报告单解读</text></view>
-<view class="service-chip" bindtap="openRecordPage">
-<image src="/images/ui/calendar-pink.svg"/><text class="service-label">周期记录</text></view>
+<view class="service-chip service-chip-art" role="button" aria-label="咨询备孕师" bindtap="openConsult"><image src="/images/campaign/shortcut-consult.png" mode="aspectFit"/></view>
+<view class="service-chip service-chip-art" role="button" aria-label="AI备孕评估" bindtap="openAssessment"><image src="/images/campaign/shortcut-assessment.png" mode="aspectFit"/></view>
+<view class="service-chip service-chip-art" role="button" aria-label="报告单解读" bindtap="onPlusClick"><image src="/images/campaign/shortcut-report.png" mode="aspectFit"/></view>
+<view class="service-chip service-chip-art" role="button" aria-label="用药建议" bindtap="onMedicationAdvice"><image src="/images/campaign/shortcut-medication.png" mode="aspectFit"/></view>
+<view class="service-chip" bindtap="openRecordPage"><image src="/images/ui/calendar-pink.svg"/><text class="service-label">周期记录</text></view>
 </view>
 </scroll-view>
 <chat-input value="{{inputValue}}" bindinput="onInputChange" bindconfirm="onSend" bindunavailable="onInputUnavailable" bindplus="onPlusClick" bindvoicesend="onVoiceSend"/>
