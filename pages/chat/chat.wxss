@@ -548,17 +548,36 @@ page {
   box-sizing:border-box;
   transform:rotate(0deg);
   box-shadow:0 6rpx 20rpx #f9c4dc}
-.score-ring>view {
+.score-dial {
+  position:relative;
   height:100%;
   background:white;
   border-radius:50%;
   padding:20rpx;
-  box-sizing:border-box}
-.score-ring>view>view {
+  box-sizing:border-box;
+}
+.score-center {
   height:100%;
   border-radius:50%;
   border:12rpx solid #ff7fb3;
-  box-sizing:border-box}
+  box-sizing:border-box;
+}
+.score-pointer {
+  position:absolute;
+  inset:0;
+  transition:transform .4s ease;
+}
+.score-pointer>view {
+  position:absolute;
+  left:50%;
+  top:5rpx;
+  margin-left:-10rpx;
+  width:0;
+  height:0;
+  border-left:10rpx solid transparent;
+  border-right:10rpx solid transparent;
+  border-bottom:22rpx solid #ff4089;
+}
 .report-disclaimer {
   font-size:21rpx;
   margin:24rpx 0 40rpx}

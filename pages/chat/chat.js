@@ -2,6 +2,7 @@
 const api = require('../../utils/api.js');
 const recordStore = require('../../utils/recordStore.js');
 const imageAnalysis = require('../../utils/imageAnalysis.js');
+const { buildAssessmentReport } = require('../../utils/assessmentReport.js');
 
 const ASSESSMENT_QUESTIONS = [{"title": "你的年龄是？", "options": ["A.20–24岁(较年轻阶段)", "B.25–29岁(适合建立规律备孕习惯)", "C.30–34岁(建议更关注周期和排卵)", "D.其他以上(建议结合专业指导备孕)"]}, {"title": "目前备孕多久了？", "options": ["A.<3个月(处于初期尝试阶段)", "B.3–6个月(已建立初期尝试阶段)", "C.6–12个月(建议更关注周期和排卵)", "D.>12个月(可考虑寻求专业评估)"]}, {"title": "你的月经周期通常规律吗？", "options": ["A.很规律(每月时间基本稳定)", "B.偶尔波动(偶尔提前或推迟几天)", "C.经常不规律(周期变化比较明显)", "D.不确定(暂时没有持续记录)"]}, {"title": "每次经期通常持续多久？", "options": ["A.1–2天(经期持续时间较短)", "B.3–7天(常见持续时间)", "C.>7天(持续时间相对较长)", "D.不确定(建议记录开始和结束日期)"]}, {"title": "最近生活状态怎么样？", "options": ["A.规律健康(作息和状态比较稳定)", "B.偶尔熬夜或压力大(整体状态尚可)", "C.经常熬夜或焦虑(生活节奏需调整)", "D.状态较差(建议优先改善休息与管理)"]}, {"title": "是否有想关注的生理问题？", "options": ["A.没有问题(目前没有明显异常)", "B.异常出血(出现非经期出血等情况)", "C.明显或持续疼痛(出现异常的疼痛)", "D.其他不适(还有其他身体状况)"]}];
 let msgId = 0;
@@ -16,7 +17,7 @@ const UNRESOLVED_STREAK_LIMIT = 2;
 Page({
   data: {
     // { id, role, content, understanding, analysis, suggestions, timestamp, needHandoff, riskLevel, dissatisfied }
-    pageMode: 'home', showDimensions: false, reportScore: 85, reportAnalysis: [],
+    pageMode: 'home', showDimensions: false, reportScore: null, scoreLabel: '信息待补充', pointerAngle: null, reportAnalysis: [],
     assessmentIntro: '为了更全面地了解您的备孕状态，可以参与这套AI备孕评估。我们将结合您的周期情况、备孕阶段及生活习惯，为您生成个性化备孕报告…',
     optionItems: [], selectedOptions: [], hasSelection: false,
     consultTab: 'stage', stageQuestions: ['初次备孕','备孕1–3月','备孕3–6月','备孕半年+','周期不规律','更多'], needQuestions: ['排卵监测','营养补充','孕前检查','生活习惯','情绪压力','周期记录'],
@@ -120,21 +121,11 @@ Page({
       if (result.code !== 0 || !result.data || !result.data.assessmentId) throw new Error('submit');
       const report = await api.getReportDetail(result.data.assessmentId);
       if (report.code !== 0 || !report.data) throw new Error('report');
-      const data = { ...report.data };
-      if (this.data.isDemo) {
-        const answers = this.data.assessmentAnswers;
-        const notices = [];
-        if (answers[1].indices[0] === 3) notices.push('你填写的备孕时间已超过12个月，建议安排妇科或生殖科咨询');
-        if (answers[2].indices[0] >= 2) notices.push('目前周期不规律或尚不确定，建议持续记录月经与排卵相关变化');
-        if (answers[4].indices[0] >= 2) notices.push('近期生活状态需要关注，建议优先改善休息和压力管理');
-        if (answers[5].indices.some(i => i > 0)) notices.push('你提到了生理不适，建议向专业医生说明具体症状');
-        data.summary = '根据你的填写情况，' + (notices.length ? notices.join('；') + '。' : '建议保持规律记录、均衡饮食和适度运动。') + '以下为本地示例建议，不构成医学评估。';
-      }
-      const scores = (data.indicators || []).map(i => Number(i.score)).filter(n => Number.isFinite(n) && n >= 0 && n <= 100);
-      const reportScore = this.data.isDemo ? 85 : (scores.length ? Math.round(scores.reduce((a,b) => a+b,0)/scores.length) : '—');
+      const calculated = buildAssessmentReport(this.data.assessmentAnswers);
+      const data = { ...report.data, ...calculated };
       const a = this.data.assessmentAnswers;
-      const reportAnalysis = [{ title:'周期状态', content:a[2].answer.slice(2) + '。建议结合近期周期记录，持续观察变化。' }, { title:'备孕时间', content:a[1].answer.slice(2) + '。可结合年龄和实际情况安排孕前咨询。' }, { title:'生活状态', content:a[4].answer.slice(2) + '。保持规律作息、均衡饮食与适度运动。' }];
-      this.setData({ assessmentReport: data, reportScore, reportAnalysis, assessmentMode: 'result', scrollToId: 'assessment-report' });
+      const reportAnalysis = [{ title:'周期状态', content:a[2].answer.slice(2) }, { title:'备孕时间', content:a[1].answer.slice(2) }, { title:'生活状态', content:a[4].answer.slice(2) }];
+      this.setData({ assessmentReport: data, reportScore: calculated.score, scoreLabel: calculated.label, pointerAngle: calculated.pointerAngle, reportAnalysis, assessmentMode: 'result', scrollToId: 'assessment-report' });
     } catch (err) { wx.showToast({ title: '报告生成失败，点击确认可重试', icon: 'none' }); }
     finally { this.setData({ assessmentSubmitting: false }); }
   },
@@ -151,19 +142,23 @@ Page({
       const dpr = info.pixelRatio || 1; canvas.width = width * dpr; canvas.height = height * dpr;
       const ctx = canvas.getContext('2d'); ctx.scale(dpr, dpr);
       const cx = width/2, cy = height/2 + 8, radius = Math.min(width * .25, height * .32);
-      const point = (i, amount) => { const angle = -Math.PI/2 + i*2*Math.PI/5; return [cx + Math.cos(angle)*radius*amount, cy + Math.sin(angle)*radius*amount]; };
+      const indicators = this.data.assessmentReport.indicators;
+      const count = indicators.length;
+      const point = (i, amount) => { const angle = -Math.PI/2 + i*2*Math.PI/count; return [cx + Math.cos(angle)*radius*amount, cy + Math.sin(angle)*radius*amount]; };
       const polygon = values => { ctx.beginPath(); values.forEach((v,i) => { const p = point(i,v); if(i) ctx.lineTo(...p); else ctx.moveTo(...p); }); ctx.closePath(); };
       ctx.lineWidth = 1; ctx.strokeStyle = '#d6cdd2';
-      for(let level=1;level<=5;level++){polygon(Array(5).fill(level/5));ctx.stroke();}
-      for(let i=0;i<5;i++){ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(...point(i,1));ctx.stroke();}
-      // Demo values only. Live charts use returned indicators rather than inventing missing measurements.
-      const labels = this.data.isDemo ? ['周期规律','经期时长','备孕时间','排卵记录','生活状态'] : (this.data.assessmentReport.indicators || []).slice(0,5).map(v=>v.name);
-      const values = this.data.isDemo ? [.86,.80,.88,.88,.78] : (this.data.assessmentReport.indicators || []).slice(0,5).map(v=>Math.max(0,Math.min(1,Number(v.score)/100 || 0)));
-      while(values.length < 5) values.push(0);
-      polygon(values);ctx.fillStyle='rgba(255,64,137,.12)';ctx.fill();ctx.strokeStyle='#ff4089';ctx.stroke();
-      values.forEach((v,i)=>{ctx.beginPath();ctx.arc(...point(i,v),3,0,Math.PI*2);ctx.fillStyle='#ff4089';ctx.fill();});
+      for(let level=1;level<=5;level++){polygon(Array(count).fill(level/5));ctx.stroke();}
+      for(let i=0;i<count;i++){ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(...point(i,1));ctx.stroke();}
+      const complete = indicators.every(item => item.score !== null);
+      if (complete) {
+        polygon(indicators.map(item => item.score/100));ctx.fillStyle='rgba(255,64,137,.12)';ctx.fill();ctx.strokeStyle='#ff4089';ctx.stroke();
+      }
+      indicators.forEach((item,i)=>{
+        if(item.score === null) return;
+        ctx.beginPath();ctx.arc(...point(i,item.score/100),3,0,Math.PI*2);ctx.fillStyle='#ff4089';ctx.fill();
+      });
       ctx.fillStyle='#999';ctx.font='11px sans-serif';ctx.textAlign='center';
-      for(let i=0;i<5;i++){const p=point(i,1.3);ctx.fillText(labels[i] || '暂无数据',p[0],p[1]+4);}
+      indicators.forEach((item,i)=>{const p=point(i,1.3);ctx.fillText(item.name + (item.score === null ? '（待补充）' : ''),p[0],p[1]+4);});
     });
   },
   onPlanFromReport() {

@@ -220,20 +220,17 @@
 <view class="report-hero">
 <view>
 <view class="report-title">备孕状态评估结果</view>
-<view class="score-badge">{{reportScore}}<text> 分</text>
+<view class="score-badge">{{reportScore === null ? '待完善' : reportScore}}<text wx:if="{{reportScore !== null}}"> 分</text>
 </view>
 <view class="dimension-button" bindtap="openReportDimensions">测试维度 ›</view>
 </view>
 <view class="orbit">
 <view class="score-ring">
-<view>
-<view>
+<view class="score-dial"><view class="score-center"></view><view wx:if="{{reportScore !== null}}" class="score-pointer" style="transform:rotate({{pointerAngle}}deg)"><view></view></view></view>
 </view>
 </view>
 </view>
-</view>
-</view>
-<view class="muted report-disclaimer">{{isDemo ? '示例数据，仅用于展示页面效果' : '此结果不代表诊疗意见，请以医生建议为准'}}</view>
+<view class="muted report-disclaimer">Demo自评规则分，不代表诊断、生育能力或受孕概率</view>
 <view class="report-title">已完成备孕状态分析</view>
 <view class="report-copy">{{assessmentReport.summary}}</view>
 <view wx:for="{{reportAnalysis}}" wx:key="title" class="analysis-line">
@@ -241,10 +238,10 @@
 <view>
 <text class="analysis-title">{{item.title}}：</text>{{item.content}}</view>
 </view>
-<view class="report-title health-title">健康建议</view>
+<view class="report-title health-title">健康建议 · {{scoreLabel}}</view>
 <view wx:for="{{assessmentReport.suggestions}}" wx:key="*this" class="report-copy">
 <text class="analysis-title">{{index + 1}}. </text>{{item}}</view>
-<view class="muted report-disclaimer">内容由AI生成仅供参考，持续不适请及时就医</view>
+<view class="muted report-disclaimer">建议由Demo规则模板生成，仅供参考；持续不适请及时就医</view>
 <view class="rating">
 <text>☺ 你对本次备孕评估满意吗？</text>
 <view bindtap="openFeedback">★★★★★</view>
@@ -322,21 +319,21 @@
 <view class="dimensions-back" bindtap="closeReportDimensions">
 <image src="/images/ui/back.svg"/>返回报告</view>
 <image class="dimensions-ip" src="/images/campaign/xiaonuan-celebrate.png" mode="aspectFit"/>
-<view class="dimensions-status">{{isDemo ? '良好' : '评估完成'}}</view>
-<view class="muted">备孕状态评估维度{{isDemo ? ' · 示例' : ''}}</view>
+<view class="dimensions-status">{{scoreLabel}}</view>
+<view class="muted">备孕状态自评维度 · Demo规则</view>
 <view class="dimensions-card">
 <view class="dimensions-title">备孕状态分析</view>
 <canvas type="2d" id="radar-canvas" class="radar-canvas">
 </canvas>
 <view class="dimension-summary">
-<view>{{isDemo ? '当前展示示例评估维度' : '结合填写情况了解备孕日常'}}</view>
-<view class="dimension-progress">
-<view>
+<view>{{reportScore === null ? '信息不足，暂无法计算总分' : '本次自评 ' + reportScore + ' 分'}}</view>
+<view wx:if="{{reportScore !== null}}" class="dimension-progress">
+<view style="width:{{reportScore}}%">
 </view>
 </view>
-<view class="muted">保持规律记录与健康生活习惯，关注排卵期变化，让备孕更有节奏。</view>
+<view class="muted">{{assessmentReport.summary}}</view>
 </view>
-<view class="muted dimensions-note">{{isDemo ? '示例分数不代表实际健康状态或受孕概率' : '评估内容仅供参考，不代表受孕概率'}}</view>
+<view class="muted dimensions-note">Demo规则未经医学验证，请结合具体症状和医生建议</view>
 <view class="dimensions-actions">
 <button class="soft-button" bindtap="closeReportDimensions">查看详细报告</button>
 <button class="pink-button" bindtap="onPlanFromReport">生成备孕计划</button>
