@@ -1,51 +1,45 @@
-/* components/ChatInput/ChatInput.wxss */
-/* 固定底部，白色背景，圆角24px（作用在输入框本体上） */
-
+/* 输入文字与左右图标使用同一条垂直中心线。 */
 .chat-input-bar {
-  display: flex;
-  align-items: center;
-  padding: 14rpx 20rpx;
-  padding-bottom: calc(14rpx + env(safe-area-inset-bottom));
-  background: #FFFFFF;
-  border-top: 1rpx solid #F5F5F5;
+  display:flex;
+  align-items:center;
+  box-sizing:border-box;
+  height:96rpx;
+  margin:0 32rpx;
+  padding:8rpx 16rpx;
+  background:#FFFFFF;
+  border:0;
+  border-radius:60rpx;
 }
-
 .chat-input-icon {
-  width: 64rpx;
-  height: 64rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 54rpx;
+  width:54rpx;
+  height:64rpx;
 }
-
-.chat-input-icon-text {
-  font-size: 36rpx;
-  color: #999999;
+.input-line-icon {
+  display:block;
+  width:48rpx;
+  height:48rpx;
 }
-
-.chat-input-plus {
-  font-size: 32rpx;
-  font-weight: 600;
-}
-
-.voice-icon-active {
-  background: #FFF0F3;
-  border-radius: 50%;
-}
-
-.voice-icon-active .chat-input-icon-text {
-  color: #F8A7B8;
-}
-
 .chat-input-box {
-  flex: 1;
-  height: 72rpx;
-  background: #FFF8FA;
-  border-radius: 24px;
-  padding: 0 28rpx;
-  font-size: 28rpx;
-  margin: 0 8rpx;
+  flex:1;
+  min-width:0;
+  align-self:center;
+  box-sizing:border-box;
+  height:48rpx;
+  line-height:48rpx;
+  padding:0 12rpx;
+  margin:0;
+  border:0;
+  background:transparent;
+  font-size:27rpx;
+  color:#333333;
+}
+.voice-icon-active {
+  background:#FFF0F3;
+  border-radius:50%;
 }
 
 /* ============ 语音录制浮层：按住说话时展示 ============ */
@@ -95,7 +89,3 @@
   font-size: 24rpx;
   color: rgba(255, 255, 255, 0.85);
 }
-
-.chat-input-bar { background:#f5f5f6; border:0; }.chat-input-box { background:white; font-size:26rpx; }.chat-input-icon-text { color:#333; }
-
-.chat-input-bar{margin:0 32rpx;background:white;border-radius:60rpx;padding:8rpx 16rpx;border:0;height:96rpx;box-sizing:border-box}.chat-input-icon{width:54rpx;height:64rpx}.input-line-icon{width:48rpx;height:48rpx}.chat-input-box{background:transparent;padding:0 12rpx;margin:0;height:76rpx;font-size:27rpx}.chat-input-box input{color:#333}
