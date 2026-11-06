@@ -25,6 +25,46 @@
       {
         "type": "file",
         "value": "评估计分与建议模板.md"
+      },
+      {
+        "type": "file",
+        "value": "images/campaign/report-star.png"
+      },
+      {
+        "type": "file",
+        "value": "images/campaign/advisor-03.png"
+      },
+      {
+        "type": "file",
+        "value": "images/campaign/advisor-featured.png"
+      },
+      {
+        "type": "file",
+        "value": "images/campaign/advisor-04.png"
+      },
+      {
+        "type": "file",
+        "value": "images/campaign/advisor-03-small.png"
+      },
+      {
+        "type": "file",
+        "value": "images/campaign/xiaonuan-celebrate.png"
+      },
+      {
+        "type": "file",
+        "value": "images/campaign/advisor-04-small.png"
+      },
+      {
+        "type": "file",
+        "value": "images/campaign/advisor-02.png"
+      },
+      {
+        "type": "file",
+        "value": "images/campaign/advisor-01.png"
+      },
+      {
+        "type": "file",
+        "value": "组件审核清单.md"
       }
     ],
     "include": []

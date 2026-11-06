@@ -32,25 +32,8 @@
  <view class="consult-intro">
 <view class="consult-copy">结合<text>备孕阶段、周期情况</text>与咨询需求，<text>智能匹配</text>适合您的备孕师，提供<text>周期管理、排卵指导、试纸解读</text>等专业服务</view>
 <view class="expert-panel">
-<view class="expert-promises">
-<view>科学建议<text>需求匹配</text>
-</view>
-<view>1V1指导<text>定制服务</text>
-</view>
-<view>全程陪伴<text>覆盖备孕周期</text>
-</view>
-</view>
-<view class="expert-portraits">
-<image class="expert-avatar" src="/images/campaign/advisor-01.png" mode="aspectFit"/>
-<image class="expert-avatar" src="/images/campaign/advisor-02.png" mode="aspectFit"/>
-<view class="expert-featured">
-<image class="expert-avatar" src="/images/campaign/advisor-featured.png" mode="aspectFit"/>
-<text>金牌备孕师</text>
-</view>
-<image class="expert-avatar" src="/images/campaign/advisor-03.png" mode="aspectFit"/>
-<image class="expert-avatar" src="/images/campaign/advisor-04.png" mode="aspectFit"/>
-
-</view>
+<image class="expert-promises-art" src="/images/campaign/expert-promises.png" mode="aspectFit"/>
+<image class="expert-team-art" src="/images/campaign/expert-team.png" mode="aspectFit"/>
 </view>
 </view>
  <view class="consult-card">
@@ -60,7 +43,11 @@
 <view class="service-history" bindtap="onHistoryClick">服务记录</view>
 </view>
 <view class="consult-body">
-<view class="consult-tabs">
+<view wx:if="{{consultTab === 'stage'}}" class="consult-tabs consult-tabs-composite">
+<image class="consult-tabs-art" src="/images/campaign/consult-tabs-stage.png" mode="aspectFit"/>
+<view class="consult-tabs-hotspots"><view role="button" aria-label="按阶段找" data-tab="stage" bindtap="changeConsultTab"></view><view role="button" aria-label="按需求找" data-tab="need" bindtap="changeConsultTab"></view></view>
+</view>
+<view wx:else class="consult-tabs">
 <view class="{{consultTab === 'stage' ? 'tab-active' : ''}}" data-tab="stage" bindtap="changeConsultTab">
 <image src="/images/ui/bars.svg"/>按阶段找</view>
 <view class="{{consultTab === 'need' ? 'tab-active' : ''}}" data-tab="need" bindtap="changeConsultTab">
@@ -72,9 +59,9 @@
 <view class="muted">你还可以这样问</view>
 <view class="suggestion-links">
 <view class="suggestion-tag" data-question="排卵日总是算不准怎么办？" bindtap="onWelcomeCardTap">
-<text class="suggestion-hash">#</text><text class="suggestion-label">排卵日总是算不准怎么办？</text></view>
+<image class="suggestion-hash suggestion-hash-art" src="/images/campaign/question-hash.png" mode="aspectFit"/><text class="suggestion-label">排卵日总是算不准怎么办？</text></view>
 <view class="suggestion-tag" data-question="我的试纸结果怎么看？" bindtap="onWelcomeCardTap">
-<text class="suggestion-hash">#</text><text class="suggestion-label">我的试纸结果怎么看？</text></view>
+<image class="suggestion-hash suggestion-hash-art" src="/images/campaign/question-hash.png" mode="aspectFit"/><text class="suggestion-label">我的试纸结果怎么看？</text></view>
 </view>
 </view>
 </view>
@@ -150,7 +137,7 @@
 <view class="assessment-intro">
 <view>{{assessmentIntro}}</view>
 <view class="privacy-row">对话内容将开启隐私保护 <text>◉</text>
-<image src="/images/ui/plan-pink.svg"/>
+<image src="/images/campaign/assessment-illustration.png" mode="aspectFit"/>
 </view>
 <view class="answer-tools"><view class="answer-tools-art">
 <image src="/images/campaign/answer-actions.png" mode="aspectFit"/>
@@ -193,10 +180,7 @@
 <view wx:if="{{questionIndex > 0}}" class="previous" bindtap="previousAssessment">上一题</view>
 </view>
 </view>
- <view wx:if="{{assessmentMode === 'quiz'}}" class="small-rating">
-<image src="/images/ui/like.svg" data-positive="{{true}}" bindtap="openFeedback"/>
-<image class="dislike-icon" src="/images/ui/like.svg" data-positive="{{false}}" bindtap="openFeedback"/>
-</view>
+ <view wx:if="{{assessmentMode === 'quiz'}}" class="small-rating"><view class="quiz-feedback-wrap"><image class="quiz-feedback-art" src="/images/campaign/quiz-feedback.png" mode="aspectFit"/><view class="quiz-feedback-hotspots"><view role="button" aria-label="满意" data-positive="{{true}}" bindtap="openFeedback"></view><view role="button" aria-label="不满意" data-positive="{{false}}" bindtap="openFeedback"></view></view></view></view>
  <block wx:if="{{assessmentMode === 'result'}}">
 <view class="completion-banner">
 <image src="/images/ui/calendar-pink.svg"/>
@@ -207,7 +191,7 @@
 <image class="completion-check" src="/images/campaign/report-complete.png" mode="aspectFit"/>
 </view>
 <view class="request-row">
-<view class="request-bubble">▤ 已完成自测</view>
+<view class="request-bubble"><image class="completed-label-art" src="/images/campaign/completed-label.png" mode="aspectFit" aria-label="已完成自测"/></view>
 </view>
 <view id="assessment-report" class="report-card">
 <view class="report-hero">
@@ -222,7 +206,7 @@
 <view class="score-dial gauge-dial"><view class="score-center"></view><view wx:if="{{reportScore !== null}}" class="score-pointer" style="transform:rotate({{pointerAngle}}deg)"><view></view></view></view>
 </view>
 </view>
-<view class="muted report-disclaimer">Demo自评规则分，不代表诊断、生育能力或受孕概率</view>
+<view class="muted report-disclaimer">Demo自评规则分，不代表诊断、生育能力或受孕概率<image class="info-help-art" src="/images/campaign/info-help.png" bindtap="onScoreExplanation"/></view>
 <view class="report-title">已完成备孕状态分析</view>
 <view class="report-copy">{{assessmentReport.summary}}</view>
 <view wx:for="{{reportAnalysis}}" wx:key="title" class="analysis-line">
@@ -288,18 +272,8 @@
 </view>
 </view>
 <view class="sentiment">
-<view data-positive="{{true}}" bindtap="chooseSentiment">
-<view class="sentiment-circle {{feedbackPositive ? 'chosen' : ''}}">
-<image src="{{feedbackPositive ? '/images/ui/feedback-like-pink.svg' : '/images/ui/feedback-like-gray.svg'}}"/>
-</view>
-<text class="{{feedbackPositive ? 'sentiment-label-active' : ''}}">满意</text>
-</view>
-<view data-positive="{{false}}" bindtap="chooseSentiment">
-<view class="sentiment-circle {{!feedbackPositive ? 'chosen' : ''}}">
-<image class="dislike-icon" src="{{!feedbackPositive ? '/images/ui/feedback-like-pink.svg' : '/images/ui/feedback-like-gray.svg'}}"/>
-</view>
-<text class="{{!feedbackPositive ? 'sentiment-label-active' : ''}}">不满意</text>
-</view>
+<view class="sentiment-art-wrap"><image class="sentiment-art" src="{{feedbackPositive ? '/images/campaign/feedback-positive.png' : '/images/campaign/feedback-negative.png'}}" mode="aspectFit"/>
+<view class="sentiment-hotspots"><view role="button" aria-label="满意" data-positive="{{true}}" bindtap="chooseSentiment"></view><view role="button" aria-label="不满意" data-positive="{{false}}" bindtap="chooseSentiment"></view></view></view>
 </view>
 <view class="feedback-tags">
 <view wx:for="{{feedbackTags}}" wx:key="label" class="feedback-tag {{item.selected ? 'active' : ''}}" data-index="{{index}}" bindtap="toggleFeedbackTag">{{item.label}}</view>
@@ -327,7 +301,7 @@
 </view>
 <view class="muted">{{assessmentReport.summary}}</view>
 </view>
-<view class="muted dimensions-note">Demo规则未经医学验证，请结合具体症状和医生建议</view>
+<view class="muted dimensions-note">Demo规则未经医学验证，请结合具体症状和医生建议<image class="info-help-art" src="/images/campaign/info-help.png" bindtap="onScoreExplanation"/></view>
 <view class="dimensions-actions">
 <button class="soft-button" bindtap="closeReportDimensions">查看详细报告</button>
 <button class="pink-button" bindtap="onPlanFromReport">生成备孕计划</button>

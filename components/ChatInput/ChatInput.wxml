@@ -8,7 +8,7 @@
     bindtouchend="onVoiceTouchEnd"
     bindtouchcancel="onVoiceTouchEnd"
   >
-    <image class="input-line-icon" src="/images/ui/voice.svg"/>
+    <image class="input-line-icon" src="/images/campaign/voice-input.png"/>
   </view>
 
   <!-- 中间：输入框 -->
