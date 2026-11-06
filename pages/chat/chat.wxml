@@ -1,29 +1,100 @@
-<!--pages/chat/chat.wxml-->
 <view class="chat-page">
-
-  <!-- 顶部导航栏 -->
-  <xiaonuan-header show-back="{{false}}" bindmore="onHeaderMore" />
-
-  <!-- 中间聊天区域 -->
-  <scroll-view
-    class="msg-list"
-    scroll-y
-    scroll-into-view="{{scrollToId}}"
-    scroll-with-animation
-  >
-
-    <view wx:if="{{messages.length === 0 ? !assessmentMode : false}}" class="welcome">
-      <view class="hero"><view><view class="hero-title">Hi,我是小暖</view><view class="hero-copy">随时为你提供孕期知识和科学建议，陪你记录每一步备孕过程～</view></view><xiaonuan-avatar size="100" /></view>
-      <view class="welcome-grid">
-        <view class="welcome-card" data-question="帮我制定一个备孕计划" bindtap="onWelcomeCardTap"><view class="feature-icon">▤</view><view>备孕计划</view></view>
-        <view class="welcome-card" bindtap="openRecordPage"><view class="feature-icon">▦</view><view>排卵周期</view></view>
-        <view class="welcome-card" data-question="备孕知识科普" bindtap="onWelcomeCardTap"><view class="feature-icon">♧</view><view>知识科普</view></view>
-      </view>
-      <view class="consult-card"><view class="consult-top"><view>备孕咨询服务<view class="consult-sub">科学建议 · 个性关怀 · 全程陪伴</view></view><text bindtap="onTransferConfirm">咨询指引 ›</text></view><view class="consult-body"><view class="consult-tabs"><view class="{{consultTab === 'stage' ? 'tab-active' : ''}}" data-tab="stage" bindtap="changeConsultTab">按阶段找</view><view class="{{consultTab === 'need' ? 'tab-active' : ''}}" data-tab="need" bindtap="changeConsultTab">按需求找</view></view><view class="stage-list"><view wx:for="{{consultTab === 'stage' ? stageQuestions : needQuestions}}" wx:key="*this" data-question="{{item}}" bindtap="onWelcomeCardTap">{{item}}</view></view><view class="muted">你还可以这样问</view><view class="suggestion-link" data-question="排卵日总是算不准怎么办？" bindtap="onWelcomeCardTap"># 排卵日总是算不准怎么办？</view></view></view>
-      <view class="section-label">常见问题</view>
-      <view class="question-pill" wx:for="{{welcomeQuestions}}" wx:key="*this" data-question="{{item}}" bindtap="onWelcomeCardTap">{{item}}</view>
-    </view>
-
+<xiaonuan-header bindback="onPageBack" bindnew="onNewConversation" bindhistory="onHistoryClick" bindmore="onHeaderMore"/>
+<scroll-view class="msg-list" scroll-y scroll-into-view="{{scrollToId}}" scroll-with-animation>
+<view wx:if="{{pageMode === 'home'}}" id="home-top" class="home-content">
+ <view class="welcome-banner">
+<view class="hero-copy">
+<view class="hero-title">Hi,我是小暖</view>
+<view class="hero-description">随时为你提供孕期知识和科学建议，陪你记录每一步备孕过程~</view>
+</view>
+<image class="hero-ip" src="/images/xiaonuan-avatar.png" mode="aspectFit"/>
+</view>
+ <view class="feature-grid">
+<view class="feature-tile" data-question="帮我制定一个备孕计划" bindtap="onWelcomeCardTap">
+<view class="feature-art">
+<image src="/images/ui/plan-pink.svg"/>
+</view>
+<text>备孕计划</text>
+</view>
+<view class="feature-tile" bindtap="openRecordPage">
+<view class="feature-art">
+<image src="/images/ui/calendar-pink.svg"/>
+</view>
+<text>排卵周期</text>
+</view>
+<view class="feature-tile" data-question="备孕知识科普" bindtap="onWelcomeCardTap">
+<view class="feature-art">
+<image src="/images/ui/book-pink.svg"/>
+</view>
+<text>知识科普</text>
+</view>
+</view>
+ <view class="faq-heading">
+<text>常见问题：</text>
+<view bindtap="refreshQuestions">
+<image src="/images/ui/refresh-pink.svg"/>换一批</view>
+</view>
+ <view class="question-pill" wx:for="{{welcomeQuestions}}" wx:key="*this" data-question="{{item}}" bindtap="onWelcomeCardTap">{{item}}</view>
+</view>
+<view wx:if="{{pageMode === 'consult'}}" id="consult-top" class="consult-content">
+ <view class="request-row">
+<view class="request-bubble">找备孕师咨询</view>
+</view>
+ <view class="consult-intro">
+<view class="consult-copy">结合<text>备孕阶段、周期情况</text>与咨询需求，<text>智能匹配</text>适合您的备孕师，提供<text>周期管理、排卵指导、试纸解读</text>等专业服务</view>
+<view class="expert-panel">
+<view class="expert-promises">
+<view>科学建议<text>需求匹配</text>
+</view>
+<view>1V1指导<text>定制服务</text>
+</view>
+<view>全程陪伴<text>覆盖备孕周期</text>
+</view>
+</view>
+<view class="expert-portraits">
+<view class="expert-silhouette">
+</view>
+<view class="expert-silhouette">
+</view>
+<view class="expert-featured">
+<view class="expert-silhouette">
+</view>
+<text>备孕咨询</text>
+</view>
+<view class="expert-silhouette">
+</view>
+<view class="expert-silhouette">
+</view>
+</view>
+</view>
+</view>
+ <view class="consult-card">
+<view class="consult-top">
+<view>AI匹配备孕师 · 咨询<view class="consult-sub">专业1V1 · 定制服务</view>
+</view>
+<view class="service-history" bindtap="onHistoryClick">服务记录</view>
+</view>
+<view class="consult-body">
+<view class="consult-tabs">
+<view class="{{consultTab === 'stage' ? 'tab-active' : ''}}" data-tab="stage" bindtap="changeConsultTab">
+<image src="/images/ui/bars.svg"/>按阶段找</view>
+<view class="{{consultTab === 'need' ? 'tab-active' : ''}}" data-tab="need" bindtap="changeConsultTab">
+<image src="/images/ui/plan-gray.svg"/>按需求找</view>
+</view>
+<view class="stage-list">
+<view wx:for="{{consultTab === 'stage' ? stageQuestions : needQuestions}}" wx:key="*this" data-question="{{item}}" bindtap="onWelcomeCardTap">{{item}}</view>
+</view>
+<view class="muted">你还可以这样问</view>
+<scroll-view scroll-x class="suggestion-links">
+<view data-question="排卵日总是算不准怎么办？" bindtap="onWelcomeCardTap">
+<text>#</text>排卵日总是算不准怎么办？</view>
+<view data-question="我的试纸结果怎么看？" bindtap="onWelcomeCardTap">
+<text>#</text>我的试纸结果怎么看？</view>
+</scroll-view>
+</view>
+</view>
+</view>
+<block wx:if="{{pageMode === 'chat'}}">
     <!-- 消息列表 -->
     <view
       wx:for="{{messages}}"
@@ -43,7 +114,7 @@
       <!-- AI消息：小鹿头像 + AI回复卡片（文字问答用ai-message-card，图片分析用ai-image-message） -->
       <block wx:else>
         <view class="assistant-row">
-          <xiaonuan-avatar size="40" />
+
           <view class="assistant-col">
             <ai-image-message
               wx:if="{{item.type === 'image_analysis'}}"
@@ -85,38 +156,116 @@
       </block>
     </view>
 
-    <view wx:if="{{assessmentMode}}" id="assessment-panel" class="assessment-wrap">
-      <view class="assessment-intro">为了更全面地了解你的备孕状态，可以参与这套AI备孕评估。结合你的填写情况，提供备孕相关参考建议。</view>
-      <view class="assessment-card" wx:if="{{assessmentMode !== 'result'}}">
-        <view class="assessment-head"><view class="assessment-icon">▦</view><view class="assessment-heading">备孕状态评估表<view class="muted">请根据你的实际情况填写</view></view><text class="step">{{questionIndex + 1}}/6</text></view>
-        <view class="assessment-body" wx:if="{{assessmentMode === 'intro'}}"><view class="intro-copy">用六个小问题，了解你的备孕日常</view><button class="pink-button" bindtap="beginAssessment">开始评估</button></view>
-        <view class="assessment-body" wx:else>
-          <view class="quiz-title">{{questionIndex + 1}}.{{currentQuestion.title}}</view>
-          <view wx:for="{{currentQuestion.options}}" wx:key="*this" class="quiz-option {{selectedOption === index ? 'selected' : ''}}" data-index="{{index}}" bindtap="selectAssessmentOption">{{item}}</view>
-          <button class="pink-button" loading="{{assessmentSubmitting}}" disabled="{{selectedOption === -1 || assessmentSubmitting}}" bindtap="confirmAssessment">{{questionIndex === 5 ? '生成评估报告' : '确认'}}</button>
-          <view wx:if="{{questionIndex > 0}}" class="previous" bindtap="previousAssessment">上一题</view>
-        </view>
-      </view>
-      <view wx:else class="report-card">
-        <view class="report-label">✓ 已完成自测 · 备孕状态评估</view>
-        <view class="report-title">备孕状态评估结果</view><view class="report-badge">{{isDemo ? '示例报告' : '参考建议'}}</view>
-        <view class="muted">内容仅供参考，不代表诊断或受孕概率</view>
-        <view class="report-title">已完成备孕状态分析</view><view class="report-copy">{{assessmentReport.summary}}</view>
-        <view class="report-title">你的填写情况</view>
-        <view wx:for="{{assessmentAnswers}}" wx:key="title" class="answer-summary"><text class="answer-number">{{index + 1}}</text><view>{{item.title}}<view class="answer-value">{{item.answer}}</view></view></view>
-        <view class="report-title">健康建议</view><view wx:for="{{assessmentReport.suggestions}}" wx:key="*this" class="report-copy">{{index + 1}}. {{item}}</view>
-        <view class="report-actions"><button class="soft-button" bindtap="restartAssessment">重新评估</button><button class="pink-button" bindtap="onPlanFromReport">生成备孕计划</button></view>
-        <view class="rating" bindtap="openFeedback">你对这次评估满意吗？ <text>★★★★★</text></view>
-      </view>
-    </view>
-    <view wx:if="{{loading}}" class="msg-row msg-row-assistant">
-      <view class="assistant-row">
-        <xiaonuan-avatar size="40" />
-        <view class="loading-bubble">小暖正在思考中...</view>
-      </view>
-    </view>
-  </scroll-view>
-
+</block>
+<view wx:if="{{pageMode === 'assessment'}}" id="assessment-top" class="assessment-wrap">
+ <view wx:if="{{assessmentMode === 'intro'}}">
+<view class="request-row">
+<view class="request-bubble">AI备孕评估</view>
+</view>
+<view class="assessment-intro">
+<view>{{assessmentIntro}}</view>
+<view class="privacy-row">对话内容将开启隐私保护 <text>◉</text>
+<image src="/images/ui/plan-pink.svg"/>
+</view>
+<view class="answer-tools">
+<image src="/images/ui/mute.svg" bindtap="onReadUnavailable"/>
+<image src="/images/ui/copy.svg" data-content="{{assessmentIntro}}" bindtap="onCopy"/>
+<image src="/images/ui/like.svg" data-positive="{{true}}" bindtap="openFeedback"/>
+<image class="dislike-icon" src="/images/ui/like.svg" data-positive="{{false}}" bindtap="openFeedback"/>
+</view>
+</view>
+</view>
+ <view wx:if="{{assessmentMode === 'quiz'}}" class="prior-tools">
+<view class="answer-tools">
+<image src="/images/ui/mute.svg" bindtap="onReadUnavailable"/>
+<image src="/images/ui/copy.svg" data-content="{{assessmentIntro}}" bindtap="onCopy"/>
+<image src="/images/ui/like.svg" data-positive="{{true}}" bindtap="openFeedback"/>
+<image class="dislike-icon" src="/images/ui/like.svg" data-positive="{{false}}" bindtap="openFeedback"/>
+</view>
+</view>
+ <view wx:if="{{assessmentMode !== 'result'}}" id="assessment-panel" class="assessment-card">
+<view class="assessment-head">
+<view class="assessment-icon">
+<image src="/images/ui/calendar-pink.svg"/>
+</view>
+<view class="assessment-heading">备孕状态评估表<view class="muted">请根据您的实际情况进行填写</view>
+</view>
+<text class="step">{{questionIndex + 1}}/6</text>
+</view>
+ <view wx:if="{{assessmentMode === 'intro'}}" class="assessment-body intro-body">
+<view>请根据您近期实际备孕情况进行填写</view>
+<button class="pink-button" bindtap="beginAssessment">开始评估</button>
+</view>
+ <view wx:else class="assessment-body">
+<view class="quiz-title">{{questionIndex + 1}}.{{currentQuestion.title}}<text wx:if="{{questionIndex === 5}}"> （可多选）</text>
+</view>
+<view wx:for="{{optionItems}}" wx:key="label" class="quiz-option {{item.selected ? 'selected' : ''}}" data-index="{{index}}" bindtap="selectAssessmentOption">{{item.label}}</view>
+<button class="pink-button" loading="{{assessmentSubmitting}}" disabled="{{!hasSelection || assessmentSubmitting}}" bindtap="confirmAssessment">确认</button>
+<view wx:if="{{questionIndex > 0}}" class="previous" bindtap="previousAssessment">上一题</view>
+</view>
+</view>
+ <view wx:if="{{assessmentMode === 'quiz'}}" class="small-rating">
+<image src="/images/ui/like.svg" data-positive="{{true}}" bindtap="openFeedback"/>
+<image class="dislike-icon" src="/images/ui/like.svg" data-positive="{{false}}" bindtap="openFeedback"/>
+</view>
+ <block wx:if="{{assessmentMode === 'result'}}">
+<view class="completion-banner">
+<image src="/images/ui/calendar-pink.svg"/>
+<view>
+<text>自测完成：备孕状态评估表</text>
+<view>已完成检测，将结合询问给出建议</view>
+</view>
+<image class="completion-check" src="/images/ui/check-pink.svg"/>
+</view>
+<view class="request-row">
+<view class="request-bubble">▤ 已完成自测</view>
+</view>
+<view id="assessment-report" class="report-card">
+<view class="report-hero">
+<view>
+<view class="report-title">备孕状态评估结果</view>
+<view class="score-badge">{{reportScore}}<text> 分</text>
+</view>
+<view class="dimension-button" bindtap="openReportDimensions">测试维度 ›</view>
+</view>
+<view class="orbit">
+<view class="score-ring">
+<view>
+<view>
+</view>
+</view>
+</view>
+</view>
+</view>
+<view class="muted report-disclaimer">{{isDemo ? '示例数据，仅用于展示页面效果' : '此结果不代表诊疗意见，请以医生建议为准'}}</view>
+<view class="report-title">已完成备孕状态分析</view>
+<view class="report-copy">{{assessmentReport.summary}}</view>
+<view wx:for="{{reportAnalysis}}" wx:key="title" class="analysis-line">
+<text class="answer-number">{{index + 1}}</text>
+<view>
+<text class="analysis-title">{{item.title}}：</text>{{item.content}}</view>
+</view>
+<view class="report-title health-title">健康建议</view>
+<view wx:for="{{assessmentReport.suggestions}}" wx:key="*this" class="report-copy">
+<text class="analysis-title">{{index + 1}}. </text>{{item}}</view>
+<view class="muted report-disclaimer">内容由AI生成仅供参考，持续不适请及时就医</view>
+<view class="rating">
+<text>☺ 你对本次备孕评估满意吗？</text>
+<view bindtap="openFeedback">★★★★★</view>
+</view>
+<view class="answer-tools">
+<image src="/images/ui/mute.svg" bindtap="onReadUnavailable"/>
+<image src="/images/ui/copy.svg" data-content="{{assessmentIntro}}" bindtap="onCopy"/>
+<image src="/images/ui/like.svg" data-positive="{{true}}" bindtap="openFeedback"/>
+<image class="dislike-icon" src="/images/ui/like.svg" data-positive="{{false}}" bindtap="openFeedback"/>
+</view>
+</view>
+</block>
+</view>
+<view wx:if="{{loading}}" class="loading-bubble">小暖正在思考中...</view>
+<view id="chat-bottom" class="scroll-end">
+</view>
+</scroll-view>
   <!-- AI咨询兜底提示卡：命中触发条件后展示 -->
   <view wx:if="{{showHandoffBanner}}" class="handoff-banner">
     <view class="handoff-banner-close" bindtap="onCloseHandoffBanner">×</view>
@@ -127,32 +276,75 @@
     <view class="handoff-banner-btn" bindtap="onGoHandoff">人工咨询入口</view>
   </view>
 
-  <!-- 快捷问题区域：只在已经开始聊天后展示，避免和欢迎首屏的能力卡片重复 -->
-  <view class="privacy-note">内容由AI生成，仅供参考；持续不适请及时就医</view>
-  <scroll-view scroll-x class="service-bar"><view class="service-chip" bindtap="onTransferConfirm">☏ 咨询备孕师</view><view class="service-chip" bindtap="openAssessment">▦ AI备孕评估</view><view class="service-chip" bindtap="onPlusClick">▤ 报告单解读</view><view class="service-chip" bindtap="openRecordPage">▦ 周期记录</view></scroll-view>
 
-  <!-- 底部输入区域：固定在页面底部 -->
-  <view class="chat-input-fixed">
-    <chat-input
-      value="{{inputValue}}"
-      bindinput="onInputChange"
-      bindconfirm="onSend"
-      bindunavailable="onInputUnavailable"
-      bindplus="onPlusClick"
-      bindvoicesend="onVoiceSend"
-    />
-  </view>
-
-  <!-- +按钮扩展：图片咨询菜单 + 图片预览确认弹层，浮层展示，不占据原有布局位置 -->
-  <image-picker show="{{showImagePicker}}" bindselect="onImagePickerSelect" bindcancel="onImagePickerCancel" />
-  <image-preview-card
-    show="{{!!pendingImage}}"
-    image-url="{{pendingImage}}"
-    caption="{{pendingCaption}}"
-    bindcaptioninput="onPendingCaptionInput"
-    bindcancel="onImagePreviewCancel"
-    bindsend="onImagePreviewSend"
-  />
-
-<view wx:if="{{showFeedback}}" class="feedback-mask" bindtap="closeFeedback"><view class="feedback-sheet" catchtap="stopTap"><view class="feedback-title">反馈<text class="feedback-close" bindtap="closeFeedback">×</text></view><view class="sentiment"><view class="{{feedbackPositive ? 'active' : ''}}" data-positive="{{true}}" bindtap="chooseSentiment">♡<view>满意</view></view><view class="{{!feedbackPositive ? 'active' : ''}}" data-positive="{{false}}" bindtap="chooseSentiment">♧<view>不满意</view></view></view><view class="feedback-tags"><view wx:for="{{feedbackTags}}" wx:key="label" class="feedback-tag {{item.selected ? 'active' : ''}}" data-index="{{index}}" bindtap="toggleFeedbackTag">{{item.label}}</view></view><textarea class="feedback-textarea" placeholder="（选填）请描述你的问题或建议（200字以内）" maxlength="200" value="{{feedbackText}}" bindinput="onFeedbackInput"/><button class="pink-button" bindtap="submitFeedback">提交反馈</button><view class="muted feedback-local">反馈保存在本机</view></view></view>
+<view wx:if="{{pageMode === 'home' || assessmentMode === 'quiz'}}" class="privacy-note">继续沟通代表您已阅读并同意 <text bindtap="onServiceNotice">《服务声明》</text>
+</view>
+<view class="bottom-dock">
+<scroll-view scroll-x class="service-bar">
+<view class="service-chip" bindtap="openConsult">
+<image src="/images/ui/chat-white.svg" class="chip-icon"/>咨询备孕师</view>
+<view class="service-chip" bindtap="openAssessment">
+<image src="/images/ui/calendar-pink.svg"/>AI备孕评估</view>
+<view class="service-chip" bindtap="onPlusClick">
+<image src="/images/ui/plan-pink.svg"/>报告单解读</view>
+<view class="service-chip" bindtap="openRecordPage">
+<image src="/images/ui/calendar-pink.svg"/>周期记录</view>
+</scroll-view>
+<chat-input value="{{inputValue}}" bindinput="onInputChange" bindconfirm="onSend" bindunavailable="onInputUnavailable" bindplus="onPlusClick" bindvoicesend="onVoiceSend"/>
+</view>
+<image-picker show="{{showImagePicker}}" bindselect="onImagePickerSelect" bindcancel="onImagePickerCancel"/>
+<image-preview-card show="{{!!pendingImage}}" image-url="{{pendingImage}}" caption="{{pendingCaption}}" bindcaptioninput="onPendingCaptionInput" bindcancel="onImagePreviewCancel" bindsend="onImagePreviewSend"/>
+<view wx:if="{{showFeedback}}" class="feedback-mask" bindtap="closeFeedback">
+<view class="feedback-sheet" catchtap="stopTap">
+<view class="feedback-title">反馈<view class="feedback-close" bindtap="closeFeedback">
+<image src="/images/ui/close.svg"/>
+</view>
+</view>
+<view class="sentiment">
+<view data-positive="{{true}}" bindtap="chooseSentiment">
+<view class="sentiment-circle {{feedbackPositive ? 'chosen' : ''}}">
+<image src="{{feedbackPositive ? '/images/ui/like-pink.svg' : '/images/ui/like-gray.svg'}}"/>
+</view>
+<text class="{{feedbackPositive ? 'sentiment-label-active' : ''}}">满意</text>
+</view>
+<view data-positive="{{false}}" bindtap="chooseSentiment">
+<view class="sentiment-circle {{!feedbackPositive ? 'chosen' : ''}}">
+<image class="dislike-icon" src="{{!feedbackPositive ? '/images/ui/like-pink.svg' : '/images/ui/like-gray.svg'}}"/>
+</view>
+<text class="{{!feedbackPositive ? 'sentiment-label-active' : ''}}">不满意</text>
+</view>
+</view>
+<view class="feedback-tags">
+<view wx:for="{{feedbackTags}}" wx:key="label" class="feedback-tag {{item.selected ? 'active' : ''}}" data-index="{{index}}" bindtap="toggleFeedbackTag">{{item.label}}</view>
+</view>
+<view class="feedback-caption">补充描述：</view>
+<textarea class="feedback-textarea" placeholder="（选填）请描述具体问题，有助于我们更好的服务（200字以内）" maxlength="200" value="{{feedbackText}}" bindinput="onFeedbackInput"/>
+<button class="pink-button" bindtap="submitFeedback">反馈</button>
+</view>
+</view>
+<view wx:if="{{showDimensions}}" class="dimensions-page">
+<view class="dimensions-back" bindtap="closeReportDimensions">
+<image src="/images/ui/back.svg"/>返回报告</view>
+<image class="dimensions-ip" src="/images/xiaonuan-avatar.png"/>
+<view class="dimensions-status">{{isDemo ? '良好' : '评估完成'}}</view>
+<view class="muted">备孕状态评估维度{{isDemo ? ' · 示例' : ''}}</view>
+<view class="dimensions-card">
+<view class="dimensions-title">备孕状态分析</view>
+<canvas type="2d" id="radar-canvas" class="radar-canvas">
+</canvas>
+<view class="dimension-summary">
+<view>{{isDemo ? '当前展示示例评估维度' : '结合填写情况了解备孕日常'}}</view>
+<view class="dimension-progress">
+<view>
+</view>
+</view>
+<view class="muted">保持规律记录与健康生活习惯，关注排卵期变化，让备孕更有节奏。</view>
+</view>
+<view class="muted dimensions-note">{{isDemo ? '示例分数不代表实际健康状态或受孕概率' : '评估内容仅供参考，不代表受孕概率'}}</view>
+<view class="dimensions-actions">
+<button class="soft-button" bindtap="closeReportDimensions">查看详细报告</button>
+<button class="pink-button" bindtap="onPlanFromReport">生成备孕计划</button>
+</view>
+</view>
+</view>
 </view>

@@ -12,5 +12,6 @@
     "image-preview-card": "../../components/ImagePreviewCard/ImagePreviewCard",
     "ai-image-message": "../../components/AIImageMessage/AIImageMessage"
   },
-  "enablePullDownRefresh": false
+  "enablePullDownRefresh": false,
+  "navigationStyle": "custom"
 }

@@ -3,7 +3,7 @@ const api = require('../../utils/api.js');
 const recordStore = require('../../utils/recordStore.js');
 const imageAnalysis = require('../../utils/imageAnalysis.js');
 
-const ASSESSMENT_QUESTIONS = [{"title": "你的年龄是？", "options": ["20–24岁", "25–29岁", "30–34岁", "35岁及以上"]}, {"title": "目前备孕多久了？", "options": ["少于3个月", "3–6个月", "6–12个月", "超过12个月"]}, {"title": "你的月经周期通常规律吗？", "options": ["很规律", "偶尔波动", "经常不规律", "不确定"]}, {"title": "每次经期通常持续多久？", "options": ["1–2天", "3–7天", "超过7天", "不确定"]}, {"title": "最近生活状态怎么样？", "options": ["作息和心态比较稳定", "偶尔熬夜或压力大", "经常熬夜或焦虑", "状态较差"]}, {"title": "是否有想关注的生理问题？", "options": ["目前没有明显异常", "异常出血", "明显或持续疼痛", "其他不适"]}];
+const ASSESSMENT_QUESTIONS = [{"title": "你的年龄是？", "options": ["A.20–24岁(较年轻阶段)", "B.25–29岁(适合建立规律备孕习惯)", "C.30–34岁(建议更关注周期和排卵)", "D.其他以上(建议结合专业指导备孕)"]}, {"title": "目前备孕多久了？", "options": ["A.<3个月(处于初期尝试阶段)", "B.3–6个月(已建立初期尝试阶段)", "C.6–12个月(建议更关注周期和排卵)", "D.>12个月(可考虑寻求专业评估)"]}, {"title": "你的月经周期通常规律吗？", "options": ["A.很规律(每月时间基本稳定)", "B.偶尔波动(偶尔提前或推迟几天)", "C.经常不规律(周期变化比较明显)", "D.不确定(暂时没有持续记录)"]}, {"title": "每次经期通常持续多久？", "options": ["A.1–2天(经期持续时间较短)", "B.3–7天(常见持续时间)", "C.>7天(持续时间相对较长)", "D.不确定(建议记录开始和结束日期)"]}, {"title": "最近生活状态怎么样？", "options": ["A.规律健康(作息和状态比较稳定)", "B.偶尔熬夜或压力大(整体状态尚可)", "C.经常熬夜或焦虑(生活节奏需调整)", "D.状态较差(建议优先改善休息与管理)"]}, {"title": "是否有想关注的生理问题？", "options": ["A.没有问题(目前没有明显异常)", "B.异常出血(出现非经期出血等情况)", "C.明显或持续疼痛(出现异常的疼痛)", "D.其他不适(还有其他身体状况)"]}];
 let msgId = 0;
 function nextId() {
   msgId += 1;
@@ -16,7 +16,10 @@ const UNRESOLVED_STREAK_LIMIT = 2;
 Page({
   data: {
     // { id, role, content, understanding, analysis, suggestions, timestamp, needHandoff, riskLevel, dissatisfied }
-    consultTab: 'stage', stageQuestions: ['初次备孕','备孕1–3月','备孕3–6月','备孕半年以上','周期不规律','更多备孕建议'], needQuestions: ['排卵监测','营养补充','孕前检查','生活习惯','情绪压力','周期记录'],
+    pageMode: 'home', showDimensions: false, reportScore: 85, reportAnalysis: [],
+    assessmentIntro: '为了更全面地了解您的备孕状态，可以参与这套AI备孕评估。我们将结合您的周期情况、备孕阶段及生活习惯，为您生成个性化备孕报告…',
+    optionItems: [], selectedOptions: [], hasSelection: false,
+    consultTab: 'stage', stageQuestions: ['初次备孕','备孕1–3月','备孕3–6月','备孕半年+','周期不规律','更多'], needQuestions: ['排卵监测','营养补充','孕前检查','生活习惯','情绪压力','周期记录'],
     welcomeQuestions: ['备孕多久正常？', '如何提高受孕几率？', '备孕期间需要补充什么营养？'],
     assessmentMode: '', questionIndex: 0, selectedOption: -1,
     assessmentAnswers: [], assessmentSubmitting: false, assessmentReport: null,
@@ -41,55 +44,128 @@ Page({
   },
 
   changeConsultTab(e) { this.setData({ consultTab: e.currentTarget.dataset.tab }); },
+  onPageBack() {
+    if (this.data.assessmentSubmitting) return;
+    if (this.data.showDimensions) { this.closeReportDimensions(); return; }
+    this.setData({ pageMode: 'home', assessmentMode: '', scrollToId: 'home-top' });
+  },
+  onNewConversation() {
+    if (this.data.loading || this.data.assessmentSubmitting) return;
+    this.setData({ pageMode: 'home', assessmentMode: '', messages: [], showDimensions: false, scrollToId: '', unresolvedStreak: 0, showHandoffBanner: false });
+  },
+  onHistoryClick() {
+    if (!this.data.messages.length) { wx.showToast({ title: '暂无咨询记录', icon: 'none' }); return; }
+    this.setData({ pageMode: 'chat' }); this.scrollToBottom();
+  },
+  openConsult() { this.setData({ pageMode: 'consult', assessmentMode: '', scrollToId: 'consult-top' }); },
+  refreshQuestions() {
+    const first = this.data.welcomeQuestions[0] === '备孕多久正常？';
+    this.setData({ welcomeQuestions: first ? ['排卵日总是算不准怎么办？','孕前检查有哪些项目？','备孕时如何调整作息？'] : ['备孕多久正常？','如何提高受孕几率？','备孕期间需要补充什么营养？'] });
+  },
+  onServiceNotice() {
+    wx.showModal({ title: '服务声明', content: '小暖提供备孕知识与生活建议，仅供参考，不替代医生诊断。请勿在对话中提供身份证号等无关敏感信息。反馈目前仅保存在本机。', showCancel: false });
+  },
+  onReadUnavailable() { wx.showToast({ title: '语音朗读暂未接入', icon: 'none' }); },
+  onCopy(e) { wx.setClipboardData({ data: e.currentTarget.dataset.content || (this.data.assessmentReport && this.data.assessmentReport.summary) || '' }); },
   openAssessment() {
     if (this.data.assessmentSubmitting) return;
-    this.setData({ assessmentMode: 'intro', scrollToId: 'assessment-panel' });
+    this.setData({ pageMode: 'assessment', assessmentMode: 'intro', questionIndex: 0, scrollToId: 'assessment-top' });
+  },
+  setQuestion(index) {
+    const q = ASSESSMENT_QUESTIONS[index];
+    const old = this.data.assessmentAnswers[index];
+    const selectedOptions = old ? (old.indices || []) : [];
+    this.setData({ questionIndex: index, currentQuestion: q, selectedOptions,
+      selectedOption: selectedOptions.length ? selectedOptions[0] : -1, hasSelection: selectedOptions.length > 0,
+      optionItems: q.options.map((label, i) => ({ label, selected: selectedOptions.indexOf(i) >= 0 })) });
   },
   beginAssessment() {
-    this.setData({ assessmentMode: 'quiz', questionIndex: 0, selectedOption: -1, assessmentAnswers: [], currentQuestion: ASSESSMENT_QUESTIONS[0] });
+    this.setData({ pageMode: 'assessment', assessmentMode: 'quiz', assessmentAnswers: [], scrollToId: 'assessment-panel' });
+    this.setQuestion(0);
   },
-  restartAssessment() { this.beginAssessment(); },
+  restartAssessment() { if (!this.data.assessmentSubmitting) this.beginAssessment(); },
   selectAssessmentOption(e) {
-    if (!this.data.assessmentSubmitting) this.setData({ selectedOption: Number(e.currentTarget.dataset.index) });
+    if (this.data.assessmentSubmitting) return;
+    const index = Number(e.currentTarget.dataset.index);
+    if (!Number.isInteger(index) || index < 0 || index > 3) return;
+    let selected = this.data.selectedOptions.slice();
+    if (this.data.questionIndex !== 5) selected = [index];
+    else if (index === 0) selected = selected.indexOf(0) >= 0 ? [] : [0];
+    else {
+      selected = selected.filter(i => i !== 0);
+      selected = selected.indexOf(index) >= 0 ? selected.filter(i => i !== index) : [...selected, index].sort();
+    }
+    this.setData({ selectedOptions: selected, selectedOption: selected.length ? selected[0] : -1, hasSelection: selected.length > 0,
+      optionItems: this.data.currentQuestion.options.map((label, i) => ({ label, selected: selected.indexOf(i) >= 0 })) });
   },
   previousAssessment() {
-    if (this.data.assessmentSubmitting) return;
-    const i = this.data.questionIndex - 1;
-    if (i < 0) return;
-    const old = this.data.assessmentAnswers[i];
-    this.setData({ questionIndex: i, currentQuestion: ASSESSMENT_QUESTIONS[i], selectedOption: old ? ASSESSMENT_QUESTIONS[i].options.indexOf(old.answer) : -1 });
+    if (this.data.assessmentSubmitting || this.data.questionIndex === 0) return;
+    this.saveCurrentAnswer(); this.setQuestion(this.data.questionIndex - 1);
+  },
+  saveCurrentAnswer() {
+    const answers = this.data.assessmentAnswers.slice();
+    const indices = this.data.selectedOptions.slice();
+    if (indices.length) answers[this.data.questionIndex] = { title: this.data.currentQuestion.title, indices, answer: indices.map(i => this.data.currentQuestion.options[i]).join('；') };
+    else delete answers[this.data.questionIndex];
+    this.setData({ assessmentAnswers: answers });
   },
   async confirmAssessment() {
-    const { questionIndex: i, selectedOption: selected, assessmentSubmitting } = this.data;
-    if (selected < 0 || assessmentSubmitting) return;
-    const q = ASSESSMENT_QUESTIONS[i];
-    const answers = this.data.assessmentAnswers.slice();
-    answers[i] = { title: q.title, answer: q.options[selected] };
-    this.setData({ assessmentAnswers: answers });
-    if (i < ASSESSMENT_QUESTIONS.length - 1) {
-      const next = answers[i + 1];
-      this.setData({ questionIndex: i + 1, currentQuestion: ASSESSMENT_QUESTIONS[i + 1], selectedOption: next ? ASSESSMENT_QUESTIONS[i + 1].options.indexOf(next.answer) : -1 });
-      return;
-    }
+    if (!this.data.hasSelection || this.data.assessmentSubmitting) return;
+    this.saveCurrentAnswer();
+    if (this.data.questionIndex < 5) { this.setQuestion(this.data.questionIndex + 1); return; }
     this.setData({ assessmentSubmitting: true });
     try {
+      const answers = this.data.assessmentAnswers.map(a => ({ title: a.title, answer: a.answer }));
       const result = await api.submitAssessment(answers);
       if (result.code !== 0 || !result.data || !result.data.assessmentId) throw new Error('submit');
       const report = await api.getReportDetail(result.data.assessmentId);
       if (report.code !== 0 || !report.data) throw new Error('report');
-      this.setData({ assessmentReport: report.data, assessmentMode: 'result', scrollToId: 'assessment-panel' });
-    } catch (err) {
-      wx.showToast({ title: '报告生成失败，点击后可重试', icon: 'none' });
-    } finally { this.setData({ assessmentSubmitting: false }); }
+      const data = report.data;
+      const scores = (data.indicators || []).map(i => Number(i.score)).filter(n => Number.isFinite(n) && n >= 0 && n <= 100);
+      const reportScore = this.data.isDemo ? 85 : (scores.length ? Math.round(scores.reduce((a,b) => a+b,0)/scores.length) : '—');
+      const a = this.data.assessmentAnswers;
+      const reportAnalysis = [{ title:'周期状态', content:a[2].answer.slice(2) + '。建议结合近期周期记录，持续观察变化。' }, { title:'备孕时间', content:a[1].answer.slice(2) + '。可结合年龄和实际情况安排孕前咨询。' }, { title:'生活状态', content:a[4].answer.slice(2) + '。保持规律作息、均衡饮食与适度运动。' }];
+      this.setData({ assessmentReport: data, reportScore, reportAnalysis, assessmentMode: 'result', scrollToId: 'assessment-report' });
+    } catch (err) { wx.showToast({ title: '报告生成失败，点击确认可重试', icon: 'none' }); }
+    finally { this.setData({ assessmentSubmitting: false }); }
+  },
+  openReportDimensions() {
+    this.setData({ showDimensions: true }, () => wx.nextTick(() => this.drawRadar()));
+  },
+  closeReportDimensions() { this.setData({ showDimensions: false }); },
+  drawRadar() {
+    const query = wx.createSelectorQuery().in(this);
+    query.select('#radar-canvas').fields({ node: true, size: true }).exec(res => {
+      if (!res[0] || !res[0].node) return;
+      const { node: canvas, width, height } = res[0];
+      const info = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
+      const dpr = info.pixelRatio || 1; canvas.width = width * dpr; canvas.height = height * dpr;
+      const ctx = canvas.getContext('2d'); ctx.scale(dpr, dpr);
+      const cx = width/2, cy = height/2 + 8, radius = Math.min(width * .25, height * .32);
+      const point = (i, amount) => { const angle = -Math.PI/2 + i*2*Math.PI/5; return [cx + Math.cos(angle)*radius*amount, cy + Math.sin(angle)*radius*amount]; };
+      const polygon = values => { ctx.beginPath(); values.forEach((v,i) => { const p = point(i,v); if(i) ctx.lineTo(...p); else ctx.moveTo(...p); }); ctx.closePath(); };
+      ctx.lineWidth = 1; ctx.strokeStyle = '#d6cdd2';
+      for(let level=1;level<=5;level++){polygon(Array(5).fill(level/5));ctx.stroke();}
+      for(let i=0;i<5;i++){ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(...point(i,1));ctx.stroke();}
+      // Demo values only. Live charts use returned indicators rather than inventing missing measurements.
+      const labels = this.data.isDemo ? ['周期规律','经期时长','备孕时间','排卵记录','生活状态'] : (this.data.assessmentReport.indicators || []).slice(0,5).map(v=>v.name);
+      const values = this.data.isDemo ? [.86,.80,.88,.88,.78] : (this.data.assessmentReport.indicators || []).slice(0,5).map(v=>Math.max(0,Math.min(1,Number(v.score)/100 || 0)));
+      while(values.length < 5) values.push(0);
+      polygon(values);ctx.fillStyle='rgba(255,64,137,.12)';ctx.fill();ctx.strokeStyle='#ff4089';ctx.stroke();
+      values.forEach((v,i)=>{ctx.beginPath();ctx.arc(...point(i,v),3,0,Math.PI*2);ctx.fillStyle='#ff4089';ctx.fill();});
+      ctx.fillStyle='#999';ctx.font='11px sans-serif';ctx.textAlign='center';
+      for(let i=0;i<5;i++){const p=point(i,1.3);ctx.fillText(labels[i] || '暂无数据',p[0],p[1]+4);}
+    });
   },
   onPlanFromReport() {
     if (this.data.loading) return;
+    this.setData({ showDimensions: false });
     const context = this.data.assessmentAnswers.map(a => a.title + a.answer).join('；');
     this.sendMessage('请结合以下填写情况提供备孕生活计划：' + context);
   },
   openFeedback(e) {
     const id = e.currentTarget.dataset.id;
-    this.setData({ showFeedback: true, feedbackMessageId: id || null, feedbackText: '', feedbackPositive: true,
+    this.setData({ showFeedback: true, feedbackMessageId: id || null, feedbackText: '', feedbackPositive: e.currentTarget.dataset.positive !== false && e.currentTarget.dataset.positive !== 'false',
       feedbackTags: this.data.feedbackTags.map(t => ({ ...t, selected: false })) });
   },
   closeFeedback() { this.setData({ showFeedback: false }); },
@@ -120,7 +196,8 @@ Page({
   loadHistory() {
     api.getChatHistory().then((res) => {
       if (res.code === 0 && res.data.length) {
-        this.setData({ messages: res.data });
+        msgId = Math.max(msgId, ...res.data.map(m => Number(m.id) || 0));
+        this.setData({ messages: res.data, pageMode: 'chat' });
         this.scrollToBottom();
       }
     });
@@ -224,6 +301,7 @@ Page({
    * 调用的还是原来的 api.sendChatMessage，接口和数据处理没有变化。
    */
   sendMessage(content) {
+    this.setData({ pageMode: 'chat', assessmentMode: '' });
     const userMsg = {
       id: nextId(),
       role: 'user',
@@ -337,6 +415,7 @@ Page({
     };
 
     this.setData({
+      pageMode: 'chat', assessmentMode: '',
       messages: [...this.data.messages, userMsg],
       pendingImage: '',
       pendingCaption: '',
@@ -402,6 +481,7 @@ Page({
    */
   onVoiceSend(e) {
     const { tempFilePath, duration } = e.detail;
+    this.setData({ pageMode: 'chat', assessmentMode: '' });
     if (!tempFilePath || this.data.loading) return;
 
     const userMsg = {
@@ -532,6 +612,6 @@ Page({
     const list = this.data.messages;
     if (!list.length) return;
     const lastId = list[list.length - 1].id;
-    this.setData({ scrollToId: `msg-${lastId}` });
+    this.setData({ scrollToId: '' }, () => { this.setData({ scrollToId: `msg-${lastId}` }); });
   }
 });

@@ -97,3 +97,5 @@
 }
 
 .chat-input-bar { background:#f5f5f6; border:0; }.chat-input-box { background:white; font-size:26rpx; }.chat-input-icon-text { color:#333; }
+
+.chat-input-bar{margin:0 32rpx;background:white;border-radius:60rpx;padding:8rpx 16rpx;border:0;height:96rpx;box-sizing:border-box}.chat-input-icon{width:54rpx;height:64rpx}.input-line-icon{width:48rpx;height:48rpx}.chat-input-box{background:transparent;padding:0 12rpx;margin:0;height:76rpx;font-size:27rpx}.chat-input-box input{color:#333}

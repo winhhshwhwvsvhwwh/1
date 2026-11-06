@@ -1,81 +1,38 @@
-/* components/XiaoNuanHeader/XiaoNuanHeader.wxss */
-
 .xn-header {
-  background: #FFFFFF;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
-}
-
+  flex-shrink:0}
 .xn-header-row {
-  height: 128rpx; /* 64px */
-  display: flex;
-  align-items: center;
-  padding: 0 16rpx;
-  box-sizing: border-box;
-}
-
-.xn-header-back,
-.xn-header-more {
-  width: 64rpx;
-  height: 64rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.xn-header-back-icon {
-  font-size: 44rpx;
-  color: #333333;
-  font-weight: 600;
-}
-
-.xn-header-more-icon {
-  font-size: 36rpx;
-  color: #333333;
-  letter-spacing: -2rpx;
-}
-
-.xn-header-center {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
+  display:flex;
+  align-items:center;
+  box-sizing:border-box;
+  min-height:40px}
+.xn-header-back {
+  width:42rpx;
+  display:flex;
+  align-items:center;
+  justify-content:center}
+.xn-header-back image {
+  width:30rpx;
+  height:36rpx}
 .xn-header-info {
-  margin-left: 16rpx;
-  display: flex;
-  flex-direction: column;
-}
-
-.xn-header-name-row {
-  display: flex;
-  align-items: center;
-}
-
+  flex:1;
+  min-width:0}
 .xn-header-name {
-  font-size: 30rpx;
-  font-weight: 600;
-  color: #333333;
-}
-
-.xn-header-dot {
-  width: 10rpx;
-  height: 10rpx;
-  border-radius: 50%;
-  background: #6FCF6F;
-  margin: 0 8rpx;
-}
-
-.xn-header-status {
-  font-size: 20rpx;
-  color: #6FCF6F;
-}
-
+  font-size:26rpx;
+  font-weight:600;
+  color:#222}
 .xn-header-sub {
-  margin-top: 4rpx;
-  font-size: 20rpx;
-  color: #999999;
-}
-
-.xn-header { background:transparent; box-shadow:none; }.xn-header-row { height:100rpx; }.xn-header-center { justify-content:flex-start; }.xn-header-name { font-size:28rpx; }.xn-header-status,.xn-header-dot { display:none; }
+  font-size:18rpx;
+  color:#b3a8af;
+  margin-top:2rpx}
+.xn-header-action {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:58rpx;
+  height:58rpx;
+  border-radius:50%;
+  background:#fff;
+  margin-right:12rpx}
+.xn-header-action image {
+  width:38rpx;
+  height:38rpx}
