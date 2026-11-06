@@ -183,10 +183,10 @@
  <view wx:if="{{assessmentMode === 'quiz'}}" class="small-rating"><view class="quiz-feedback-wrap"><image class="quiz-feedback-art" src="/images/campaign/quiz-feedback.png" mode="aspectFit"/><view class="quiz-feedback-hotspots"><view role="button" aria-label="满意" data-positive="{{true}}" bindtap="openFeedback"></view><view role="button" aria-label="不满意" data-positive="{{false}}" bindtap="openFeedback"></view></view></view></view>
  <block wx:if="{{assessmentMode === 'result'}}">
 <view class="completion-banner">
-<image src="/images/ui/calendar-pink.svg"/>
-<view>
-<text>自测完成：备孕状态评估表</text>
-<view>已完成检测，将结合询问给出建议</view>
+<image class="completion-icon" src="/images/campaign/assessment-calendar.png" mode="aspectFit"/>
+<view class="completion-copy">
+<text class="completion-title">自测完成：备孕状态评估表</text>
+<view class="completion-subtitle">已完成检测，将结合询问给出建议</view>
 </view>
 <image class="completion-check" src="/images/campaign/report-complete.png" mode="aspectFit"/>
 </view>
@@ -211,7 +211,7 @@
 <view class="report-copy">{{assessmentReport.summary}}</view>
 <view wx:for="{{reportAnalysis}}" wx:key="title" class="analysis-line">
 <text class="answer-number">{{index + 1}}</text>
-<view>
+<view class="analysis-copy">
 <text class="analysis-title">{{item.title}}：</text>{{item.content}}</view>
 </view>
 <view class="report-title health-title">健康建议 · {{scoreLabel}}</view>

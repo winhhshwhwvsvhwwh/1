@@ -438,27 +438,42 @@ page {
 .completion-banner {
   position:relative;
   display:flex;
-  align-items:center;
+  align-items:flex-start;
+  box-sizing:border-box;
+  min-height:146rpx;
   background:#fffafa;
   border-radius:30rpx;
-  padding:26rpx;
+  padding:26rpx 28rpx;
   overflow:hidden;
   gap:14rpx;
-  font-size:25rpx}
-.completion-banner>image {
+}
+.completion-banner .completion-icon {
+  flex:0 0 32rpx;
   width:32rpx;
-  height:32rpx}
-.completion-banner view view {
+  height:32rpx;
+  margin-top:2rpx;
+  position:relative;
+  z-index:1;
+}
+.completion-copy {
+  flex:1;
+  min-width:0;
+  padding-right:70rpx;
+  position:relative;
+  z-index:1;
+}
+.completion-title {
+  display:block;
+  font-size:26rpx;
+  line-height:36rpx;
+  font-weight:600;
+}
+.completion-subtitle {
   font-size:22rpx;
+  line-height:32rpx;
   color:#b7b1b4;
-  margin-top:8rpx}
-.completion-banner .completion-check {
-  position:absolute;
-  width:144rpx;
-  height:144rpx;
-  right:-10rpx;
-  top:20rpx;
-  opacity:.1}
+  margin-top:6rpx;
+}
 .report-card {
   background:linear-gradient(145deg,#fff0f7,white 24%);
   border:3rpx solid white;
@@ -561,14 +576,25 @@ page {
   line-height:1.6;
   margin-bottom:16rpx}
 .answer-number {
-  display:inline-block;
+  display:flex;
+  flex:0 0 26rpx;
+  align-items:center;
+  justify-content:center;
+  box-sizing:border-box;
+  width:26rpx;
+  height:32rpx;
+  padding:0;
+  margin-top:4.8rpx;
   background:#ff2581;
   border-radius:6rpx;
   color:white;
-  font-size:20rpx;
-  line-height:25rpx;
-  padding:0 5rpx;
-  margin-top:8rpx}
+  font-size:22rpx;
+  line-height:1;
+}
+.analysis-copy {
+  flex:1;
+  min-width:0;
+}
 .analysis-title {
   font-weight:600}
 .health-title {
@@ -822,6 +848,9 @@ page {
   height:96rpx;
 }
 .completion-banner .completion-check {
+  position:absolute;
+  z-index:0;
+  pointer-events:none;
   width:162rpx;
   height:162rpx;
   right:-14rpx;
