@@ -81,12 +81,12 @@
 <view wx:for="{{consultTab === 'stage' ? stageQuestions : needQuestions}}" wx:key="*this" data-question="{{item}}" bindtap="onWelcomeCardTap">{{item}}</view>
 </view>
 <view class="muted">你还可以这样问</view>
-<scroll-view scroll-x class="suggestion-links">
-<view data-question="排卵日总是算不准怎么办？" bindtap="onWelcomeCardTap">
-<text>#</text>排卵日总是算不准怎么办？</view>
-<view data-question="我的试纸结果怎么看？" bindtap="onWelcomeCardTap">
-<text>#</text>我的试纸结果怎么看？</view>
-</scroll-view>
+<view class="suggestion-links">
+<view class="suggestion-tag" data-question="排卵日总是算不准怎么办？" bindtap="onWelcomeCardTap">
+<text class="suggestion-hash">#</text><text class="suggestion-label">排卵日总是算不准怎么办？</text></view>
+<view class="suggestion-tag" data-question="我的试纸结果怎么看？" bindtap="onWelcomeCardTap">
+<text class="suggestion-hash">#</text><text class="suggestion-label">我的试纸结果怎么看？</text></view>
+</view>
 </view>
 </view>
 </view>

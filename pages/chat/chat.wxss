@@ -287,22 +287,44 @@ page {
   line-height:1.55;
   font-weight:400}
 .suggestion-links {
-  white-space:nowrap;
-  margin-top:20rpx}
-.suggestion-links view {
-  display:inline-block;
+  display:flex;
+  flex-wrap:wrap;
+  gap:12rpx;
+  margin-top:20rpx;
+}
+.suggestion-tag {
+  display:inline-flex;
+  align-items:center;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
   border:1rpx solid #eee;
   border-radius:40rpx;
   padding:10rpx 14rpx;
   font-size:22rpx;
   color:#666;
-  margin-right:12rpx}
-.suggestion-links text {
+}
+.suggestion-hash {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 28rpx;
+  width:28rpx;
+  height:28rpx;
+  box-sizing:border-box;
+  line-height:1;
   background:#f8bbd2;
   color:white;
   border-radius:50%;
-  padding:0 5rpx;
-  margin-right:6rpx}
+  margin-right:6rpx;
+}
+.suggestion-label {
+  min-width:0;
+  white-space:normal;
+  overflow-wrap:break-word;
+  word-break:break-all;
+  line-height:1.5;
+}
 .assessment-intro {
   background:white;
   border-radius:0 0 32rpx 32rpx;
@@ -388,6 +410,12 @@ page {
   font-size:29rpx;
   padding:44rpx 32rpx 48rpx}
 .intro-body .pink-button {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-sizing:border-box;
+  padding:0;
+  line-height:1;
   margin-top:54rpx;
   background:linear-gradient(#ff3781,#ff78a7)}
 .quiz-title {
