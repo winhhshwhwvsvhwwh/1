@@ -7,7 +7,7 @@
 <view class="hero-title">Hi,我是小暖</view>
 <view class="hero-description">随时为你提供孕期知识和科学建议，陪你记录每一步备孕过程~</view>
 </view>
-<image class="hero-ip" src="/images/xiaonuan-avatar.png" mode="aspectFit"/>
+<image class="hero-ip" src="/images/campaign/xiaonuan-heart.png" mode="aspectFit"/>
 </view>
  <view class="feature-grid">
 <view class="feature-tile" data-question="帮我制定一个备孕计划" bindtap="onWelcomeCardTap">
@@ -52,19 +52,15 @@
 </view>
 </view>
 <view class="expert-portraits">
-<view class="expert-silhouette">
-</view>
-<view class="expert-silhouette">
-</view>
+<image class="expert-avatar" src="/images/campaign/advisor-01.png" mode="aspectFit"/>
+<image class="expert-avatar" src="/images/campaign/advisor-02.png" mode="aspectFit"/>
 <view class="expert-featured">
-<view class="expert-silhouette">
+<image class="expert-avatar" src="/images/campaign/advisor-featured.png" mode="aspectFit"/>
+<text>金牌备孕师</text>
 </view>
-<text>备孕咨询</text>
-</view>
-<view class="expert-silhouette">
-</view>
-<view class="expert-silhouette">
-</view>
+<image class="expert-avatar" src="/images/campaign/advisor-03.png" mode="aspectFit"/>
+<image class="expert-avatar" src="/images/campaign/advisor-04.png" mode="aspectFit"/>
+
 </view>
 </view>
 </view>
@@ -325,7 +321,7 @@
 <view wx:if="{{showDimensions}}" class="dimensions-page">
 <view class="dimensions-back" bindtap="closeReportDimensions">
 <image src="/images/ui/back.svg"/>返回报告</view>
-<image class="dimensions-ip" src="/images/xiaonuan-avatar.png"/>
+<image class="dimensions-ip" src="/images/campaign/xiaonuan-celebrate.png" mode="aspectFit"/>
 <view class="dimensions-status">{{isDemo ? '良好' : '评估完成'}}</view>
 <view class="muted">备孕状态评估维度{{isDemo ? ' · 示例' : ''}}</view>
 <view class="dimensions-card">
