@@ -49,9 +49,9 @@
 </view>
 <view wx:else class="consult-tabs">
 <view class="{{consultTab === 'stage' ? 'tab-active' : ''}}" data-tab="stage" bindtap="changeConsultTab">
-<image src="/images/ui/bars.svg"/>按阶段找</view>
+<view class="consult-tab-icon"><image class="consult-tab-sprite consult-tab-stage-sprite" src="/images/campaign/consult-tabs-stage.png"/></view>按阶段找</view>
 <view class="{{consultTab === 'need' ? 'tab-active' : ''}}" data-tab="need" bindtap="changeConsultTab">
-<image src="/images/ui/plan-gray.svg"/>按需求找</view>
+<view class="consult-tab-icon"><image class="consult-tab-sprite consult-tab-need-sprite" src="/images/campaign/consult-tabs-stage.png"/></view>按需求找</view>
 </view>
 <view class="stage-list">
 <view wx:for="{{consultTab === 'stage' ? stageQuestions : needQuestions}}" wx:key="*this" data-question="{{item}}" bindtap="onWelcomeCardTap">{{item}}</view>
@@ -136,8 +136,8 @@
 </view>
 <view class="assessment-intro">
 <view>{{assessmentIntro}}</view>
-<view class="privacy-row">对话内容将开启隐私保护 <text>◉</text>
-<image src="/images/campaign/assessment-illustration.png" mode="aspectFit"/>
+<view class="privacy-row">对话内容将开启隐私保护 <image class="privacy-help-art" src="/images/campaign/info-help.png" mode="aspectFit" bindtap="onPrivacyExplanation"/>
+<image class="assessment-illustration-art" src="/images/campaign/assessment-illustration.png" mode="aspectFit"/>
 </view>
 <view class="answer-tools"><view class="answer-tools-art">
 <image src="/images/campaign/answer-actions.png" mode="aspectFit"/>

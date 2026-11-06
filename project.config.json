@@ -101,7 +101,7 @@
   "compileType": "miniprogram",
   "libVersion": "3.2.0",
   "appid": "wx19e17d6811ea8c83",
-  "projectname": "xiaonuan-ai-pregnancy-assistant",
+  "projectname": "xiaonuan-ui-20261106-r2",
   "cloudfunctionRoot": "cloudfunctions/",
   "condition": {}
 }

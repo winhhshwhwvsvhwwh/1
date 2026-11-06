@@ -174,53 +174,6 @@ page {
   border-radius:28rpx;
   margin-top:24rpx;
   padding:30rpx 18rpx 20rpx}
-.expert-promises {
-  display:flex;
-  justify-content:space-around;
-  color:#e5317b;
-  font-size:27rpx;
-  text-align:center}
-.expert-promises text {
-  display:block;
-  color:#b9afb4;
-  font-size:18rpx;
-  margin-top:6rpx}
-.expert-portraits {
-  display:flex;
-  justify-content:space-around;
-  align-items:center;
-  margin-top:32rpx;
-  height:114rpx}
-.expert-avatar {
-  width:68rpx;
-  height:68rpx;
-  border-radius:50%;
-  flex-shrink:0;
-}
-.expert-featured {
-  position:relative;
-  padding:5rpx;
-  border:2rpx solid #f081dd;
-  box-shadow:0 0 0 7rpx #ffe3ef;
-  border-radius:50%;
-  margin:0 10rpx;
-}
-.expert-featured .expert-avatar {
-  display:block;
-  width:108rpx;
-  height:108rpx;
-}
-.expert-featured text {
-  position:absolute;
-  white-space:nowrap;
-  bottom:-14rpx;
-  left:50%;
-  transform:translateX(-50%);
-  background:white;
-  color:#8a1b47;
-  border-radius:20rpx;
-  font-size:20rpx;
-  padding:5rpx 10rpx}
 .consult-card {
   margin-top:32rpx;
   border:2rpx solid white;
@@ -352,7 +305,7 @@ page {
 .privacy-row text {
   color:#d0d0d0;
   font-size:20rpx}
-.privacy-row image {
+.privacy-row .assessment-illustration-art {
   position:absolute;
   right:0;
   bottom:12rpx;
@@ -717,28 +670,11 @@ page {
   gap:96rpx;
   padding:44rpx 0 46rpx;
   text-align:center}
-.sentiment-circle {
-  width:116rpx;
-  height:116rpx;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:50%;
-  background:#fafafa}
-.sentiment-circle.chosen {
-  background:#fff4f9}
-.sentiment-circle image {
-  width:72rpx;
-  height:72rpx}
 .sentiment text {
   display:block;
   font-size:24rpx;
   color:#b5b5b5;
   margin-top:18rpx}
-.sentiment .sentiment-label-active {
-  color:#222;
-  font-weight:600;
-}
 .feedback-tags {
   display:grid;
   grid-template-columns:repeat(3,1fr);
@@ -934,29 +870,6 @@ page {
 .consult-intro {
   border-top-right-radius:32rpx;
 }
-.expert-promises>view {
-  position:relative;
-}
-.expert-promises>view::before,.expert-promises>view::after {
-  content:'❧';
-  display:inline-block;
-  color:#ffbad3;
-  font-size:34rpx;
-  vertical-align:middle;
-  margin:0 4rpx;
-}
-.expert-promises>view::after {
-  transform:scaleX(-1);
-}
-.expert-promises text {
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:-26rpx;
-}
-.expert-portraits {
-  margin-top:54rpx;
-}
 .answer-tools-art {
   position:relative;
   width:336rpx;
@@ -1108,7 +1021,7 @@ page {
   width:202rpx;
   height:32rpx;
 }
-.privacy-row image {
+.privacy-row .assessment-illustration-art {
   width:114rpx;
   height:122.67rpx;
   opacity:1;
@@ -1119,4 +1032,36 @@ page {
   height:24rpx;
   margin-left:8rpx;
   vertical-align:middle;
+}
+
+.privacy-row .privacy-help-art {
+  display:inline-block;
+  position:static;
+  width:24rpx;
+  height:24rpx;
+  margin-left:6rpx;
+  vertical-align:middle;
+  opacity:1;
+}
+.consult-tab-icon {
+  position:relative;
+  flex:0 0 40rpx;
+  width:40rpx;
+  height:40rpx;
+  margin-right:12rpx;
+  overflow:hidden;
+}
+.consult-tabs .consult-tab-icon .consult-tab-sprite {
+  position:absolute;
+  width:505.33rpx;
+  height:78.67rpx;
+  max-width:none;
+  margin:0;
+  top:-18rpx;
+}
+.consult-tabs .consult-tab-stage-sprite {
+  left:-16rpx;
+}
+.consult-tabs .consult-tab-need-sprite {
+  left:-326rpx;
 }

@@ -115,6 +115,9 @@ Page({
   onServiceNotice() {
     wx.showModal({ title: '服务声明', content: '小暖提供备孕知识与生活建议，仅供参考，不替代医生诊断。请勿在对话中提供身份证号等无关敏感信息。反馈目前仅保存在本机。', showCancel: false });
   },
+  onPrivacyExplanation() {
+    wx.showModal({ title: '隐私提示', content: '请勿在对话中提供身份证号等无关敏感信息。当前Demo的反馈保存在本机；如启用云服务，请先阅读并确认相应隐私说明。', showCancel: false });
+  },
   onScoreExplanation() {
     wx.showModal({ title: '自评说明', content: '分数按已填写的四项Demo规则计算，每项最多25分；未知项不计算总分。规则未经医学验证，不代表诊断、生育能力或受孕概率。身体不适时请结合具体症状咨询医生。', showCancel: false });
   },
