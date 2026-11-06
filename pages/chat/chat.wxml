@@ -55,7 +55,7 @@
 </view>
  <view class="consult-card">
 <view class="consult-top">
-<view>AI匹配备孕师 · 咨询<view class="consult-sub">专业1V1 · 定制服务</view>
+<view>AI匹配备孕师 · 深圳<view class="consult-sub">专业1V1 · 定制服务</view>
 </view>
 <view class="service-history" bindtap="onHistoryClick">服务记录</view>
 </view>
@@ -152,21 +152,25 @@
 <view class="privacy-row">对话内容将开启隐私保护 <text>◉</text>
 <image src="/images/ui/plan-pink.svg"/>
 </view>
-<view class="answer-tools">
-<image src="/images/ui/mute.svg" bindtap="onReadUnavailable"/>
-<image src="/images/ui/copy.svg" data-content="{{assessmentIntro}}" bindtap="onCopy"/>
-<image src="/images/ui/like.svg" data-positive="{{true}}" bindtap="openFeedback"/>
-<image class="dislike-icon" src="/images/ui/like.svg" data-positive="{{false}}" bindtap="openFeedback"/>
-</view>
+<view class="answer-tools"><view class="answer-tools-art">
+<image src="/images/campaign/answer-actions.png" mode="aspectFit"/>
+<view class="answer-tools-hotspots">
+<view role="button" aria-label="朗读" bindtap="onReadUnavailable"></view>
+<view role="button" aria-label="复制" data-content="{{assessmentIntro}}" bindtap="onCopy"></view>
+<view role="button" aria-label="满意" data-positive="{{true}}" bindtap="openFeedback"></view>
+<view role="button" aria-label="不满意" data-positive="{{false}}" bindtap="openFeedback"></view>
+</view></view></view>
 </view>
 </view>
  <view wx:if="{{assessmentMode === 'quiz'}}" class="prior-tools">
-<view class="answer-tools">
-<image src="/images/ui/mute.svg" bindtap="onReadUnavailable"/>
-<image src="/images/ui/copy.svg" data-content="{{assessmentIntro}}" bindtap="onCopy"/>
-<image src="/images/ui/like.svg" data-positive="{{true}}" bindtap="openFeedback"/>
-<image class="dislike-icon" src="/images/ui/like.svg" data-positive="{{false}}" bindtap="openFeedback"/>
-</view>
+<view class="answer-tools"><view class="answer-tools-art">
+<image src="/images/campaign/answer-actions.png" mode="aspectFit"/>
+<view class="answer-tools-hotspots">
+<view role="button" aria-label="朗读" bindtap="onReadUnavailable"></view>
+<view role="button" aria-label="复制" data-content="{{assessmentIntro}}" bindtap="onCopy"></view>
+<view role="button" aria-label="满意" data-positive="{{true}}" bindtap="openFeedback"></view>
+<view role="button" aria-label="不满意" data-positive="{{false}}" bindtap="openFeedback"></view>
+</view></view></view>
 </view>
  <view wx:if="{{assessmentMode !== 'result'}}" id="assessment-panel" class="assessment-card">
 <view class="assessment-head">
@@ -214,9 +218,8 @@
 <view class="dimension-button" bindtap="openReportDimensions">测试维度 ›</view>
 </view>
 <view class="orbit">
-<view class="score-ring">
-<view class="score-dial"><view class="score-center"></view><view wx:if="{{reportScore !== null}}" class="score-pointer" style="transform:rotate({{pointerAngle}}deg)"><view></view></view></view>
-</view>
+<image class="gauge-art" src="/images/campaign/report-gauge.png" mode="aspectFit"/>
+<view class="score-dial gauge-dial"><view class="score-center"></view><view wx:if="{{reportScore !== null}}" class="score-pointer" style="transform:rotate({{pointerAngle}}deg)"><view></view></view></view>
 </view>
 </view>
 <view class="muted report-disclaimer">Demo自评规则分，不代表诊断、生育能力或受孕概率</view>
@@ -232,17 +235,16 @@
 <text class="analysis-title">{{index + 1}}. </text>{{item}}</view>
 <view class="muted report-disclaimer">建议由Demo规则模板生成，仅供参考；持续不适请及时就医</view>
 <view class="report-footer">
-<image class="report-star" src="/images/campaign/report-star.png" mode="aspectFit"/>
-<view class="rating">
-<text>☺ 你对本次备孕评估满意吗？</text>
-<view bindtap="openFeedback">★★★★★</view>
-</view>
-<view class="answer-tools">
-<image src="/images/ui/mute.svg" bindtap="onReadUnavailable"/>
-<image src="/images/ui/copy.svg" data-content="{{assessmentIntro}}" bindtap="onCopy"/>
-<image src="/images/ui/like.svg" data-positive="{{true}}" bindtap="openFeedback"/>
-<image class="dislike-icon" src="/images/ui/like.svg" data-positive="{{false}}" bindtap="openFeedback"/>
-</view>
+<image class="report-feedback-art" src="/images/campaign/report-feedback.png" mode="widthFix"/>
+<view class="rating-hit" role="button" aria-label="你对本次备孕评估满意吗？" bindtap="openFeedback"></view>
+<view class="answer-tools"><view class="answer-tools-art">
+<image src="/images/campaign/answer-actions.png" mode="aspectFit"/>
+<view class="answer-tools-hotspots">
+<view role="button" aria-label="朗读" bindtap="onReadUnavailable"></view>
+<view role="button" aria-label="复制" data-content="{{assessmentIntro}}" bindtap="onCopy"></view>
+<view role="button" aria-label="满意" data-positive="{{true}}" bindtap="openFeedback"></view>
+<view role="button" aria-label="不满意" data-positive="{{false}}" bindtap="openFeedback"></view>
+</view></view></view>
 </view>
 </view>
 </block>
@@ -311,7 +313,7 @@
 <view wx:if="{{showDimensions}}" class="dimensions-page">
 <view class="dimensions-back" bindtap="closeReportDimensions">
 <image src="/images/ui/back.svg"/>返回报告</view>
-<image class="dimensions-ip" src="/images/campaign/xiaonuan-celebrate.png" mode="aspectFit"/>
+<image class="dimensions-ip" src="/images/campaign/xiaonuan-celebration-scene.png" mode="aspectFit"/>
 <view class="dimensions-status">{{scoreLabel}}</view>
 <view class="muted">备孕状态自评维度 · Demo规则</view>
 <view class="dimensions-card">

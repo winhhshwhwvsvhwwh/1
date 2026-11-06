@@ -6,7 +6,7 @@ page {
   height:100dvh;
   display:flex;
   flex-direction:column;
-  background:linear-gradient(120deg,#ffdfed 0,#efdafa 20%,#f5f5f5 42%);
+  background:linear-gradient(180deg,transparent 0,#f5f5f5 650rpx),linear-gradient(115deg,#ffdfed,#efdafa);
   color:#5c1730;
   overflow:hidden;
   box-sizing:border-box}
@@ -58,7 +58,7 @@ page {
 .feature-strip {
   display:block;
   width:100%;
-  height:200rpx;
+  height:198.67rpx;
 }
 .feature-hit-grid {
   position:absolute;
@@ -543,35 +543,38 @@ page {
   padding:10rpx 20rpx;
   font-size:24rpx}
 .orbit {
-  width:230rpx;
-  height:230rpx;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:repeating-radial-gradient(circle,transparent 0,transparent 13rpx,#ffe2ed 14rpx,transparent 16rpx);
-  border-radius:50%}
-.score-ring {
-  width:140rpx;
-  height:140rpx;
-  background:conic-gradient(#ff4089 0 135deg,white 135deg 220deg,#00ddbd 220deg 360deg);
-  padding:18rpx;
-  border-radius:50%;
-  box-sizing:border-box;
-  transform:rotate(0deg);
-  box-shadow:0 6rpx 20rpx #f9c4dc}
+  position:relative;
+  flex:0 0 290rpx;
+  width:290rpx;
+  height:301.26rpx;
+  margin:-26rpx -12rpx -20rpx 0;
+}
+.gauge-art {
+  display:block;
+  width:100%;
+  height:100%;
+}
 .score-dial {
   position:relative;
-  height:100%;
-  background:white;
-  border-radius:50%;
-  padding:20rpx;
   box-sizing:border-box;
+  background:#fff;
+  border-radius:50%;
+}
+.gauge-dial {
+  position:absolute;
+  left:50.2%;
+  top:54.8%;
+  transform:translate(-50%,-50%);
+  width:21%;
+  height:20.22%;
+  padding:7rpx;
 }
 .score-center {
+  width:100%;
   height:100%;
-  border-radius:50%;
-  border:12rpx solid #ff7fb3;
   box-sizing:border-box;
+  border-radius:50%;
+  border:10rpx solid #ff7fb3;
 }
 .score-pointer {
   position:absolute;
@@ -581,13 +584,13 @@ page {
 .score-pointer>view {
   position:absolute;
   left:50%;
-  top:5rpx;
-  margin-left:-10rpx;
+  top:0;
+  margin-left:-8rpx;
   width:0;
   height:0;
-  border-left:10rpx solid transparent;
-  border-right:10rpx solid transparent;
-  border-bottom:22rpx solid #ff4089;
+  border-left:8rpx solid transparent;
+  border-right:8rpx solid transparent;
+  border-bottom:18rpx solid #ff4089;
 }
 .report-disclaimer {
   font-size:21rpx;
@@ -842,10 +845,10 @@ page {
 
 /* Transparent source artwork supplied by the designer. */
 .hero-ip {
-  width:300rpx;
-  height:338rpx;
-  bottom:-76rpx;
-  right:-8rpx;
+  width:350rpx;
+  height:394rpx;
+  bottom:-90rpx;
+  right:-32rpx;
   border-radius:0;
 }
 .dimensions-ip {
@@ -923,4 +926,102 @@ page {
   top:83rpx;
   border-radius:50%;
   pointer-events:auto;
+}
+
+/* Latest 3x page references: keep logical display sizes independent of bitmap pixels. */
+.score-badge {
+  white-space:nowrap;
+}
+.consult-intro {
+  border-top-right-radius:32rpx;
+}
+.expert-promises>view {
+  position:relative;
+}
+.expert-promises>view::before,.expert-promises>view::after {
+  content:'❧';
+  display:inline-block;
+  color:#ffbad3;
+  font-size:34rpx;
+  vertical-align:middle;
+  margin:0 4rpx;
+}
+.expert-promises>view::after {
+  transform:scaleX(-1);
+}
+.expert-promises text {
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-26rpx;
+}
+.expert-portraits {
+  margin-top:54rpx;
+}
+.answer-tools-art {
+  position:relative;
+  width:336rpx;
+  height:40.67rpx;
+  flex-shrink:0;
+}
+.answer-tools-art>image {
+  display:block;
+  width:100%;
+  height:100%;
+}
+.answer-tools-hotspots {
+  position:absolute;
+  inset:-14rpx -8rpx;
+  display:flex;
+}
+.answer-tools-hotspots>view {
+  flex:1;
+}
+.report-footer {
+  height:220.5rpx;
+}
+.report-feedback-art {
+  display:block;
+  width:100%;
+  height:220.5rpx;
+}
+.rating-hit {
+  position:absolute;
+  left:0;
+  right:0;
+  top:0;
+  height:100rpx;
+  z-index:2;
+}
+.report-footer .answer-tools {
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  border-top:0;
+  padding:22rpx 0 18rpx;
+}
+.dimensions-ip {
+  width:420rpx;
+  height:364rpx;
+  margin-top:8rpx;
+}
+.dimensions-status {
+  margin-top:10rpx;
+}
+.dimensions-title::before,.dimensions-title::after {
+  content:'〟';
+  display:inline-block;
+  color:#ffb5d0;
+  margin:0 12rpx;
+}
+.dimensions-title::before {
+  transform:scaleX(-1);
+}
+.dimensions-actions .soft-button {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  line-height:1;
 }
