@@ -60,7 +60,7 @@
   },
   "compileType": "miniprogram",
   "libVersion": "3.2.0",
-  "appid": "touristappid",
+  "appid": "wx19e17d6811ea8c83",
   "projectname": "xiaonuan-ai-pregnancy-assistant",
   "cloudfunctionRoot": "cloudfunctions/",
   "condition": {}
