@@ -15,6 +15,11 @@ function selection(answers, index) {
   if (index === 5 && indices.includes(0) && indices.length > 1) throw new Error('没有问题与其他选项互斥');
   return indices;
 }
+// CSS rotation: 0deg points up, -90deg left, +90deg right.
+function scoreToPointerAngle(score) {
+  if (score === null || !Number.isFinite(score) || score < 0 || score > 100) return null;
+  return 90 - score * 1.8;
+}
 function buildAssessmentReport(answers) {
   const selected = Array.from({ length: 6 }, (_, i) => selection(answers, i));
   const points = [SCORE_TABLE[0][selected[2][0]], SCORE_TABLE[1][selected[3][0]], SCORE_TABLE[2][selected[4][0]], Math.min(...selected[5].map(i => SCORE_TABLE[3][i]))];
@@ -32,6 +37,6 @@ function buildAssessmentReport(answers) {
   if (selected[2][0] === 2) tailored.push('周期经常不规律时，单靠日历预测排卵可能不准确，建议结合记录向医生咨询。');
   if ([0, 2].includes(selected[3][0])) tailored.push('经期较短或较长需要结合个人既往情况、经量和伴随症状判断；若新出现、反复或伴不适，建议咨询医生。');
   if (selected[4][0] >= 2) tailored.push('近期生活状态需要关注，建议优先改善休息与压力管理，必要时寻求专业支持。');
-  return { score, label: band.label, summary: band.summary, indicators, priority, suggestions: [...priority, ...tailored, ...band.advice], pointerAngle: score === null ? null : 135 - score * 2.7, rulesVersion: 'demo-v1' };
+  return { score, label: band.label, summary: band.summary, indicators, priority, suggestions: [...priority, ...tailored, ...band.advice], pointerAngle: scoreToPointerAngle(score), rulesVersion: 'demo-v1' };
 }
-module.exports = { buildAssessmentReport, SCORE_TABLE, BANDS };
+module.exports = { buildAssessmentReport, scoreToPointerAngle, SCORE_TABLE, BANDS };
