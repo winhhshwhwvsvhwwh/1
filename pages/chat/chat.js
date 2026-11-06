@@ -120,7 +120,16 @@ Page({
       if (result.code !== 0 || !result.data || !result.data.assessmentId) throw new Error('submit');
       const report = await api.getReportDetail(result.data.assessmentId);
       if (report.code !== 0 || !report.data) throw new Error('report');
-      const data = report.data;
+      const data = { ...report.data };
+      if (this.data.isDemo) {
+        const answers = this.data.assessmentAnswers;
+        const notices = [];
+        if (answers[1].indices[0] === 3) notices.push('你填写的备孕时间已超过12个月，建议安排妇科或生殖科咨询');
+        if (answers[2].indices[0] >= 2) notices.push('目前周期不规律或尚不确定，建议持续记录月经与排卵相关变化');
+        if (answers[4].indices[0] >= 2) notices.push('近期生活状态需要关注，建议优先改善休息和压力管理');
+        if (answers[5].indices.some(i => i > 0)) notices.push('你提到了生理不适，建议向专业医生说明具体症状');
+        data.summary = '根据你的填写情况，' + (notices.length ? notices.join('；') + '。' : '建议保持规律记录、均衡饮食和适度运动。') + '以下为本地示例建议，不构成医学评估。';
+      }
       const scores = (data.indicators || []).map(i => Number(i.score)).filter(n => Number.isFinite(n) && n >= 0 && n <= 100);
       const reportScore = this.data.isDemo ? 85 : (scores.length ? Math.round(scores.reduce((a,b) => a+b,0)/scores.length) : '—');
       const a = this.data.assessmentAnswers;

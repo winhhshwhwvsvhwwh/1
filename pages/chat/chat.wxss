@@ -435,19 +435,26 @@ page {
   border-color:#ff4089;
   color:#ff4089}
 .pink-button {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-sizing:border-box;
+  padding:0;
   background:#ff4089;
   color:white;
   font-size:30rpx;
   border-radius:60rpx;
   height:92rpx;
-  line-height:92rpx;
+  line-height:1;
   margin:20rpx 0 0;
   font-weight:500}
 .pink-button::after,.soft-button::after {
   border:0}
-.pink-button[disabled] {
+.assessment-body button.pink-button[disabled] {
   color:white;
-  background:#f4b2cb}
+  background:#f4b2cb;
+  opacity:1;
+}
 .previous {
   font-size:20rpx;
   color:#a68c98;
