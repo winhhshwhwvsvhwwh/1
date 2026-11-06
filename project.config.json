@@ -5,6 +5,26 @@
       {
         "type": "folder",
         "value": "_archived"
+      },
+      {
+        "type": "folder",
+        "value": "design-reference"
+      },
+      {
+        "type": "folder",
+        "value": "tests"
+      },
+      {
+        "type": "file",
+        "value": "README.md"
+      },
+      {
+        "type": "file",
+        "value": "UI-改版说明.md"
+      },
+      {
+        "type": "file",
+        "value": "评估计分与建议模板.md"
       }
     ],
     "include": []
