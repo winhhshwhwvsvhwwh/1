@@ -273,15 +273,17 @@
 <view wx:if="{{pageMode === 'home' || assessmentMode === 'quiz'}}" class="privacy-note">继续沟通代表您已阅读并同意 <text bindtap="onServiceNotice">《服务声明》</text>
 </view>
 <view class="bottom-dock">
-<scroll-view scroll-x class="service-bar">
+<scroll-view scroll-x class="service-bar" show-scrollbar="{{false}}">
+<view class="service-track">
 <view class="service-chip" bindtap="openConsult">
-<image src="/images/ui/chat-white.svg" class="chip-icon"/>咨询备孕师</view>
+<image src="/images/ui/chat-white.svg" class="chip-icon"/><text class="service-label">咨询备孕师</text></view>
 <view class="service-chip" bindtap="openAssessment">
-<image src="/images/ui/calendar-pink.svg"/>AI备孕评估</view>
+<image src="/images/ui/calendar-pink.svg"/><text class="service-label">AI备孕评估</text></view>
 <view class="service-chip" bindtap="onPlusClick">
-<image src="/images/ui/plan-pink.svg"/>报告单解读</view>
+<image src="/images/ui/plan-pink.svg"/><text class="service-label">报告单解读</text></view>
 <view class="service-chip" bindtap="openRecordPage">
-<image src="/images/ui/calendar-pink.svg"/>周期记录</view>
+<image src="/images/ui/calendar-pink.svg"/><text class="service-label">周期记录</text></view>
+</view>
 </scroll-view>
 <chat-input value="{{inputValue}}" bindinput="onInputChange" bindconfirm="onSend" bindunavailable="onInputUnavailable" bindplus="onPlusClick" bindvoicesend="onVoiceSend"/>
 </view>

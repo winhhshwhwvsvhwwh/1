@@ -114,30 +114,51 @@ page {
   padding-bottom:calc(28rpx + env(safe-area-inset-bottom));
   background:linear-gradient(transparent,#f5f5f5 18%)}
 .service-bar {
-  white-space:nowrap;
   width:100%;
+  height:86rpx;
+  white-space:nowrap;
   box-sizing:border-box;
-  padding:6rpx 32rpx 22rpx}
-.service-chip {
+  padding-bottom:22rpx;
+}
+.service-track {
   display:inline-flex;
   align-items:center;
+  gap:12rpx;
+  padding:0 32rpx;
+  box-sizing:border-box;
+}
+.service-chip {
+  display:flex;
+  flex:0 0 216rpx;
+  align-items:center;
+  justify-content:center;
+  gap:12rpx;
+  box-sizing:border-box;
+  width:216rpx;
+  height:64rpx;
+  padding:0 18rpx;
+  border-radius:50rpx;
   background:white;
   color:#333;
-  border-radius:50rpx;
-  padding:13rpx 19rpx;
-  font-size:23rpx;
-  margin-right:12rpx;
-  line-height:1.4}
+}
+.service-label {
+  flex:0 0 auto;
+  font-size:24rpx;
+  line-height:32rpx;
+  white-space:nowrap;
+}
 .service-chip image {
-  width:30rpx;
-  height:30rpx;
-  margin-right:10rpx}
+  display:block;
+  flex:0 0 32rpx;
+  box-sizing:border-box;
+  width:32rpx;
+  height:32rpx;
+}
 .service-chip .chip-icon {
   background:#ff71a4;
   border-radius:50%;
-  padding:3rpx;
-  width:24rpx;
-  height:24rpx}
+  padding:4rpx;
+}
 .request-row {
   display:flex;
   justify-content:flex-end;
