@@ -954,15 +954,7 @@ page {
 .dimensions-status {
   margin-top:10rpx;
 }
-.dimensions-title::before,.dimensions-title::after {
-  content:'〟';
-  display:inline-block;
-  color:#ffb5d0;
-  margin:0 12rpx;
-}
-.dimensions-title::before {
-  transform:scaleX(-1);
-}
+
 .dimensions-actions .soft-button {
   display:flex;
   align-items:center;
@@ -1109,3 +1101,41 @@ page {
 .radar-tooltip-attention .radar-tooltip-tip { border-top-color:#ffe8e2; }
 .radar-tooltip-unknown .radar-tooltip-tip { border-top-color:#f0f0f2; }
 .radar-tooltip-below .radar-tooltip-tip { top:auto;bottom:100%;transform:translateX(-50%) rotate(180deg); }
+
+.dimensions-title {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12rpx;
+}
+.dimensions-title-label {
+  flex:0 0 auto;
+  line-height:44rpx;
+}
+.dimensions-title-accent {
+  position:relative;
+  flex:0 0 52rpx;
+  width:52rpx;
+  height:48rpx;
+}
+.dimensions-title-accent-right {
+  transform:scaleX(-1);
+}
+.title-accent-short,.title-accent-long {
+  position:absolute;
+  height:12rpx;
+  border-radius:12rpx;
+  background:linear-gradient(90deg,#ffc8dc,#ff9dc1);
+}
+.title-accent-short {
+  width:26rpx;
+  left:25rpx;
+  top:8rpx;
+  transform:rotate(45deg);
+}
+.title-accent-long {
+  width:42rpx;
+  left:0;
+  top:30rpx;
+  transform:rotate(22deg);
+}
