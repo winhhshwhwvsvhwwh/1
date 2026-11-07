@@ -3,9 +3,9 @@
 .section-title {
   font-size: 28rpx;
   font-weight: 600;
-  color: #FF9E9E;
+  color: #FF4089;
   padding-bottom: 12rpx;
-  border-bottom: 2rpx solid #FFF0EC;
+  border-bottom: 2rpx solid #F3E8EF;
 }
 
 .form-item {
@@ -25,7 +25,7 @@
   justify-content: space-between;
   height: 76rpx;
   padding: 0 24rpx;
-  background: #F9F9F9;
+  background: #FAF7FA;
   border-radius: 16rpx;
   font-size: 28rpx;
   color: #333333;
@@ -39,7 +39,7 @@
 .input-field {
   height: 76rpx;
   padding: 0 24rpx;
-  background: #F9F9F9;
+  background: #FAF7FA;
   border-radius: 16rpx;
   font-size: 28rpx;
   box-sizing: border-box;
@@ -53,7 +53,7 @@
 .symptom-tag {
   padding: 16rpx 28rpx;
   border-radius: 30rpx;
-  background: #F9F9F9;
+  background: #FAF7FA;
   color: #666666;
   font-size: 26rpx;
   margin-right: 16rpx;
@@ -62,9 +62,9 @@
 }
 
 .symptom-tag-active {
-  background: #FFF0EC;
-  border: 2rpx solid #FF9E9E;
-  color: #FF9E9E;
+  background: #FFE9F2;
+  border: 2rpx solid #FF4089;
+  color: #FF4089;
   font-weight: 600;
 }
 
@@ -100,6 +100,26 @@
 
 .record-delete {
   font-size: 24rpx;
-  color: #FF9E9E;
+  color: #FF4089;
   padding: 8rpx 16rpx;
+}
+
+/* Share the chat page palette; form layout and record behavior are unchanged. */
+page {
+  background:#f5f5f5;
+}
+.container {
+  background:linear-gradient(180deg,transparent 0,#f5f5f5 650rpx),linear-gradient(115deg,#ffdfed,#efdafa);
+}
+.card {
+  box-shadow:0 4rpx 20rpx rgba(255,64,137,.08);
+}
+.title,.record-date {
+  color:#5c1730;
+}
+.input-field {
+  color:#333333;
+}
+.btn-primary {
+  background:#ff4089;
 }
