@@ -31,8 +31,16 @@ function assessRisk(content) {
 function handle(content, latestRecord) {
   const risk = assessRisk(content);
 
-  const understanding = '你提到的这个情况我认真看了一下，确实需要留意一下~';
+  const understanding = risk.category === '长期未孕'
+    ? '你想了解备孕一段时间仍未怀孕该怎么办，我们先看何时需要评估，以及可以准备哪些信息。'
+    : '你提到的这个情况我认真看了一下，确实需要留意一下~';
   const analysisLines = [risk.riskNotice];
+  const durationFAQ = risk.category === '长期未孕'
+    ? knowledgeBase.FAQ_LIBRARY.find(item => item.id === 'plan-duration') : null;
+  if (durationFAQ) {
+    analysisLines.splice(0, 1, durationFAQ.answer);
+    analysisLines.push('请补充：' + durationFAQ.followUpQuestions.join('；'));
+  }
   const medicationFAQ = risk.category === '备孕用药'
     ? knowledgeBase.matchFAQ(content).find(item => item.category === 'medication') : null;
   if (medicationFAQ) {
@@ -48,6 +56,8 @@ function handle(content, latestRecord) {
 
   const suggestions = risk.category === '备孕用药'
     ? (medicationFAQ ? medicationFAQ.suggestions : ['用药前咨询医生或药师，并说明备孕计划。', '整理正在使用的药物和补充剂清单，供专业人员核对。', '遵医嘱，不要自行用药、换药或停药。'])
+    : durationFAQ
+    ? durationFAQ.suggestions.concat('双方一起整理既往检查和周期记录，预约妇科或生殖医学门诊咨询；不要自行使用促排药。')
     : risk.riskLevel === 'high'
     ? [
         '请按以上提示就医，不依赖Demo判断病因。',
@@ -65,7 +75,7 @@ function handle(content, latestRecord) {
     understanding,
     analysisLines,
     suggestions,
-    faqIds: medicationFAQ ? [medicationFAQ.id] : [],
+    faqIds: medicationFAQ ? [medicationFAQ.id] : durationFAQ ? [durationFAQ.id] : [],
     refIds: risk.refIds,
     usedUserData: !!shortSummary
   };

@@ -124,10 +124,10 @@ const RISK_LIBRARY = [
     refIds: []
   },
   {
-    level: 'high',
+    level: 'medium',
     category: '长期未孕',
     source: '风险规则库',
-    keywords: ['一年没有怀孕', '一年未孕', '两年没有怀孕', '备孕失败', '一直没怀孕', '一直没成功', '一直没怀上', '怀不上'],
+    keywords: ['一年没有怀孕', '一年未孕', '两年没有怀孕', '备孕失败', '一直没怀孕', '一直没成功', '一直没怀上', '怀不上', '没怀上', '没有怀上'],
     guidance: '仅凭未怀孕的描述不能判断是否不孕或已经达到评估条件。请补充双方年龄、规律未避孕尝试的时长和病史；是否需要生育相关评估应由医生结合实际情况决定，有异常症状时不要仅等待。',
     refIds: [5, 6]
   },
@@ -172,9 +172,16 @@ function matchFAQ(content) {
  * 根据用户输入匹配风险规则库，返回命中的风险条目（可能为空数组=无风险）
  */
 function matchRisk(content) {
-  return RISK_LIBRARY.filter((item) => item.allKeywords
-    ? item.allKeywords.every(group => group.some(kw => content.includes(kw)))
-    : item.keywords.some(kw => content.includes(kw)))
+  return RISK_LIBRARY.filter((item) => {
+    // ‘没怀孕’也可能是在问验孕结果，不能单独当成长时间尝试未孕。
+    const attemptConcern = item.category === '长期未孕'
+      && /备孕|未避孕|尝试/.test(content)
+      && /没(?:有)?(?:能)?怀(?:上)?(?:孕)?|未孕|未怀孕|怀不上/.test(content)
+      && !/试纸|验孕|早孕|hcg|HCG|阴性|阳性/.test(content);
+    return attemptConcern || (item.allKeywords
+      ? item.allKeywords.every(group => group.some(kw => content.includes(kw)))
+      : item.keywords.some(kw => content.includes(kw)));
+  })
     .sort((a,b) => ({high:2,medium:1}[b.level] - {high:2,medium:1}[a.level]) || (b.priority || 0) - (a.priority || 0));
 }
 

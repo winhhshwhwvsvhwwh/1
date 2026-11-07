@@ -99,7 +99,9 @@ function handle(content) {
   }
 
   // 场景3：问题不明确，引导用户补充信息
-  if (matchAny(text, VAGUE_KEYWORDS)) {
+  // 只有整句本身是模糊表达才追问；具体问题末尾的‘怎么办’不能截走专业路由。
+  const vagueText = text.replace(/[\s，。！？!?、]/g, '');
+  if (VAGUE_KEYWORDS.includes(vagueText)) {
     return buildAnswer(
       '当然可以。\n你可以告诉我具体想了解什么，例如：\n- 月经周期\n- 排卵时间\n- 备孕知识\n- 备孕记录\n- 其他身体情况\n我会根据你的问题帮你进一步分析。'
     );
