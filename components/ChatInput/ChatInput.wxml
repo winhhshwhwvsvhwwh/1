@@ -16,7 +16,7 @@
     class="chat-input-box"
     focus="{{focused}}"
     bindblur="onBlur"
-    placeholder="有什么健康问题尽管问我~"
+    placeholder="有什么备孕问题想问小暖？"
     value="{{value}}"
     bindinput="onInput"
     confirm-type="send"

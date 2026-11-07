@@ -10,16 +10,16 @@
 </view>
 <image class="hero-ip" src="/images/campaign/xiaonuan-heart.png" mode="aspectFit"/>
 </view>
+ <view class="home-ask-action" role="button" bindtap="onAskPregnancyQuestion">问备孕问题 <text>输入问题，或选择下方常见问题 ›</text></view>
  <view class="feature-grid">
-<image class="feature-strip" src="/images/campaign/home-features.png" mode="widthFix"/>
-<view class="feature-hit-grid">
-<view role="button" aria-label="备孕计划" data-question="帮我制定一个备孕计划" bindtap="onWelcomeCardTap"></view>
-<view role="button" aria-label="排卵周期" bindtap="openRecordPage"></view>
-<view role="button" aria-label="知识科普" data-question="备孕知识科普" bindtap="onWelcomeCardTap"></view>
+<view class="home-feature-list">
+<view class="home-feature" role="button" data-question="帮我制定一个备孕计划" bindtap="onWelcomeCardTap"><view class="home-feature-icon"><image class="home-feature-sprite home-feature-plan" src="/images/campaign/home-features.png"/></view><text class="home-feature-plan-label">查看备孕准备建议</text></view>
+<view class="home-feature" role="button" bindtap="openRecordPage"><view class="home-feature-icon"><image class="home-feature-sprite home-feature-cycle" src="/images/campaign/home-features.png"/></view><text>周期记录与解读</text></view>
+<view class="home-feature" role="button" data-question="备孕知识科普" bindtap="onWelcomeCardTap"><view class="home-feature-icon"><image class="home-feature-sprite home-feature-knowledge" src="/images/campaign/home-features.png"/></view><text>知识科普</text></view>
 </view>
 </view>
  <view class="faq-heading">
-<text>常见问题：</text>
+<text>你可以这样问</text>
 <view bindtap="refreshQuestions">
 <image src="/images/ui/refresh-pink.svg"/>换一批</view>
 </view>
@@ -27,7 +27,7 @@
 </view>
 <view wx:if="{{pageMode === 'consult'}}" id="consult-top" class="consult-content">
  <view class="request-row">
-<view class="request-bubble">找备孕师咨询</view>
+<view class="request-bubble">备孕咨询示例</view>
 </view>
  <view class="consult-intro">
 <view class="consult-copy"><text>以下为咨询服务示例。</text>结合<text>备孕阶段、周期情况</text>与咨询需求，<text>智能匹配</text>适合您的备孕师，提供<text>周期管理、排卵指导、试纸解读</text>等专业服务</view>
@@ -259,7 +259,7 @@
 <view class="bottom-dock">
 <scroll-view scroll-x class="service-bar" show-scrollbar="{{false}}">
 <view class="service-track">
-<view class="service-chip service-chip-art" role="button" aria-label="咨询备孕师" bindtap="openConsult"><image src="/images/campaign/shortcut-consult.png" mode="aspectFit"/></view>
+<view class="service-chip service-consult" role="button" aria-label="咨询备孕师（示例）" bindtap="openConsult"><view class="service-consult-icon"><image src="/images/campaign/shortcut-consult.png"/></view><view>咨询备孕师<text class="service-example-label">示例</text></view></view>
 <view class="service-chip service-chip-art" role="button" aria-label="AI备孕评估" bindtap="openAssessment"><image src="/images/campaign/shortcut-assessment.png" mode="aspectFit"/></view>
 <view class="service-chip service-chip-art" role="button" aria-label="报告单解读" bindtap="onPlusClick"><image src="/images/campaign/shortcut-report.png" mode="aspectFit"/></view>
 <view class="service-chip service-chip-art" role="button" aria-label="用药建议" bindtap="onMedicationAdvice"><image src="/images/campaign/shortcut-medication.png" mode="aspectFit"/></view>
@@ -316,7 +316,7 @@
 <view class="muted dimensions-note">Demo规则未经医学验证，请结合具体症状和医生建议<image class="info-help-art" src="/images/campaign/info-help.png" bindtap="onScoreExplanation"/></view>
 <view class="dimensions-actions">
 <button class="soft-button" bindtap="closeReportDimensions">查看详细报告</button>
-<button class="pink-button" bindtap="onPlanFromReport">生成备孕计划</button>
+<button class="pink-button" bindtap="onPlanFromReport">根据本次自评整理计划</button>
 </view>
 </view>
 </view>

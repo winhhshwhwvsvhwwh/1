@@ -129,3 +129,6 @@ page {
 }
 
 .record-page .container { min-height:0; }
+
+.cycle-next-step .subtitle { line-height:1.6; }
+.cycle-interpret-link { padding:12rpx; text-align:center; color:#ff4089; font-size:28rpx; }
