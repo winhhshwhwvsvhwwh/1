@@ -1181,7 +1181,7 @@ page {
   position:absolute;
   height:7rpx;
   border-radius:7rpx;
-  background:linear-gradient(90deg,rgba(255,200,220,.3),#ffa7ca);
+  background:linear-gradient(90deg,#ff9fc5 0%,#ffbad5 45%,rgba(255,220,235,0) 100%);
 }
 .title-accent-short {
   width:18rpx;
