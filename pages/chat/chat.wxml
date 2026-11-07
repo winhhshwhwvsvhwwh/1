@@ -239,10 +239,15 @@
 <view wx:if="{{showScrollShortcut}}" class="scroll-shortcut" style="bottom:{{scrollShortcutBottom}}px" role="button" aria-label="滚动到底部" bindtap="onScrollShortcut"><image src="/images/campaign/scroll-down.png" mode="aspectFit"/></view>
   <!-- AI咨询兜底提示卡：命中触发条件后展示 -->
   <view wx:if="{{showHandoffBanner}}" class="handoff-banner">
-    <view class="handoff-banner-close" bindtap="onCloseHandoffBanner">×</view>
-    <view class="handoff-banner-title">{{handoffReason === 'feedback_medical' ? '建议咨询专业医生' : '换个问法试试'}}</view>
-    <view class="handoff-banner-desc">{{handoffReason === 'feedback_medical' ? '已记录你对内容准确性的反馈。涉及健康或用药决定时，请向医生或药师核实，不要仅依赖Demo回答。' : '已收到反馈。可以补充具体问题、发生时间或已有记录，我再帮你梳理。'}}</view>
-    <view class="handoff-banner-btn" bindtap="onHandoffBannerAction">{{handoffReason === 'feedback_medical' ? '查看就医指引' : '继续提问'}}</view>
+    <view class="handoff-banner-heading">
+      <view class="handoff-banner-icon" aria-hidden="true"><view></view><view></view><view></view></view>
+      <view class="handoff-banner-title">{{handoffReason === 'feedback_medical' ? '建议咨询专业医生' : '换个问法试试'}}</view>
+      <view class="handoff-banner-close" role="button" aria-label="关闭提示" bindtap="onCloseHandoffBanner">×</view>
+    </view>
+    <view class="handoff-banner-desc">{{handoffReason === 'feedback_medical' ? '已记录你对内容准确性的反馈。涉及健康或用药决定时，请向医生或药师核实，不要仅依赖Demo回答。' : (handoffReason === 'unresolved_streak' ? '可以补充具体问题、发生时间或已有记录，帮我更好地理解你的问题。' : '收到你的反馈了。补充具体问题、发生时间或已有记录，我再帮你梳理。')}}</view>
+    <view class="handoff-banner-footer">
+      <view class="handoff-banner-btn" role="button" bindtap="onHandoffBannerAction">{{handoffReason === 'feedback_medical' ? '查看就医指引' : '继续提问'}}<text class="handoff-banner-arrow" aria-hidden="true">›</text></view>
+    </view>
   </view>
 
 

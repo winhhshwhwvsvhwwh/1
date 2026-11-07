@@ -661,22 +661,57 @@ page {
 .scroll-end {
   height:20rpx}
 .handoff-banner {
-  background:#fff0ec;
-  padding:20rpx 28rpx;
-  font-size:24rpx;
+  margin:12rpx 24rpx 16rpx;
+  padding:20rpx 24rpx;
+  border:2rpx solid #ffe0ec;
+  border-radius:28rpx;
+  background:linear-gradient(120deg,#fff4f8,#fffafd);
+  box-shadow:0 6rpx 20rpx rgba(92,23,48,.04);
   flex-shrink:0;
-  position:relative}
+  box-sizing:border-box;
+}
+.handoff-banner-heading { display:flex; align-items:center; }
+.handoff-banner-icon {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4rpx;
+  width:40rpx;
+  height:32rpx;
+  border:2rpx solid #ff76a5;
+  border-radius:12rpx 12rpx 12rpx 4rpx;
+  margin-right:14rpx;
+  flex-shrink:0;
+}
+.handoff-banner-icon view { width:4rpx; height:4rpx; border-radius:50%; background:#ff76a5; }
+.handoff-banner-title { flex:1; font-size:28rpx; line-height:1.4; font-weight:600; color:#5c1730; }
 .handoff-banner-close {
-  position:absolute;
-  right:20rpx;
-  top:8rpx}
-.handoff-banner-title {
-  font-weight:600}
-.handoff-banner-desc {
-  line-height:1.5;
-  margin:8rpx 0}
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:64rpx;
+  height:64rpx;
+  margin:-12rpx -12rpx -12rpx 8rpx;
+  font-size:36rpx;
+  line-height:1;
+  color:#a78b97;
+  flex-shrink:0;
+}
+.handoff-banner-desc { color:#856b77; font-size:24rpx; line-height:1.6; margin:12rpx 0 16rpx; }
+.handoff-banner-footer { display:flex; justify-content:flex-end; }
 .handoff-banner-btn {
-  color:#ff4089}
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:64rpx;
+  padding:0 24rpx;
+  border-radius:32rpx;
+  background:#ff4089;
+  color:#fff;
+  font-size:24rpx;
+  font-weight:500;
+}
+.handoff-banner-arrow { margin-left:14rpx; font-size:32rpx; line-height:1; }
 .feedback-mask {
   position:fixed;
   top:0;
