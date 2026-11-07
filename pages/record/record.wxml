@@ -1,4 +1,6 @@
 <!--pages/record/record.wxml-->
+<view class="record-page">
+<xiaonuan-header bindback="onHeaderBack" bindnew="onHeaderNew" bindhistory="onHeaderHistory"/>
 <view class="container">
 
   <!-- 记录表单 -->
@@ -98,5 +100,7 @@
       </view>
     </view>
   </view>
+
+</view>
 
 </view>

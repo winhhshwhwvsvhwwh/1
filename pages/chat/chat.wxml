@@ -280,8 +280,7 @@
 </view>
 </view>
 <view wx:if="{{showDimensions}}" class="dimensions-page">
-<view class="dimensions-back" bindtap="closeReportDimensions">
-<image src="/images/ui/back.svg"/>返回报告</view>
+<view class="dimensions-navigation"><xiaonuan-header bindback="closeReportDimensions" bindnew="onNewConversation" bindhistory="onDimensionsHistory"/></view>
 <view class="dimensions-hero">
 <image class="dimensions-ip" src="/images/campaign/xiaonuan-celebration-scene.png" mode="aspectFit"/>
 <view class="dimensions-status">{{scoreLabel}}</view>

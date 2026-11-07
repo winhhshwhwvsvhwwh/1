@@ -108,7 +108,8 @@
 page {
   background:#f5f5f5;
 }
-.container {
+.record-page {
+  min-height:100vh;
   background:linear-gradient(180deg,transparent 0,#f5f5f5 650rpx),linear-gradient(115deg,#ffdfed,#efdafa);
 }
 .card {
@@ -123,3 +124,5 @@ page {
 .btn-primary {
   background:#ff4089;
 }
+
+.record-page .container { min-height:0; }

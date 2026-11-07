@@ -1,8 +1,7 @@
 // components/XiaoNuanHeader/XiaoNuanHeader.js
 Component({
   properties: {
-    // 是否显示返回按钮。当页面是应用的根页面（比如只有AI咨询一个入口时）没有可返回的上一页，
-    // 传false隐藏；隐藏时仍保留占位，保证中间的头像和标题居中不偏移
+    // 根页面隐藏返回按钮，子页面保留返回入口。
     showBack: { type: Boolean, value: true }
   },
 

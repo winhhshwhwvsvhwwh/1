@@ -1,4 +1,7 @@
 {
   "navigationBarTitleText": "我的周期记录",
-  "usingComponents": {}
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "xiaonuan-header": "../../components/XiaoNuanHeader/XiaoNuanHeader"
+  }
 }

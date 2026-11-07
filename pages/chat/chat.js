@@ -107,6 +107,10 @@ Page({
     if (this.data.loading || this.data.assessmentSubmitting) return;
     this.setData({ pageMode: 'home', assessmentMode: '', showScrollShortcut: false, messages: [], showDimensions: false, scrollToId: '', unresolvedStreak: 0, showHandoffBanner: false });
   },
+  onDimensionsHistory() {
+    this.closeReportDimensions();
+    this.onHistoryClick();
+  },
   onHistoryClick() {
     if (!this.data.messages.length) { wx.showToast({ title: '暂无咨询记录', icon: 'none' }); return; }
     this.setData({ pageMode: 'chat' }); this.scrollToBottom();

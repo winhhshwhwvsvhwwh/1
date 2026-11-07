@@ -29,6 +29,22 @@ Page({
     loading: false
   },
 
+  onHeaderBack() { this.returnToChat(); },
+  onHeaderNew() { this.returnToChat('onNewConversation'); },
+  onHeaderHistory() { this.returnToChat('onHistoryClick'); },
+
+  returnToChat(action) {
+    const pages = getCurrentPages();
+    const previous = pages[pages.length - 2];
+    if (previous && previous.route === 'pages/chat/chat') {
+      wx.navigateBack({ success: () => {
+        if (action && typeof previous[action] === 'function') previous[action]();
+      } });
+    } else {
+      wx.redirectTo({ url: '/pages/chat/chat' });
+    }
+  },
+
   onLoad() {
     this.setData({ today: formatDate(new Date()) });
     this.loadRecords();
