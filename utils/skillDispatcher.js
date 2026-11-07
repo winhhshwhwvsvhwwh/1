@@ -74,7 +74,7 @@ function formatDisplayText({ understanding, analysis, suggestions, riskNotice, q
   }
 
   if (quality.suggestHandoff && primarySkill !== 'human_transfer') {
-    paragraphs.push('如果这个回答没帮你解决问题，回复"转人工"，我可以帮你对接专业医生咨询～');
+    paragraphs.push('如果回答没有解决问题，可以补充更具体的信息；涉及健康决定时请向专业人员核实。');
   }
 
   const referencesText = knowledgeBase.formatReferences(refIds);

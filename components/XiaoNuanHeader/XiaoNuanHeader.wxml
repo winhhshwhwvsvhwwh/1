@@ -1,6 +1,6 @@
 <view class="xn-header" style="padding-top:{{statusBarHeight}}px">
 <view class="xn-header-row" style="height:{{navigationHeight}}px;padding-right:{{menuWidth}}px">
-<view class="xn-header-back" bindtap="onBack">
+<view wx:if="{{showBack}}" class="xn-header-back" bindtap="onBack">
 <image src="/images/ui/back.svg"/>
 </view>
 <view class="xn-header-info">

@@ -10,7 +10,8 @@ const CANCEL_THRESHOLD = 80; // 上滑超过这个像素距离，判定为"取�
 
 Component({
   properties: {
-    value: { type: String, value: '' }
+    value: { type: String, value: '' },
+    focused: { type: Boolean, value: false }
   },
 
   data: {
@@ -57,6 +58,7 @@ Component({
   },
 
   methods: {
+    onBlur() { this.triggerEvent('blur'); },
     onInput(e) {
       this.triggerEvent('input', { value: e.detail.value });
     },

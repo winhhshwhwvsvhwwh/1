@@ -9,6 +9,7 @@ Component({
     suggestions: { type: Array, value: [] },
     // 兼容没有拆分成understanding/analysis字段的历史消息，保证卡片始终有内容可看
     fallbackContent: { type: String, value: '' },
+    riskNotice: { type: String, value: '' },
     threshold: { type: Number, value: COLLAPSE_THRESHOLD }
   },
 

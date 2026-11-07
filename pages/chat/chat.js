@@ -29,7 +29,9 @@ Page({
     assessmentIntro: '为了更全面地了解您的备孕状态，可以参与这套AI备孕评估。我们将结合您的周期情况、备孕阶段及生活习惯，为您生成个性化备孕报告…',
     radarNodes: [], radarTooltip: null,
     optionItems: [], selectedOptions: [], hasSelection: false,
-    consultTab: 'stage', stageQuestions: ['初次备孕','备孕1–3月','备孕3–6月','备孕半年+','周期不规律','更多'], needQuestions: ['排卵监测','营养补充','孕前检查','生活习惯','情绪压力','周期记录'],
+    consultTab: 'stage',
+    stageQuestions: [{"label": "初次备孕", "question": "初次备孕需要关注什么？"}, {"label": "备孕1–3月", "question": "备孕1–3个月需要关注什么？"}, {"label": "备孕3–6月", "question": "备孕3–6个月需要关注什么？"}, {"label": "备孕半年+", "question": "备孕半年以上需要关注什么？"}, {"label": "周期不规律", "question": "月经周期不规律时，备孕需要关注什么？"}, {"label": "更多", "question": "备孕知识科普主要包括哪些内容？"}],
+    needQuestions: [{"label": "排卵监测", "question": "排卵监测时如何记录排卵相关变化？"}, {"label": "营养补充", "question": "备孕期间需要补充什么营养？"}, {"label": "孕前检查", "question": "备孕前需要做哪些孕前检查？"}, {"label": "生活习惯", "question": "备孕生活习惯需要注意什么？"}, {"label": "情绪压力", "question": "备孕时感到压力，如何调整情绪？"}, {"label": "周期记录", "question": "如何记录月经周期？"}],
     welcomeQuestions: ['备孕多久正常？', '如何提高受孕几率？', '备孕期间需要补充什么营养？'],
     assessmentMode: '', questionIndex: 0, selectedOption: -1,
     assessmentAnswers: [], assessmentSubmitting: false, assessmentReport: null,
@@ -39,7 +41,7 @@ Page({
     feedbackSelections: { positive: [], negative: [] },
     currentQuestion: {},
     messages: [],
-    inputValue: '',
+    inputValue: '', inputFocused: false,
     loading: false,
     scrollToId: '',
     showScrollShortcut: false,
@@ -47,8 +49,8 @@ Page({
 
     // ============ AI咨询兜底机制状态 ============
     unresolvedStreak: 0,   // AI连续判定"无法有效解决"的次数
-    showHandoffBanner: false, // 是否显示"建议咨询专业医生"兜底提示卡
-    handoffReason: '',        // 'user_feedback' | 'unresolved_streak' | 'high_risk'
+    showHandoffBanner: false, // 是否显示补充提问/核实提示
+    handoffReason: '',        // 'feedback_rephrase' | 'feedback_medical' | 'unresolved_streak'
 
     // ============ 图片咨询状态 ============
     showImagePicker: false, // 是否显示"图片咨询/拍摄图片"底部菜单
@@ -233,14 +235,23 @@ Page({
     });
   },
   onPlanFromReport() {
-    if (this.data.loading) return;
-    this.setData({ showDimensions: false });
-    const context = this.data.assessmentAnswers.map(a => a.title + a.answer).join('；');
-    this.sendMessage('请结合以下填写情况提供备孕生活计划：' + context);
+    if (this.data.loading || !this.data.assessmentReport) return;
+    const suggestions = (this.data.assessmentReport.suggestions || []).slice();
+    const analysis = this.data.reportAnalysis.map(item => item.title + '：' + item.content).join('\n');
+    const notice = 'Demo 规则模板，仅供参考。';
+    const userMessage = { id: nextId(), role: 'user', content: '生成备孕生活计划', timestamp: Date.now() };
+    const reply = {
+      id: nextId(), role: 'assistant', type: 'plan',
+      understanding: '备孕生活计划：以下根据本次自评已有的建议与分析整理，不重新判断健康状态。',
+      analysis, suggestions, riskNotice: notice, riskLevel: 'none', needHandoff: false, dissatisfied: false, timestamp: Date.now()
+    };
+    reply.content = [reply.understanding, analysis, ...suggestions.map((text,i) => (i+1) + '. ' + text), notice].filter(Boolean).join('\n\n');
+    this.setData({ showDimensions: false, pageMode: 'chat', assessmentMode: '', messages: [...this.data.messages, userMessage, reply], showHandoffBanner: false });
+    this.scrollToBottom();
   },
   openFeedback(e) {
     const { id, positive } = e.currentTarget.dataset;
-    const feedbackPositive = positive !== false && positive !== 'false';
+    const feedbackPositive = positive === true || positive === 'true';
     this.setData({ showFeedback: true, feedbackMessageId: id || null, feedbackText: '', feedbackPositive,
       feedbackSelections: { positive: [], negative: [] }, feedbackTags: feedbackTagsFor(feedbackPositive) });
   },
@@ -263,7 +274,7 @@ Page({
     try {
       const entries = wx.getStorageSync('xiaonuan_feedback') || [];
       wx.setStorageSync('xiaonuan_feedback', [...entries, { positive: this.data.feedbackPositive, tags: this.data.feedbackTags.filter(t => t.selected).map(t => t.label), text: this.data.feedbackText, timestamp: Date.now() }].slice(-50));
-      if (!this.data.feedbackPositive && this.data.feedbackMessageId) this.onDissatisfied({ currentTarget: { dataset: { id: this.data.feedbackMessageId } } });
+      if (!this.data.feedbackPositive && this.data.feedbackMessageId) this.onDissatisfied({ currentTarget: { dataset: { id: this.data.feedbackMessageId } } }, this.data.feedbackTags.filter(t => t.selected).map(t => t.label));
       this.closeFeedback();
       wx.showToast({ title: '反馈已保存在本机', icon: 'none' });
     } catch (err) { wx.showToast({ title: '保存失败，请重试', icon: 'none' }); }
@@ -314,6 +325,13 @@ Page({
 
   /* ============ 输入区域 ============ */
 
+  focusChatInput() {
+    this.setData({ inputFocused: false }, () => {
+      const focus = () => this.setData({ inputFocused: true });
+      if (typeof wx.nextTick === 'function') wx.nextTick(focus); else focus();
+    });
+  },
+  onInputBlur() { this.setData({ inputFocused: false }); },
   onInputChange(e) {
     this.setData({ inputValue: e.detail.value });
   },
@@ -338,8 +356,7 @@ Page({
   onWelcomeCardTap(e) {
     const { question } = e.currentTarget.dataset;
     if (this.data.loading) return;
-    if (question === '周期记录') { this.openRecordPage(); return; }
-    this.sendMessage(question);
+    if (typeof question === 'string' && question.trim()) this.sendMessage(question);
   },
 
   onStartChat() {
@@ -411,6 +428,7 @@ Page({
           timestamp: res.data.timestamp,
           needHandoff: !!res.data.needHandoff,
           riskLevel: res.data.riskLevel || 'none',
+          riskNotice: res.data.riskNotice || '',
           dissatisfied: false
         };
         this.setData({
@@ -421,6 +439,7 @@ Page({
         this.evaluateHandoffTrigger(assistantMsg, 'ai_signal');
       } else {
         this.setData({ loading: false });
+        wx.showToast({ title: '暂时无法回复，请稍后重试', icon: 'none' });
       }
     }).catch(() => {
       this.setData({ loading: false });
@@ -616,7 +635,7 @@ Page({
     if (action === 'record') {
       this.openRecordPage();
     } else if (action === 'continue') {
-      wx.showToast({ title: '可以继续问我哦～', icon: 'none' });
+      this.focusChatInput();
     }
   },
 
@@ -639,38 +658,35 @@ Page({
    * 触发条件：
    * 1. 用户点击"不满意"（onDissatisfied 直接调用，source='user_feedback'）
    * 2. AI连续两次判定"无法有效解决"（这里统计 needHandoff 连续为true的次数）
-   * 3. 出现高风险关键词（riskLevel === 'high'）
+   * 3. 高风险只保留消息内风险卡，底部横幅不重复出现
    */
-  evaluateHandoffTrigger(assistantMsg, source) {
+  evaluateHandoffTrigger(assistantMsg, source, reasons = []) {
     if (source === 'user_feedback') {
-      this.setData({ showHandoffBanner: true, handoffReason: 'user_feedback' });
+      if (assistantMsg && assistantMsg.riskLevel === 'high') {
+        this.setData({ showHandoffBanner: false });
+        return;
+      }
+      this.setData({ showHandoffBanner: true, handoffReason: reasons.includes('内容有误') ? 'feedback_medical' : 'feedback_rephrase' });
       return;
     }
-
     if (assistantMsg.riskLevel === 'high') {
-      this.setData({ showHandoffBanner: true, handoffReason: 'high_risk', unresolvedStreak: 0 });
+      this.setData({ showHandoffBanner: false, handoffReason: '', unresolvedStreak: 0 });
       return;
     }
-
     const nextStreak = assistantMsg.needHandoff ? this.data.unresolvedStreak + 1 : 0;
     const shouldShow = nextStreak >= UNRESOLVED_STREAK_LIMIT;
-
-    this.setData({
-      unresolvedStreak: nextStreak,
-      showHandoffBanner: shouldShow || this.data.showHandoffBanner,
-      handoffReason: shouldShow ? 'unresolved_streak' : this.data.handoffReason
-    });
+    this.setData({ unresolvedStreak: nextStreak, showHandoffBanner: shouldShow || this.data.showHandoffBanner, handoffReason: shouldShow ? 'unresolved_streak' : this.data.handoffReason });
   },
-
-  onDissatisfied(e) {
+  onDissatisfied(e, reasons = []) {
     const { id } = e.currentTarget.dataset;
-    const messages = this.data.messages.map((m) =>
-      m.id === id ? { ...m, dissatisfied: true } : m
-    );
-    this.setData({ messages });
-    this.evaluateHandoffTrigger(null, 'user_feedback');
+    const message = this.data.messages.find(m => m.id === id);
+    this.setData({ messages: this.data.messages.map(m => m.id === id ? { ...m, dissatisfied: true } : m) });
+    this.evaluateHandoffTrigger(message, 'user_feedback', reasons);
   },
-
+  onHandoffBannerAction() {
+    if (this.data.handoffReason === 'feedback_medical') this.onGoHandoff();
+    else { this.setData({ showHandoffBanner: false }); this.focusChatInput(); }
+  },
   onCloseHandoffBanner() {
     this.setData({ showHandoffBanner: false });
   },

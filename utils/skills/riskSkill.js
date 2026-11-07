@@ -8,36 +8,17 @@
 //   understanding/analysisLines/suggestions结构，和knowledgeSkill/cycleSkill的返回形状一致，
 //   方便skillDispatcher统一处理。
 
-const ragRetriever = require('../ragRetriever.js');
 const userContext = require('./userContext.js');
+const knowledgeBase = require('../knowledgeBase.js');
 
 /**
  * @param {string} content 用户输入
  * @returns {{ riskLevel: 'none'|'medium'|'high', riskNotice: string, refIds: number[] }}
  */
 function assessRisk(content) {
-  const { chunks, hasMatch } = ragRetriever.retrieve(content, 'D');
-  const riskChunks = chunks.filter((c) => c.topic === 'risk');
-
-  if (!hasMatch || riskChunks.length === 0) {
-    // 没有命中风险规则库：给标准合规免责声明（这是固定的安全兜底话术，不是知识库检索内容）
-    return {
-      riskLevel: 'none',
-      riskNotice: '对了，这些内容主要是科普参考，没法替代医生诊断哦；如果备孕超过一年还没成功，或者出现月经紊乱、肚子疼这些情况，还是建议尽早去医院看看比较放心。',
-      refIds: []
-    };
-  }
-
-  const hasHighRisk = riskChunks.some((c) => c.level === 'high');
-  const categories = [...new Set(riskChunks.map((c) => c.category))].join('、');
-  // riskNotice直接基于"风险规则库"里的guidance字段拼装，而不是另外手写一套话术
-  const guidanceText = [...new Set(riskChunks.map((c) => c.text))].join(' ');
-
-  return {
-    riskLevel: hasHighRisk ? 'high' : 'medium',
-    riskNotice: `你提到的情况（${categories}）：${guidanceText}`,
-    refIds: ragRetriever.collectRefIds(riskChunks)
-  };
+  const selected = knowledgeBase.matchRisk(content)[0];
+  if (!selected) return { riskLevel: 'none', riskNotice: '以上为备孕科普参考，不替代医生诊断。', refIds: [], category: '' };
+  return { riskLevel: selected.level, riskNotice: selected.guidance, refIds: selected.refIds || [], category: selected.category };
 }
 
 /**
@@ -59,14 +40,16 @@ function handle(content, latestRecord) {
     ? `就诊时可以直接把这份数据给医生看：${shortSummary}，这些来自你在「周期记录」里的记录，能帮医生更快了解情况`
     : '就诊前可以把「周期记录」里的数据整理一下带过去，方便医生快速了解情况';
 
-  const suggestions = risk.riskLevel === 'high'
+  const suggestions = risk.category === '备孕用药'
+    ? ['用药前咨询医生或药师，并说明备孕计划。', '整理正在使用的药物和补充剂清单，供专业人员核对。', '遵医嘱，不要自行用药、换药或停药。']
+    : risk.riskLevel === 'high'
     ? [
-        '建议尽快前往正规医院妇科/生殖科就诊，让医生结合检查结果做出准确判断',
-        dataForDoctorTip,
-        '如果想让我帮你对接更专业的咨询，也可以直接回复"转人工"'
+        '请按以上提示就医，不依赖Demo判断病因。',
+        dataForDoctorTip + '；不要为整理资料耽误就医。',
+        '不要自行判断病因或用药；就医优先，不要等待Demo回复。'
       ]
     : [
-        '先观察一下具体症状和持续时间，方便的话记录下来',
+        '记录具体症状和持续时间，向医生说明情况。',
         '保持规律作息，避免给身体增加额外负担',
         '如果症状持续或者变严重，尽快去正规医院看看会更放心'
       ];

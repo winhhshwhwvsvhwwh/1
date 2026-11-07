@@ -1,12 +1,12 @@
 <view class="chat-page">
-<xiaonuan-header bindback="onPageBack" bindnew="onNewConversation" bindhistory="onHistoryClick" bindmore="onHeaderMore"/>
+<xiaonuan-header show-back="{{pageMode !== 'home'}}" bindback="onPageBack" bindnew="onNewConversation" bindhistory="onHistoryClick" bindmore="onHeaderMore"/>
 <scroll-view class="msg-list" scroll-y scroll-into-view="{{scrollToId}}" scroll-with-animation bindscroll="onMessageScroll" bindtouchstart="onScrollTouchStart">
 <view class="scroll-content">
 <view wx:if="{{pageMode === 'home'}}" id="home-top" class="home-content">
  <view class="welcome-banner">
 <view class="hero-copy">
 <view class="hero-title">Hi,我是小暖</view>
-<view class="hero-description">随时为你提供孕期知识和科学建议，陪你记录每一步备孕过程~</view>
+<view class="hero-description">随时为你提供备孕知识和科学建议，陪你记录每一步备孕过程~</view>
 </view>
 <image class="hero-ip" src="/images/campaign/xiaonuan-heart.png" mode="aspectFit"/>
 </view>
@@ -30,7 +30,7 @@
 <view class="request-bubble">找备孕师咨询</view>
 </view>
  <view class="consult-intro">
-<view class="consult-copy">结合<text>备孕阶段、周期情况</text>与咨询需求，<text>智能匹配</text>适合您的备孕师，提供<text>周期管理、排卵指导、试纸解读</text>等专业服务</view>
+<view class="consult-copy"><text>以下为咨询服务示例。</text>结合<text>备孕阶段、周期情况</text>与咨询需求，<text>智能匹配</text>适合您的备孕师，提供<text>周期管理、排卵指导、试纸解读</text>等专业服务</view>
 <view class="expert-panel">
 <image class="expert-promises-art" src="/images/campaign/expert-promises.png" mode="aspectFit"/>
 <image class="expert-team-art" src="/images/campaign/expert-team.png" mode="aspectFit"/>
@@ -38,9 +38,9 @@
 </view>
  <view class="consult-card">
 <view class="consult-top">
-<view>AI匹配备孕师 · 深圳<view class="consult-sub">专业1V1 · 定制服务</view>
+<view>备孕咨询（示例）<view class="consult-sub">Demo展示 · 未接入真人服务</view>
 </view>
-<view class="service-history" bindtap="onHistoryClick">服务记录</view>
+<view class="service-history" bindtap="onHistoryClick">咨询记录</view>
 </view>
 <view class="consult-body">
 <view class="consult-tabs">
@@ -50,7 +50,7 @@
 <view class="consult-tab-icon"><image class="consult-tab-sprite consult-tab-need-sprite" src="/images/campaign/consult-tabs-stage.png"/></view><text class="consult-tab-label">按需求找</text></view>
 </view>
 <view class="stage-list">
-<view wx:for="{{consultTab === 'stage' ? stageQuestions : needQuestions}}" wx:key="*this" data-question="{{item}}" bindtap="onWelcomeCardTap">{{item}}</view>
+<view wx:for="{{consultTab === 'stage' ? stageQuestions : needQuestions}}" wx:key="label" data-question="{{item.question}}" bindtap="onWelcomeCardTap">{{item.label}}</view>
 </view>
 <view class="muted">你还可以这样问</view>
 <view class="suggestion-links">
@@ -98,6 +98,7 @@
               understanding="{{item.understanding}}"
               analysis="{{item.analysis}}"
               suggestions="{{item.suggestions}}"
+              risk-notice="{{item.riskNotice}}"
               fallback-content="{{item.content}}"
               data-id="{{item.id}}"
               bindaction="onCardAction"
@@ -114,6 +115,7 @@
             <!-- 用户反馈"这个回答没帮到我" -->
             <view
               class="feedback-btn {{item.dissatisfied ? 'feedback-btn-active' : ''}}"
+              data-positive="{{false}}"
               data-id="{{item.id}}"
               bindtap="openFeedback"
             >
@@ -238,11 +240,9 @@
   <!-- AI咨询兜底提示卡：命中触发条件后展示 -->
   <view wx:if="{{showHandoffBanner}}" class="handoff-banner">
     <view class="handoff-banner-close" bindtap="onCloseHandoffBanner">×</view>
-    <view class="handoff-banner-title">建议咨询专业医生</view>
-    <view class="handoff-banner-desc">
-      {{handoffReason === 'high_risk' ? '你提到的情况可能需要专业医生当面判断' : (handoffReason === 'unresolved_streak' ? 'AI好像没能连续解决你的问题' : '已收到你的反馈') }}，为了不耽误你，建议直接寻求专业咨询。
-    </view>
-    <view class="handoff-banner-btn" bindtap="onGoHandoff">人工咨询入口</view>
+    <view class="handoff-banner-title">{{handoffReason === 'feedback_medical' ? '建议咨询专业医生' : '换个问法试试'}}</view>
+    <view class="handoff-banner-desc">{{handoffReason === 'feedback_medical' ? '已记录你对内容准确性的反馈。涉及健康或用药决定时，请向医生或药师核实，不要仅依赖Demo回答。' : '已收到反馈。可以补充具体问题、发生时间或已有记录，我再帮你梳理。'}}</view>
+    <view class="handoff-banner-btn" bindtap="onHandoffBannerAction">{{handoffReason === 'feedback_medical' ? '查看就医指引' : '继续提问'}}</view>
   </view>
 
 
@@ -257,7 +257,7 @@
 <view class="service-chip service-chip-art" role="button" aria-label="用药建议" bindtap="onMedicationAdvice"><image src="/images/campaign/shortcut-medication.png" mode="aspectFit"/></view>
 </view>
 </scroll-view>
-<chat-input value="{{inputValue}}" bindinput="onInputChange" bindconfirm="onSend" bindunavailable="onInputUnavailable" bindplus="onPlusClick" bindvoicesend="onVoiceSend"/>
+<chat-input focused="{{inputFocused}}" bindblur="onInputBlur" value="{{inputValue}}" bindinput="onInputChange" bindconfirm="onSend" bindunavailable="onInputUnavailable" bindplus="onPlusClick" bindvoicesend="onVoiceSend"/>
 </view>
 <image-picker show="{{showImagePicker}}" bindselect="onImagePickerSelect" bindcancel="onImagePickerCancel"/>
 <image-preview-card show="{{!!pendingImage}}" image-url="{{pendingImage}}" caption="{{pendingCaption}}" bindcaptioninput="onPendingCaptionInput" bindcancel="onImagePreviewCancel" bindsend="onImagePreviewSend"/>
@@ -276,7 +276,7 @@
 </view>
 <view class="feedback-caption">补充描述：</view>
 <textarea class="feedback-textarea" placeholder="（选填）请描述具体问题，有助于我们更好的服务（200字以内）" maxlength="200" value="{{feedbackText}}" bindinput="onFeedbackInput"/>
-<button class="pink-button" bindtap="submitFeedback">反馈</button>
+<button class="pink-button" bindtap="submitFeedback">提交反馈</button>
 </view>
 </view>
 <view wx:if="{{showDimensions}}" class="dimensions-page">

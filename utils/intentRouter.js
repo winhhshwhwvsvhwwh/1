@@ -48,9 +48,10 @@ const TYPE_TO_SKILL = {
  * 1. E 人工咨询——用户明确表达要找人工/医生，或反馈AI没解决问题，这是最强信号，优先级最高
  * 2. D 医疗风险——命中风险问题库（不区分medium/high，只要沾边医疗风险就先交给专业的风险处理模块，
  *    而不是让它被情绪/知识类回答稀释掉，安全类问题优先于其他类型）
- * 3. C 情绪焦虑
- * 4. B 周期分析
- * 5. A 备孕知识咨询（默认兜底）
+ * 3. 已命中的固定知识问句/备孕计划 → A，避免被情绪或周期词抢走
+ * 4. C 情绪焦虑
+ * 5. B 周期分析
+ * 6. A 备孕知识咨询（默认兜底）
  *
  * @param {string} content 用户输入
  * @param {object} context { hasRecord: boolean } 是否已有周期记录数据
@@ -72,6 +73,8 @@ function analyzeIntent(content, context) {
     handoffReason = 'unresolved';
   } else if (riskItems.length > 0) {
     type = 'D';
+  } else if (/备孕计划|生活计划|用药|药/.test(content) || matchedFAQ.some(faq => faq.suggestions)) {
+    type = 'A';
   } else if (EMOTION_KEYWORDS.some((kw) => content.includes(kw))) {
     type = 'C';
   } else if (CYCLE_DATA_KEYWORDS.some((kw) => content.includes(kw))) {

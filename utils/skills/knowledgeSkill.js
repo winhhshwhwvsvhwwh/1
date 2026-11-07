@@ -74,6 +74,10 @@ function buildSuggestions(content, chunks) {
  */
 function handle(content, intent, latestRecord) {
   const { chunks, hasMatch } = ragRetriever.retrieve(content, 'A');
+  const faq = intent.matchedFAQ && intent.matchedFAQ[0];
+  if (faq && faq.suggestions) {
+    return { skillId: 'knowledge', understanding: '我来说明这个问题的通用注意事项。', analysisLines: [faq.answer], suggestions: faq.suggestions, refIds: faq.refIds || [], usedKnowledge: true, usedUserData: false };
+  }
   const durationText = extractDurationText(content);
   const understanding = buildUnderstanding(durationText);
 

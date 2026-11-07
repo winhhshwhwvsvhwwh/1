@@ -37,4 +37,6 @@
     <view class="ai-card-action-btn" data-action="continue" bindtap="onActionTap">继续咨询</view>
   </view>
 
+  <view wx:if="{{riskNotice && riskNotice !== analysis && riskNotice !== '以上为备孕科普参考，不替代医生诊断。'}}" class="ai-card-disclaimer">{{riskNotice}}</view>
+  <view class="ai-card-disclaimer">以上为备孕科普参考，不替代医生诊断。</view>
 </view>

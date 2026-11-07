@@ -14,6 +14,8 @@
   <!-- 中间：输入框 -->
   <input
     class="chat-input-box"
+    focus="{{focused}}"
+    bindblur="onBlur"
     placeholder="有什么健康问题尽管问我~"
     value="{{value}}"
     bindinput="onInput"

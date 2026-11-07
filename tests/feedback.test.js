@@ -11,7 +11,8 @@ p.toggleFeedbackTag(event({index:0}));p.toggleFeedbackTag(event({index:1}));p.on
 p.chooseSentiment(event({positive:true}));assert.equal(p.data.feedbackTags.length,8);assert.equal(p.data.feedbackTags[0].label,'已解决');assert(p.data.feedbackTags.every(t=>!t.selected));
 p.toggleFeedbackTag(event({index:2}));p.chooseSentiment(event({positive:false}));assert(p.data.feedbackTags[0].selected&&p.data.feedbackTags[1].selected);assert.equal(p.data.feedbackText,'这条回答没有考虑我的记录');
 p.submitFeedback();assert.equal(stored.length,1);assert.equal(stored[0].positive,false);assert.deepEqual(Array.from(stored[0].tags),['答非所问','内容有误']);assert.equal(dissatisfiedId,7);assert.equal(p.data.showFeedback,false);
-p.openFeedback(event({}));assert.equal(p.data.feedbackPositive,true);assert(p.data.feedbackTags.every(t=>!t.selected));assert.equal(p.data.feedbackText,'');
+p.openFeedback(event({positive:true}));assert.equal(p.data.feedbackPositive,true);assert(p.data.feedbackTags.every(t=>!t.selected));assert.equal(p.data.feedbackText,'');
 p.toggleFeedbackTag(event({index:4}));p.submitFeedback();assert.deepEqual(Array.from(stored[1].tags),['操作方便']);assert.equal(stored[1].positive,true);
 p.openFeedback(event({positive:'false'}));assert.equal(p.data.feedbackPositive,false);assert(p.data.feedbackTags.every(t=>!t.selected));failStorage=true;p.submitFeedback();assert.equal(p.data.showFeedback,true);
+p.openFeedback(event({}));assert.equal(p.data.feedbackPositive,false);
 console.log('PASS positive/negative entry, independent tag drafts, text preservation, correct sentiment storage, reopen reset and storage failure');
