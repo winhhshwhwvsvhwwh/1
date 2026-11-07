@@ -286,9 +286,11 @@
 <view wx:if="{{showDimensions}}" class="dimensions-page">
 <view class="dimensions-back" bindtap="closeReportDimensions">
 <image src="/images/ui/back.svg"/>返回报告</view>
+<view class="dimensions-hero">
 <image class="dimensions-ip" src="/images/campaign/xiaonuan-celebration-scene.png" mode="aspectFit"/>
 <view class="dimensions-status">{{scoreLabel}}</view>
 <view class="muted">备孕状态自评维度 · Demo规则</view>
+</view>
 <view class="dimensions-card">
 <view class="dimensions-title">备孕状态分析</view>
 <canvas type="2d" id="radar-canvas" class="radar-canvas">
