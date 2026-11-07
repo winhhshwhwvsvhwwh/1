@@ -811,7 +811,7 @@ page {
   font-size:52rpx;
   color:#ff0080;
   font-weight:600;
-  margin:22rpx 0 6rpx}
+  margin:8rpx 0 6rpx}
 .dimensions-card {
   background:white;
   margin-top:30rpx;
@@ -1135,9 +1135,9 @@ page {
 }
 .dimensions-ip {
   display:block;
-  width:420rpx;
-  height:364rpx;
-  margin:8rpx auto 0;
+  width:400rpx;
+  height:354rpx;
+  margin:0 auto;
   border:0;
   border-radius:0;
   background:transparent;
@@ -1162,7 +1162,7 @@ page {
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:12rpx;
+  gap:8rpx;
 }
 .dimensions-title-label {
   flex:0 0 auto;
@@ -1170,28 +1170,28 @@ page {
 }
 .dimensions-title-accent {
   position:relative;
-  flex:0 0 52rpx;
-  width:52rpx;
-  height:48rpx;
+  flex:0 0 34rpx;
+  width:34rpx;
+  height:34rpx;
 }
 .dimensions-title-accent-right {
   transform:scaleX(-1);
 }
 .title-accent-short,.title-accent-long {
   position:absolute;
-  height:12rpx;
-  border-radius:12rpx;
-  background:linear-gradient(90deg,#ffc8dc,#ff9dc1);
+  height:7rpx;
+  border-radius:7rpx;
+  background:linear-gradient(90deg,rgba(255,200,220,.3),#ffa7ca);
 }
 .title-accent-short {
-  width:26rpx;
-  left:25rpx;
-  top:8rpx;
+  width:18rpx;
+  left:17rpx;
+  top:5rpx;
   transform:rotate(45deg);
 }
 .title-accent-long {
-  width:42rpx;
+  width:26rpx;
   left:0;
-  top:30rpx;
+  top:22rpx;
   transform:rotate(22deg);
 }
