@@ -26,9 +26,7 @@ Page({
 
     // 历史记录列表
     records: [],
-    loading: false,
-    interpretationRecord: null,
-    savedForInterpretation: false
+    loading: false
   },
 
   onHeaderBack() { this.returnToChat(); },
@@ -63,33 +61,11 @@ Page({
   loadRecords() {
     recordStore
       .getRecords()
-      .then((records) => {
-        const selected = this.data.interpretationRecord;
-        this.setData({ records, interpretationRecord: records.find(r => selected && r.id === selected.id) || records[0] || null });
-      })
+      .then((records) => this.setData({ records }))
       .catch((err) => {
         console.error('loadRecords error', err);
         wx.showToast({ title: '记录加载失败', icon: 'none' });
       });
-  },
-
-  onViewCycleInterpretation() {
-    const record = this.data.interpretationRecord;
-    if (!record) {
-      wx.showToast({ title: '请先填写并保存下方周期记录', icon: 'none' });
-      return;
-    }
-    const pages = getCurrentPages();
-    const previous = pages[pages.length - 2];
-    if (previous && previous.route === 'pages/chat/chat') {
-      if (previous.data.loading) {
-        wx.showToast({ title: '请等待当前回复完成后再解读', icon: 'none' });
-        return;
-      }
-      wx.navigateBack({ success: () => previous.sendCycleInterpretation(record.id) });
-    } else {
-      wx.redirectTo({ url: '/pages/chat/chat?cycleRecordId=' + encodeURIComponent(record.id) });
-    }
   },
 
   /* ============ 第一部分：月经记录 ============ */
@@ -164,7 +140,7 @@ Page({
         periodLength,
         symptoms
       })
-      .then((record) => {
+      .then(() => {
         wx.showToast({ title: '保存成功', icon: 'success' });
         this.setData({
           startDate: '',
@@ -172,9 +148,7 @@ Page({
           cycleLength: '',
           periodLength: '',
           symptoms: [],
-          loading: false,
-          interpretationRecord: record,
-          savedForInterpretation: true
+          loading: false
         });
         this.loadRecords();
       })
@@ -197,10 +171,7 @@ Page({
         if (!res.confirm) return;
         recordStore
           .deleteRecord(id)
-          .then((records) => {
-            const selected = this.data.interpretationRecord;
-            this.setData({ records, interpretationRecord: records.find(r => selected && r.id === selected.id) || records[0] || null, savedForInterpretation: false });
-          })
+          .then((records) => this.setData({ records }))
           .catch((err) => {
             console.error('deleteRecord error', err);
             wx.showToast({ title: '删除失败，请稍后重试', icon: 'none' });

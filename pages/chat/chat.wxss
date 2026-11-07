@@ -1195,22 +1195,3 @@ page {
   top:22rpx;
   transform:rotate(22deg);
 }
-
-/* Keep supplied artwork as icon-only sprites; labels are native text. */
-.home-ask-action { position:relative; margin:24rpx 0 16rpx; padding:24rpx; border-radius:24rpx; background:#fff; color:#5c1730; font-size:30rpx; font-weight:600; }
-.home-ask-action text { display:block; margin-top:8rpx; color:#967681; font-size:23rpx; font-weight:400; }
-.home-feature-list { display:flex; gap:16rpx; }
-.home-feature { flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; background:#fcf4f8; border-radius:22rpx; padding:8rpx 6rpx 18rpx; box-sizing:border-box; }
-.home-feature text { color:#6c1836; font-size:24rpx; line-height:1.4; font-weight:600; text-align:center; }
-.home-feature-icon { position:relative; width:112rpx; height:108rpx; overflow:hidden; flex-shrink:0; }
-.home-feature-sprite { position:absolute; width:638rpx; height:198.67rpx; top:-26rpx; max-width:none; }
-.home-feature-plan { left:-48rpx; }
-.home-feature-cycle { left:-264rpx; }
-.home-feature-knowledge { left:-486rpx; }
-.feature-grid { margin-top:0; }
-.service-chip.service-consult { display:flex; flex-direction:row; align-items:center; justify-content:center; gap:6rpx; padding:0 4rpx; color:#333; background:#fff; border-radius:50rpx; font-size:20rpx; white-space:nowrap; }
-.service-consult-icon { position:relative; width:32rpx; height:32rpx; overflow:hidden; flex-shrink:0; }
-.service-consult-icon image { position:absolute; width:216rpx; height:64rpx; left:-28rpx; top:-16rpx; max-width:none; }
-.service-example-label { display:block; font-size:18rpx; color:#a57487; line-height:1.1; text-align:center; }
-
-.home-feature .home-feature-plan-label { width:4em; }

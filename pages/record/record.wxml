@@ -3,13 +3,6 @@
 <xiaonuan-header bindback="onHeaderBack" bindnew="onHeaderNew" bindhistory="onHeaderHistory"/>
 <view class="container">
 
-  <view class="card cycle-next-step">
-    <view class="title">{{interpretationRecord ? (savedForInterpretation ? '记录已保存，下一步看解读' : '查看已记录的周期') : '先记录，再查看周期解读'}}</view>
-    <view wx:if="{{interpretationRecord}}" class="subtitle mt-16">将使用 {{interpretationRecord.startDate}} 开始的记录，周期 {{interpretationRecord.cycleLength}} 天、经期 {{interpretationRecord.periodLength}} 天。</view>
-    <view wx:else class="subtitle mt-16">请填写最近一次经期的开始日期、结束日期、平均周期长度和经期长度；身体状态可选。保存后即可查看解读。</view>
-    <view wx:if="{{interpretationRecord}}" class="btn-primary mt-16" role="button" bindtap="onViewCycleInterpretation">查看周期解读</view>
-  </view>
-
   <!-- 记录表单 -->
   <view class="card">
     <view class="title">我的周期记录</view>
@@ -80,8 +73,7 @@
     </view>
 
     <!-- 第四部分：保存数据 -->
-    <view class="btn-primary mt-32" bindtap="onSave">{{loading ? '保存中…' : '保存记录'}}</view>
-    <view wx:if="{{interpretationRecord}}" class="cycle-interpret-link mt-16" role="button" bindtap="onViewCycleInterpretation">查看周期解读 ›</view>
+    <view class="btn-primary mt-32" bindtap="onSave">保存记录</view>
   </view>
 
   <!-- 历史记录 -->

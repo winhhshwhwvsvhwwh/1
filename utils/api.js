@@ -36,10 +36,10 @@ function callCloudFunction(name, data) {
 /**
  * 模拟AI回复生成函数（USE_CLOUD=false 时使用）
  */
-function sendChatMessageMock(content, options) {
+function sendChatMessageMock(content) {
   return new Promise((resolve) => {
     setTimeout(() => {
-      skillDispatcher.dispatch(content, options).then(resolve);
+      skillDispatcher.dispatch(content).then(resolve);
     }, 600);
   });
 }
@@ -77,11 +77,11 @@ function sendImageMessage(caption) {
   });
 }
 
-function sendChatMessage(content, options) {
+function sendChatMessage(content) {
   if (USE_CLOUD) {
     return callCloudFunction(CLOUD_FUNCTION.AI_CHAT, { content });
   }
-  return sendChatMessageMock(content, options);
+  return sendChatMessageMock(content);
 }
 
 function getChatHistory() {

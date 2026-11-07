@@ -243,7 +243,7 @@ Page({
     const suggestions = (this.data.assessmentReport.suggestions || []).slice();
     const analysis = this.data.reportAnalysis.map(item => item.title + '：' + item.content).join('\n');
     const notice = 'Demo 规则模板，仅供参考。';
-    const userMessage = { id: nextId(), role: 'user', content: '根据本次自评整理计划', timestamp: Date.now() };
+    const userMessage = { id: nextId(), role: 'user', content: '生成备孕生活计划', timestamp: Date.now() };
     const reply = {
       id: nextId(), role: 'assistant', type: 'plan',
       understanding: '备孕生活计划：以下根据本次自评已有的建议与分析整理，不重新判断健康状态。',
@@ -284,11 +284,7 @@ Page({
     } catch (err) { wx.showToast({ title: '保存失败，请重试', icon: 'none' }); }
   },
 
-  onLoad(options = {}) {
-    if (options.cycleRecordId) {
-      this.sendCycleInterpretation(decodeURIComponent(options.cycleRecordId));
-      return;
-    }
+  onLoad() {
     this.loadHistory();
   },
 
@@ -322,22 +318,11 @@ Page({
     });
   },
 
-  // 首页主操作复用现有输入框。
-  onAskPregnancyQuestion() {
-    this.setData({ pageMode: 'chat', assessmentMode: '' });
-    this.focusChatInput();
-  },
-
-  sendCycleInterpretation(recordId) {
-    if (this.data.loading) {
-      wx.showToast({ title: '请等待当前回复完成后再解读', icon: 'none' });
-      return false;
-    }
-    this.sendMessage('我现在处于周期哪个阶段？', { recordId });
-    return true;
-  },
-
-  // 周期记录仍是现有聊天页下的二级页面。
+  /**
+   * 打开「周期记录」页。
+   * 应用只有AI咨询一个入口、没有tab栏，周期记录是从聊天里进入的二级页面，
+   * 直接 navigateTo 即可（自带返回按钮，返回后聊天记录还在）。
+   */
   openRecordPage() {
     wx.navigateTo({ url: '/pages/record/record' });
   },
@@ -417,9 +402,9 @@ Page({
 
   /**
    * 统一的发送逻辑：手动输入发送 / 欢迎卡片 / 快捷问题，都走这一个方法，
-   * 复用 api.sendChatMessage；周期解读可额外指定本次选择的记录 ID。
+   * 调用的还是原来的 api.sendChatMessage，接口和数据处理没有变化。
    */
-  sendMessage(content, options) {
+  sendMessage(content) {
     this.setData({ pageMode: 'chat', assessmentMode: '' }, () => this.refreshScrollShortcut());
     const userMsg = {
       id: nextId(),
@@ -434,7 +419,7 @@ Page({
     });
     this.scrollToBottom();
 
-    api.sendChatMessage(content, options).then((res) => {
+    api.sendChatMessage(content).then((res) => {
       if (res.code === 0) {
         const assistantMsg = {
           id: nextId(),
