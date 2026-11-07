@@ -1,6 +1,6 @@
 .xn-header {
   flex-shrink:0;
-  background:linear-gradient(115deg,#ffdfed,#efdafa);
+  background:transparent;
 }
 .xn-header-row {
   display:flex;

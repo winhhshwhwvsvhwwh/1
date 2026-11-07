@@ -111,6 +111,9 @@ page {
 .record-page {
   min-height:100vh;
   background:linear-gradient(180deg,transparent 0,#f5f5f5 650rpx),linear-gradient(115deg,#ffdfed,#efdafa);
+  background-size:100% 650rpx;
+  background-repeat:no-repeat;
+  background-color:#f5f5f5;
 }
 .card {
   box-shadow:0 4rpx 20rpx rgba(255,64,137,.08);

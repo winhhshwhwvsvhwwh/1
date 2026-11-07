@@ -7,6 +7,9 @@ page {
   display:flex;
   flex-direction:column;
   background:linear-gradient(180deg,transparent 0,#f5f5f5 650rpx),linear-gradient(115deg,#ffdfed,#efdafa);
+  background-size:100% 650rpx;
+  background-repeat:no-repeat;
+  background-color:#f5f5f5;
   color:#5c1730;
   overflow:hidden;
   box-sizing:border-box}
@@ -796,7 +799,10 @@ page {
   z-index:110;
   overflow-y:auto;
   text-align:center;
-  background:linear-gradient(180deg,rgba(245,245,245,0) 0,rgba(245,245,245,.35) 560rpx,#f5f5f5 1080rpx),linear-gradient(105deg,#fbe0ed,#efd9fc);
+  background:linear-gradient(180deg,transparent 0,#f5f5f5 650rpx),linear-gradient(115deg,#ffdfed,#efdafa);
+  background-size:100% 650rpx;
+  background-repeat:no-repeat;
+  background-color:#f5f5f5;
   padding:0 32rpx calc(28rpx + env(safe-area-inset-bottom));
   box-sizing:border-box}
 .dimensions-navigation { margin:0 -32rpx; text-align:left; }
