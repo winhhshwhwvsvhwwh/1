@@ -43,15 +43,11 @@
 <view class="service-history" bindtap="onHistoryClick">服务记录</view>
 </view>
 <view class="consult-body">
-<view wx:if="{{consultTab === 'stage'}}" class="consult-tabs consult-tabs-composite">
-<image class="consult-tabs-art" src="/images/campaign/consult-tabs-stage.png" mode="aspectFit"/>
-<view class="consult-tabs-hotspots"><view role="button" aria-label="按阶段找" data-tab="stage" bindtap="changeConsultTab"></view><view role="button" aria-label="按需求找" data-tab="need" bindtap="changeConsultTab"></view></view>
-</view>
-<view wx:else class="consult-tabs">
-<view class="{{consultTab === 'stage' ? 'tab-active' : ''}}" data-tab="stage" bindtap="changeConsultTab">
-<view class="consult-tab-icon"><image class="consult-tab-sprite consult-tab-stage-sprite" src="/images/campaign/consult-tabs-stage.png"/></view>按阶段找</view>
-<view class="{{consultTab === 'need' ? 'tab-active' : ''}}" data-tab="need" bindtap="changeConsultTab">
-<view class="consult-tab-icon"><image class="consult-tab-sprite consult-tab-need-sprite" src="/images/campaign/consult-tabs-stage.png"/></view>按需求找</view>
+<view class="consult-tabs">
+<view class="consult-tab {{consultTab === 'stage' ? 'tab-active' : ''}}" role="button" aria-label="按阶段找" data-tab="stage" bindtap="changeConsultTab">
+<view class="consult-tab-icon"><image class="consult-tab-sprite consult-tab-stage-sprite" src="/images/campaign/consult-tabs-stage.png"/></view><text class="consult-tab-label">按阶段找</text></view>
+<view class="consult-tab {{consultTab === 'need' ? 'tab-active' : ''}}" role="button" aria-label="按需求找" data-tab="need" bindtap="changeConsultTab">
+<view class="consult-tab-icon"><image class="consult-tab-sprite consult-tab-need-sprite" src="/images/campaign/consult-tabs-stage.png"/></view><text class="consult-tab-label">按需求找</text></view>
 </view>
 <view class="stage-list">
 <view wx:for="{{consultTab === 'stage' ? stageQuestions : needQuestions}}" wx:key="*this" data-question="{{item}}" bindtap="onWelcomeCardTap">{{item}}</view>
