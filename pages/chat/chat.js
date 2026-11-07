@@ -3,6 +3,7 @@ const api = require('../../utils/api.js');
 const recordStore = require('../../utils/recordStore.js');
 const imageAnalysis = require('../../utils/imageAnalysis.js');
 const { buildAssessmentReport } = require('../../utils/assessmentReport.js');
+const { tooltipPosition } = require('../../utils/radarTooltip.js');
 
 const ASSESSMENT_QUESTIONS = [{"title": "你的年龄是？", "options": ["A.20–24岁(较年轻阶段)", "B.25–29岁(适合建立规律备孕习惯)", "C.30–34岁(建议更关注周期和排卵)", "D.其他以上(建议结合专业指导备孕)"]}, {"title": "目前备孕多久了？", "options": ["A.<3个月(处于初期尝试阶段)", "B.3–6个月(已建立初期尝试阶段)", "C.6–12个月(建议更关注周期和排卵)", "D.>12个月(可考虑寻求专业评估)"]}, {"title": "你的月经周期通常规律吗？", "options": ["A.很规律(每月时间基本稳定)", "B.偶尔波动(偶尔提前或推迟几天)", "C.经常不规律(周期变化比较明显)", "D.不确定(暂时没有持续记录)"]}, {"title": "每次经期通常持续多久？", "options": ["A.1–2天(经期持续时间较短)", "B.3–7天(常见持续时间)", "C.>7天(持续时间相对较长)", "D.不确定(建议记录开始和结束日期)"]}, {"title": "最近生活状态怎么样？", "options": ["A.规律健康(作息和状态比较稳定)", "B.偶尔熬夜或压力大(整体状态尚可)", "C.经常熬夜或焦虑(生活节奏需调整)", "D.状态较差(建议优先改善休息与管理)"]}, {"title": "是否有想关注的生理问题？", "options": ["A.没有问题(目前没有明显异常)", "B.异常出血(出现非经期出血等情况)", "C.明显或持续疼痛(出现异常的疼痛)", "D.其他不适(还有其他身体状况)"]}];
 const FEEDBACK_LABELS = {
@@ -26,6 +27,7 @@ Page({
     // { id, role, content, understanding, analysis, suggestions, timestamp, needHandoff, riskLevel, dissatisfied }
     pageMode: 'home', showDimensions: false, reportScore: null, scoreLabel: '信息待补充', pointerAngle: null, reportAnalysis: [],
     assessmentIntro: '为了更全面地了解您的备孕状态，可以参与这套AI备孕评估。我们将结合您的周期情况、备孕阶段及生活习惯，为您生成个性化备孕报告…',
+    radarNodes: [], radarTooltip: null,
     optionItems: [], selectedOptions: [], hasSelection: false,
     consultTab: 'stage', stageQuestions: ['初次备孕','备孕1–3月','备孕3–6月','备孕半年+','周期不规律','更多'], needQuestions: ['排卵监测','营养补充','孕前检查','生活习惯','情绪压力','周期记录'],
     welcomeQuestions: ['备孕多久正常？', '如何提高受孕几率？', '备孕期间需要补充什么营养？'],
@@ -92,7 +94,7 @@ Page({
   },
   onScrollTouchStart() { this._scrollingToEnd = false; },
   onReady() { this.refreshScrollShortcut(); },
-  onResize() { this.refreshScrollShortcut(); },
+  onResize() { if (this.data.showDimensions) this.drawRadar(); else this.refreshScrollShortcut(); },
   changeConsultTab(e) { this.setData({ consultTab: e.currentTarget.dataset.tab }); },
   onPageBack() {
     if (this.data.assessmentSubmitting) return;
@@ -186,9 +188,18 @@ Page({
     finally { this.setData({ assessmentSubmitting: false }); }
   },
   openReportDimensions() {
-    this.setData({ showDimensions: true, showScrollShortcut: false }, () => wx.nextTick(() => this.drawRadar()));
+    if (!this.data.assessmentReport) return;
+    this.setData({ showDimensions: true, showScrollShortcut: false, radarTooltip: null, radarNodes: [] }, () => wx.nextTick(() => this.drawRadar()));
   },
-  closeReportDimensions() { this.setData({ showDimensions: false }, () => this.refreshScrollShortcut()); },
+  closeReportDimensions() { this.setData({ showDimensions: false, radarTooltip: null }, () => this.refreshScrollShortcut()); },
+  onRadarNodeTap(e) { this.selectRadarNode(Number(e.currentTarget.dataset.index)); },
+  selectRadarNode(index) {
+    const node = this.data.radarNodes[index];
+    const indicator = this.data.assessmentReport && this.data.assessmentReport.indicators[index];
+    if (!node || !indicator || !this._radarSize) return;
+    this.setData({ radarTooltip: { ...tooltipPosition(node, this._radarSize.width, this._radarSize.height, indicator.tooltip), text: indicator.tooltip, name: indicator.name, tone: indicator.tone, index } });
+  },
+  closeRadarTooltip() { this.setData({ radarTooltip: null }); },
   drawRadar() {
     const query = wx.createSelectorQuery().in(this);
     query.select('#radar-canvas').fields({ node: true, size: true }).exec(res => {
@@ -201,6 +212,10 @@ Page({
       const indicators = this.data.assessmentReport.indicators;
       const count = indicators.length;
       const point = (i, amount) => { const angle = -Math.PI/2 + i*2*Math.PI/count; return [cx + Math.cos(angle)*radius*amount, cy + Math.sin(angle)*radius*amount]; };
+      this._radarSize = { width, height };
+      const radarNodes = indicators.map((item,i) => { const p = point(i,item.score === null ? 1 : item.score/100); return { x:p[0],y:p[1],name:item.name }; });
+      const selectedIndex = this.data.radarTooltip ? this.data.radarTooltip.index : 0;
+      this.setData({ radarNodes }, () => this.selectRadarNode(selectedIndex));
       const polygon = values => { ctx.beginPath(); values.forEach((v,i) => { const p = point(i,v); if(i) ctx.lineTo(...p); else ctx.moveTo(...p); }); ctx.closePath(); };
       ctx.lineWidth = 1; ctx.strokeStyle = '#d6cdd2';
       for(let level=1;level<=5;level++){polygon(Array(count).fill(level/5));ctx.stroke();}
@@ -210,7 +225,7 @@ Page({
         polygon(indicators.map(item => item.score/100));ctx.fillStyle='rgba(255,64,137,.12)';ctx.fill();ctx.strokeStyle='#ff4089';ctx.stroke();
       }
       indicators.forEach((item,i)=>{
-        if(item.score === null) return;
+        if(item.score === null) { const p=point(i,1);ctx.beginPath();ctx.arc(...p,3,0,Math.PI*2);ctx.strokeStyle='#aaa';ctx.stroke();return; }
         ctx.beginPath();ctx.arc(...point(i,item.score/100),3,0,Math.PI*2);ctx.fillStyle='#ff4089';ctx.fill();
       });
       ctx.fillStyle='#999';ctx.font='11px sans-serif';ctx.textAlign='center';

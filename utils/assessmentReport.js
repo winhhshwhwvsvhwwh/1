@@ -1,4 +1,5 @@
 // Demo self-assessment rules approved by the user; not a validated medical scale.
+const { indicatorFeedback } = require('./radarTooltip');
 const SCORE_TABLE = [[25, 18, 10, null], [10, 25, 10, null], [25, 18, 10, 5], [25, 10, 5, 10]];
 const DIMENSIONS = ['周期规律', '经期时长', '生活状态', '生理关注'];
 const BANDS = [
@@ -23,7 +24,8 @@ function scoreToPointerAngle(score) {
 function buildAssessmentReport(answers) {
   const selected = Array.from({ length: 6 }, (_, i) => selection(answers, i));
   const points = [SCORE_TABLE[0][selected[2][0]], SCORE_TABLE[1][selected[3][0]], SCORE_TABLE[2][selected[4][0]], Math.min(...selected[5].map(i => SCORE_TABLE[3][i]))];
-  const indicators = points.map((point, i) => ({ name: DIMENSIONS[i], points: point, score: point === null ? null : point * 4 }));
+  const feedback = indicatorFeedback(selected);
+  const indicators = points.map((point, i) => ({ name: DIMENSIONS[i], points: point, score: point === null ? null : point * 4, ...feedback[i] }));
   const score = points.includes(null) ? null : points.reduce((sum, p) => sum + p, 0);
   const band = score === null ? { label: '信息待补充', summary: '周期或经期时长选择了“不确定”，目前信息不足，暂无法计算总分。已填写的项目仍可提供参考。', advice: ['先记录月经开始和结束日期及身体变化，信息明确后可重新自评；不确定不等于状态差。'] } : BANDS.find(b => score >= b.min);
   const priority = [];

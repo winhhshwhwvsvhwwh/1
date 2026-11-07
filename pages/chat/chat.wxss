@@ -1099,3 +1099,17 @@ page {
   background:transparent;
   box-shadow:none;
 }
+
+.radar-stage { position:relative; }
+.radar-node-hit { position:absolute;width:36px;height:36px;transform:translate(-50%,-50%);border-radius:50%;z-index:2; }
+.radar-tooltip { position:absolute;z-index:3;box-sizing:border-box;padding:5px 8px;border-radius:8px;text-align:center;font-size:12px;line-height:18px;white-space:normal;overflow-wrap:break-word; }
+.radar-tooltip-stable { background:#ffe9f2;color:#ff257f; }
+.radar-tooltip-general { background:#fff1db;color:#a96517; }
+.radar-tooltip-attention { background:#ffe8e2;color:#af453d; }
+.radar-tooltip-unknown { background:#f0f0f2;color:#73737c; }
+.radar-tooltip-tip { position:absolute;top:100%;transform:translateX(-50%);border:6px solid transparent;border-bottom:0; }
+.radar-tooltip-stable .radar-tooltip-tip { border-top-color:#ffe9f2; }
+.radar-tooltip-general .radar-tooltip-tip { border-top-color:#fff1db; }
+.radar-tooltip-attention .radar-tooltip-tip { border-top-color:#ffe8e2; }
+.radar-tooltip-unknown .radar-tooltip-tip { border-top-color:#f0f0f2; }
+.radar-tooltip-below .radar-tooltip-tip { top:auto;bottom:100%;transform:translateX(-50%) rotate(180deg); }

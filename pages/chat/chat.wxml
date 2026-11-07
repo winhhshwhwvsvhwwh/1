@@ -293,8 +293,11 @@
 </view>
 <view class="dimensions-card">
 <view class="dimensions-title">备孕状态分析</view>
-<canvas type="2d" id="radar-canvas" class="radar-canvas">
-</canvas>
+<view class="radar-stage" bindtap="closeRadarTooltip">
+<canvas type="2d" id="radar-canvas" class="radar-canvas"></canvas>
+<view wx:for="{{radarNodes}}" wx:key="name" class="radar-node-hit" style="left:{{item.x}}px;top:{{item.y}}px" role="button" aria-label="查看{{item.name}}状态" data-index="{{index}}" catchtap="onRadarNodeTap"></view>
+<view wx:if="{{radarTooltip}}" class="radar-tooltip radar-tooltip-{{radarTooltip.tone}} {{radarTooltip.below ? 'radar-tooltip-below' : ''}}" style="left:{{radarTooltip.left}}px;top:{{radarTooltip.top}}px;width:{{radarTooltip.width}}px" catchtap="stopTap" aria-label="{{radarTooltip.name}}：{{radarTooltip.text}}"><text>{{radarTooltip.text}}</text><view class="radar-tooltip-tip" style="left:{{radarTooltip.pointerLeft}}px"></view></view>
+</view>
 <view class="dimension-summary">
 <view>{{reportScore === null ? '信息不足，暂无法计算总分' : '本次自评 ' + reportScore + ' 分'}}</view>
 <view wx:if="{{reportScore !== null}}" class="dimension-progress">
