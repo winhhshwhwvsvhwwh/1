@@ -118,7 +118,8 @@ function dispatch(content) {
   // 是 → 直接用它的回复，不再跑后面的知识检索/周期分析等专业逻辑。
   // 不是（need_routing:true）→ 完全不影响，原有A-E路由逻辑照常执行。
   const basicResult = basicConsultationSkill.handle(content);
-  if (!basicResult.need_routing) {
+  const specificQuestion = knowledgeBase.matchFAQ(content).some(item => item.category) || knowledgeBase.matchRisk(content).length > 0;
+  if (!basicResult.need_routing && !specificQuestion) {
     return Promise.resolve({
       code: 0,
       data: {
@@ -202,6 +203,7 @@ function dispatch(content) {
         needHandoff,
         // meta 字段记录本次识别到的类型和调用的模块，便于调试/演示分流是否准确
         meta: {
+          faqIds: skillResult.faqIds || [],
           type: intent.type,
           typeLabel: intent.typeLabel,
           skill: intent.primarySkill,

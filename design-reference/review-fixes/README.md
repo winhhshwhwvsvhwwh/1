@@ -6,9 +6,9 @@
 
 ## 1. 预设入口与计划回复
 
-- [utils/knowledgeBase.js:87](../../utils/knowledgeBase.js#L87)：补12条固定问答，附关键词和建议，来源标为Demo内部文案；已有医学条目不冒充新文献。
-- [utils/skills/knowledgeSkill.js:77](../../utils/skills/knowledgeSkill.js#L77)：命中固定FAQ后使用对应答案与建议。
-- [utils/intentRouter.js:76](../../utils/intentRouter.js#L76)：风险识别仍先于知识；计划/已命中FAQ先于情绪和周期分支。
+- [utils/knowledgeBase.js:89](../../utils/knowledgeBase.js#L89)：补12条固定问答，附关键词和建议，来源标为Demo内部文案；已有医学条目不冒充新文献。
+- [utils/skills/knowledgeSkill.js:78](../../utils/skills/knowledgeSkill.js#L78)：命中固定FAQ后使用对应答案与建议。
+- [utils/intentRouter.js:79](../../utils/intentRouter.js#L79)：风险识别仍先于知识；计划/已命中FAQ先于情绪和周期分支。
 - [pages/chat/chat.js:33](../../pages/chat/chat.js#L33) 与 [pages/chat/chat.wxml:53](../../pages/chat/chat.wxml#L53)：标签拆分label与question。
 - [pages/chat/chat.js:237](../../pages/chat/chat.js#L237)：只整理既有报告suggestions和reportAnalysis，直接写入一条生活计划回复，末尾注明Demo规则模板，不调用意图路由。
 
@@ -23,7 +23,7 @@
 
 - [pages/chat/chat.js:431](../../pages/chat/chat.js#L431)：保存文字回复riskNotice。
 - [components/AIMessageCard/AIMessageCard.js:12](../../components/AIMessageCard/AIMessageCard.js#L12)、[components/AIMessageCard/AIMessageCard.wxml:40](../../components/AIMessageCard/AIMessageCard.wxml#L40)、[components/AIMessageCard/AIMessageCard.wxss:105](../../components/AIMessageCard/AIMessageCard.wxss#L105)：免责声明置于折叠区外，适用于短回复、折叠回复和模板计划。
-- [utils/knowledgeBase.js:104](../../utils/knowledgeBase.js#L104)、[utils/knowledgeBase.js:166](../../utils/knowledgeBase.js#L166)、[utils/skills/riskSkill.js:18](../../utils/skills/riskSkill.js#L18)：按等级、同等级优先级只选一条指导，避免同时输出等待和立即就医。新增用药规则，已确认腹痛+出血high。
+- [utils/knowledgeBase.js:106](../../utils/knowledgeBase.js#L106)、[utils/knowledgeBase.js:174](../../utils/knowledgeBase.js#L174)、[utils/skills/riskSkill.js:18](../../utils/skills/riskSkill.js#L18)：按等级、同等级优先级只选一条指导，避免同时输出等待和立即就医。新增用药规则，已确认腹痛+出血high。
 - [components/RiskWarningCard/RiskWarningCard.wxss:5](../../components/RiskWarningCard/RiskWarningCard.wxss#L5)：风险卡宽度与AI卡统一。
 - [utils/skillDispatcher.js:77](../../utils/skillDispatcher.js#L77)：移除“能对接专业医生”的未实现承诺。
 
@@ -56,14 +56,14 @@
 | 备孕1–3月 | 备孕1–3个月需要关注什么？ | A | 命中，无兜底 |
 | 备孕3–6月 | 备孕3–6个月需要关注什么？ | A | 命中，无兜底 |
 | 备孕半年+ | 备孕半年以上需要关注什么？ | A | 命中，无兜底 |
-| 周期不规律 | 月经周期不规律时，备孕需要关注什么？ | B | 命中，无兜底 |
+| 周期不规律 | 月经周期不规律时，备孕需要关注什么？ | A | 命中，无兜底 |
 | 更多 | 备孕知识科普主要包括哪些内容？ | A | 命中，无兜底 |
 | 排卵监测 | 排卵监测时如何记录排卵相关变化？ | A | 命中，无兜底 |
 | 营养补充 | 备孕期间需要补充什么营养？ | A | 命中，无兜底 |
 | 孕前检查 | 备孕前需要做哪些孕前检查？ | A | 命中，无兜底 |
 | 生活习惯 | 备孕生活习惯需要注意什么？ | A | 命中，无兜底 |
 | 情绪压力 | 备孕时感到压力，如何调整情绪？ | C | 命中，无兜底 |
-| 周期记录 | 如何记录月经周期？ | B | 命中，无兜底 |
+| 周期记录 | 如何记录月经周期？ | A | 命中，无兜底 |
 | 推荐问题1 | 排卵日总是算不准怎么办？ | A | 命中，无兜底 |
 | 推荐问题2 | 我的试纸结果怎么看？ | A | 命中，无兜底 |
 
@@ -87,11 +87,15 @@
 你提到的这个情况我认真看了一下，确实需要留意一下~
 
 用药请遵医嘱，不要自行用药或停药，用药前咨询医生或药师。Demo不判断某种药是否适合你，不提供剂量、换药或停药方案。
+长期用药需要由原开药医生结合疾病状态和备孕计划评估，不能仅凭药名判断能否备孕。请遵医嘱，不要自行用药或停药，用药前咨询医生或药师；本地Demo不作安全性分级或替代方案推荐。
+请补充：药物用于什么情况，是否由医生开具？；目前是否已怀孕或有怀孕可能？
 
 给你几个具体建议：
-1. 用药前咨询医生或药师，并说明备孕计划。
-2. 整理正在使用的药物和补充剂清单，供专业人员核对。
-3. 遵医嘱，不要自行用药、换药或停药。
+1. 整理药名、使用原因、使用时间及医生原方案。
+2. 提前告诉原医生备孕计划，而不是自行停药。
+3. 如已经可能怀孕，及时联系医生说明情况。
+
+用药请遵医嘱，不要自行用药或停药，用药前咨询医生或药师。Demo不判断某种药是否适合你，不提供剂量、换药或停药方案。
 ```
 #### 我阴道大量出血，肚子剧痛 → high
 

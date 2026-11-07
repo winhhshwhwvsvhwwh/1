@@ -74,9 +74,22 @@ function buildSuggestions(content, chunks) {
  */
 function handle(content, intent, latestRecord) {
   const { chunks, hasMatch } = ragRetriever.retrieve(content, 'A');
-  const faq = intent.matchedFAQ && intent.matchedFAQ[0];
+  const matched = intent.matchedFAQ || [];
+  const faq = matched[0];
   if (faq && faq.suggestions) {
-    return { skillId: 'knowledge', understanding: '我来说明这个问题的通用注意事项。', analysisLines: [faq.answer], suggestions: faq.suggestions, refIds: faq.refIds || [], usedKnowledge: true, usedUserData: false };
+    const selected = [faq];
+    // A second explicit topic is included only when the question asks for both.
+    if (/还有|以及|同时|另外|和|也想/.test(content) && faq.category) {
+      const second = matched.find(item => item.category && item.category !== faq.category && item.keywords.some(kw => kw.length >= 4 && content.toLowerCase().includes(kw.toLowerCase())));
+      if (second) selected.push(second);
+    }
+    const followUps = [...new Set(selected.flatMap(item => item.followUpQuestions || []))].slice(0,3);
+    return {
+      skillId: 'knowledge', understanding: '我来说明这个问题的通用注意事项。',
+      analysisLines: [...selected.map(item => item.answer), ...(followUps.length ? ['为了更具体地说明，可以补充：' + followUps.join('；')] : [])],
+      suggestions: [...new Set(selected.flatMap(item => item.suggestions))].slice(0,6),
+      faqIds: selected.map(item => item.id).filter(Boolean), refIds: selected.flatMap(item => item.refIds || []), usedKnowledge: true, usedUserData: false
+    };
   }
   const durationText = extractDurationText(content);
   const understanding = buildUnderstanding(durationText);

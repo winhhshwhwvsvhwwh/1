@@ -45,6 +45,7 @@ const TYPE_TO_SKILL = {
  * 识别用户需求类型（第一步），返回 A/B/C/D/E 中的一个，并给出对应要调用的Skill id。
  *
  * 优先级说明：
+ * 0. 高风险症状优先，不被寒暄或找人工的表述遮盖
  * 1. E 人工咨询——用户明确表达要找人工/医生，或反馈AI没解决问题，这是最强信号，优先级最高
  * 2. D 医疗风险——命中风险问题库（不区分medium/high，只要沾边医疗风险就先交给专业的风险处理模块，
  *    而不是让它被情绪/知识类回答稀释掉，安全类问题优先于其他类型）
@@ -65,7 +66,9 @@ function analyzeIntent(content, context) {
   let type = 'A';
   let handoffReason = '';
 
-  if (EXPERT_REQUEST_KEYWORDS.some((kw) => content.includes(kw))) {
+  if (hasHighRisk) {
+    type = 'D';
+  } else if (EXPERT_REQUEST_KEYWORDS.some((kw) => content.includes(kw))) {
     type = 'E';
     handoffReason = 'user_request';
   } else if (UNRESOLVED_KEYWORDS.some((kw) => content.includes(kw))) {

@@ -13,6 +13,8 @@
 // 涉及具体医学决策（剂量、诊断、治疗方案）时，始终建议用户以医生面诊意见为准。
 
 // 参考文献列表（外部文献），编号与产品文档里的"参考文献排版"保持一致
+const OFFLINE_FAQ = require('./offlineFaq.js');
+
 const REFERENCES = [
   { id: 1, label: '中国营养学会妇幼营养分会.《备孕妇女膳食指南》', url: 'http://www.mcnutri.cn/guifanzn/811800200.html' },
   { id: 2, label: 'WHO. Preconception care: Maximizing the gains for maternal and child health', url: 'https://cdn.who.int/media/docs/default-source/mca-documents/maternal-nb/preconception_care_policy_brief.pdf' },
@@ -60,7 +62,7 @@ const FAQ_LIBRARY = [
     question: '排卵期怎么算',
     source: '小暖FAQ知识库',
     keywords: ['排卵期怎么算', '怎么算排卵期', '排卵期计算'],
-    answer: '一般以下次月经来潮前14天左右作为排卵日，排卵日前5天到后4天都算易孕窗口。如果周期规律，可以用"下次月经预计日期-14天"估算；也可以配合基础体温或排卵试纸辅助判断，会更准确。',
+    answer: '排卵时间因人、因周期而异，日历只能估计，不能确认实际排卵。易孕窗口通常主要涉及排卵前几天至排卵当天；周期不规律时推算更不可靠。试纸与基础体温也各有局限，有疑问时请专业人员解释。',
     refIds: [4]
   },
   {
@@ -96,7 +98,7 @@ const FAQ_LIBRARY = [
   {"question": "备孕3–6个月需要关注什么", "source": "小暖Demo固定问答（待用户确认）", "keywords": ["备孕3–6个月", "备孕3-6个月", "备孕3–6月", "备孕3-6月"], "answer": "备孕3–6个月可回顾记录是否连续、生活安排是否可持续，避免反复根据单次试纸或预测作结论。年龄已满35岁、有规律未避孕性生活满6个月仍未孕时，建议双方安排生育相关咨询。", "suggestions": ["整理已有周期记录与检测记录。", "遇到不清楚的结果时请专业人员帮助解释。", "不要自行使用促排或其他药物。"], "refIds": []},
   {"question": "备孕半年以上需要关注什么", "source": "小暖Demo固定问答（待用户确认）", "keywords": ["备孕半年以上", "备孕半年+"], "answer": "备孕半年以上时，是否需要评估应结合年龄、备孕方式、病史和症状。通常35岁以下有规律未避孕性生活满12个月仍未孕，或35岁及以上满6个月仍未孕，可安排双方生育相关咨询；有异常症状不必等待到这些时间点。", "suggestions": ["带上连续周期记录和既往检查资料。", "双方共同沟通咨询安排。", "避免仅凭备孕时长自行判断不孕或自行用药。"], "refIds": []},
   {"question": "排卵日总是算不准怎么办", "source": "小暖Demo固定问答（待用户确认）", "keywords": ["排卵日总是算不准", "排卵监测", "记录排卵相关变化"], "answer": "排卵时间存在个体差异，日历估算不能确定实际排卵。可以记录周期与连续检测变化，并按产品说明书使用试纸；周期经常不规律或结果持续不清楚时，建议咨询医生。", "suggestions": ["记录月经日期和检测时间。", "按说明书判读，避免只依据单次结果。", "有不适或持续疑问时咨询专业人员。"], "refIds": []}
-];
+].concat(OFFLINE_FAQ);
 
 // 风险规则库：内部风险分级规则，依据卫健委互联网诊疗合规文件设计
 // 注：关键词尽量用完整短语而不是"一直没"这种2-3字的片段——太短的片段容易在无关问题里
@@ -110,7 +112,7 @@ const RISK_LIBRARY = [
   },
   {
     level: 'medium', priority: 50, category: '备孕用药', source: '风险规则库',
-    keywords: ['药', '二甲双胍', '克罗米芬', '促排'],
+    keywords: ['药', '二甲双胍', '克罗米芬', '促排', '来曲唑', '排卵针', '优甲乐', '左甲状腺素', '布洛芬', '对乙酰氨基酚'],
     guidance: '用药请遵医嘱，不要自行用药或停药，用药前咨询医生或药师。Demo不判断某种药是否适合你，不提供剂量、换药或停药方案。', refIds: []
   },
   {
@@ -126,7 +128,7 @@ const RISK_LIBRARY = [
     category: '长期未孕',
     source: '风险规则库',
     keywords: ['一年没有怀孕', '一年未孕', '两年没有怀孕', '备孕失败', '一直没怀孕', '一直没成功', '一直没怀上', '怀不上'],
-    guidance: '达到"长期未孕"的判断标准，建议尽早就医做系统的生育力评估，而不是继续自行尝试观察。',
+    guidance: '仅凭未怀孕的描述不能判断是否不孕或已经达到评估条件。请补充双方年龄、规律未避孕尝试的时长和病史；是否需要生育相关评估应由医生结合实际情况决定，有异常症状时不要仅等待。',
     refIds: [5, 6]
   },
   {
@@ -155,9 +157,15 @@ const UNRESOLVED_KEYWORDS = ['没解决我的问题', '不是这个意思', '答
 /**
  * 根据用户输入匹配小暖FAQ知识库里的问答（返回带真实answer内容的条目）
  */
+function normalizeQuestion(content) {
+  return String(content || '').normalize('NFKC').replace(/[–—−]/g, '-').replace(/\s+/g, '').toLowerCase();
+}
 function matchFAQ(content) {
-  return FAQ_LIBRARY.filter((item) => item.keywords.some((kw) => content.includes(kw)))
-    .sort((a,b) => Math.max(...b.keywords.filter(kw => content.includes(kw)).map(kw => kw.length)) - Math.max(...a.keywords.filter(kw => content.includes(kw)).map(kw => kw.length)));
+  const text = normalizeQuestion(content);
+  return FAQ_LIBRARY.map(item => ({ item, length: Math.max(0,...item.keywords.map(kw => normalizeQuestion(kw)).filter(kw => text.includes(kw)).map(kw => kw.length)) }))
+    .filter(match => match.length > 0)
+    .sort((a,b) => b.length-a.length || (b.item.priority || 0)-(a.item.priority || 0))
+    .map(match => match.item);
 }
 
 /**

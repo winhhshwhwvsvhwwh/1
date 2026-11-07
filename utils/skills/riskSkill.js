@@ -33,6 +33,12 @@ function handle(content, latestRecord) {
 
   const understanding = '你提到的这个情况我认真看了一下，确实需要留意一下~';
   const analysisLines = [risk.riskNotice];
+  const medicationFAQ = risk.category === '备孕用药'
+    ? knowledgeBase.matchFAQ(content).find(item => item.category === 'medication') : null;
+  if (medicationFAQ) {
+    if (!analysisLines.includes(medicationFAQ.answer)) analysisLines.push(medicationFAQ.answer);
+    if (medicationFAQ.followUpQuestions.length) analysisLines.push('请补充：' + medicationFAQ.followUpQuestions.join('；'));
+  }
 
   // 个性化：有真实周期数据时，直接把具体数值列出来，而不是"整理一下带过去"这种空话
   const shortSummary = userContext.buildShortSummary(latestRecord);
@@ -41,7 +47,7 @@ function handle(content, latestRecord) {
     : '就诊前可以把「周期记录」里的数据整理一下带过去，方便医生快速了解情况';
 
   const suggestions = risk.category === '备孕用药'
-    ? ['用药前咨询医生或药师，并说明备孕计划。', '整理正在使用的药物和补充剂清单，供专业人员核对。', '遵医嘱，不要自行用药、换药或停药。']
+    ? (medicationFAQ ? medicationFAQ.suggestions : ['用药前咨询医生或药师，并说明备孕计划。', '整理正在使用的药物和补充剂清单，供专业人员核对。', '遵医嘱，不要自行用药、换药或停药。'])
     : risk.riskLevel === 'high'
     ? [
         '请按以上提示就医，不依赖Demo判断病因。',
@@ -59,6 +65,7 @@ function handle(content, latestRecord) {
     understanding,
     analysisLines,
     suggestions,
+    faqIds: medicationFAQ ? [medicationFAQ.id] : [],
     refIds: risk.refIds,
     usedUserData: !!shortSummary
   };
