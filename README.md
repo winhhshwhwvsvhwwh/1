@@ -45,6 +45,7 @@ _archived/                       归档的早期首页/会员/独立评估与报
 安装 Node.js 后，从项目根目录执行：
 
 ```sh
+node tests/menopauseKnowledge.test.js
 node tests/homeGuides.test.js
 node tests/temperatureIntent.test.js
 node tests/replyInteraction.test.js
@@ -88,3 +89,6 @@ node tests/componentAssets.test.js
 
 
 首页“备孕计划”回复现提供4周通用准备安排，并给出今天/本周/每天的具体行动；“知识科普”回复解释6个主题和常见误区，不再只罗列类别。仅这两个FAQ支持专用开场，其他回复不变；长文沿用原来的“展开全部”和“复制文字”。完整新增科普文案见design-reference/home-guide-copy.md，仍为待确认的本地科普草案。
+
+
+围绝经期/绝经作为次级本地科普接入，未新增首页入口或页面：支持区别与定义、月经变化、40岁后备孕、潮热/睡眠/情绪变化，以及绝经后再次出血。明确话题不进入个人周期计算；出血/疼痛和用药仍遵循风险优先级，大量出血、剧痛、腹痛伴出血仍保留原高风险处理。文案见design-reference/menopause-copy.md（本地科普草案，待确认与专业审核）。

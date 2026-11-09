@@ -48,6 +48,10 @@ function handle(content, latestRecord) {
     if (medicationFAQ.followUpQuestions.length) analysisLines.push('请补充：' + medicationFAQ.followUpQuestions.join('；'));
   }
 
+  const menopauseFAQ = risk.riskLevel === 'medium' && ['绝经后出血','围绝经期异常症状'].includes(risk.category)
+    ? knowledgeBase.matchFAQ(content).find(item => item.category === 'menopause') : null;
+  if (menopauseFAQ) analysisLines.push(menopauseFAQ.answer);
+
   // 个性化：有真实周期数据时，直接把具体数值列出来，而不是"整理一下带过去"这种空话
   const shortSummary = userContext.buildShortSummary(latestRecord);
   const dataForDoctorTip = shortSummary
@@ -56,6 +60,8 @@ function handle(content, latestRecord) {
 
   const suggestions = risk.category === '备孕用药'
     ? (medicationFAQ ? medicationFAQ.suggestions : ['用药前咨询医生或药师，并说明备孕计划。', '整理正在使用的药物和补充剂清单，供专业人员核对。', '遵医嘱，不要自行用药、换药或停药。'])
+    : menopauseFAQ
+    ? menopauseFAQ.suggestions
     : durationFAQ
     ? durationFAQ.suggestions.concat('双方一起整理既往检查和周期记录，预约妇科或生殖医学门诊咨询；不要自行使用促排药。')
     : risk.riskLevel === 'high'
@@ -75,7 +81,7 @@ function handle(content, latestRecord) {
     understanding,
     analysisLines,
     suggestions,
-    faqIds: medicationFAQ ? [medicationFAQ.id] : durationFAQ ? [durationFAQ.id] : [],
+    faqIds: medicationFAQ ? [medicationFAQ.id] : menopauseFAQ ? [menopauseFAQ.id] : durationFAQ ? [durationFAQ.id] : [],
     refIds: risk.refIds,
     usedUserData: !!shortSummary
   };

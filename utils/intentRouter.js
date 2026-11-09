@@ -81,6 +81,9 @@ function analyzeIntent(content, context) {
     handoffReason = 'unresolved';
   } else if (riskItems.length > 0) {
     type = 'D';
+  } else if (matchedFAQ.some(faq => faq.category === 'menopause')) {
+    // 更年期/绝经疑问先解释知识边界，不按个人周期推算是否已经绝经。
+    type = 'A';
   } else if (personalCycleAnalysis) {
     type = 'B';
   } else if (/备孕计划|生活计划|用药|药/.test(content) || matchedFAQ.some(faq => faq.suggestions)) {
