@@ -85,7 +85,7 @@ function handle(content, intent, latestRecord) {
     }
     const followUps = [...new Set(selected.flatMap(item => item.followUpQuestions || []))].slice(0,3);
     return {
-      skillId: 'knowledge', understanding: '我来说明这个问题的通用注意事项。',
+      skillId: 'knowledge', understanding: faq.understanding || '我来说明这个问题的通用注意事项。',
       analysisLines: [...selected.map(item => item.answer), ...(followUps.length ? ['为了更具体地说明，可以补充：' + followUps.join('；')] : [])],
       suggestions: [...new Set(selected.flatMap(item => item.suggestions))].slice(0,6),
       faqIds: selected.map(item => item.id).filter(Boolean), refIds: selected.flatMap(item => item.refIds || []), usedKnowledge: true, usedUserData: false
