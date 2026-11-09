@@ -8,6 +8,7 @@
 
 const ragRetriever = require('../ragRetriever.js');
 const userContext = require('./userContext.js');
+const {extractFacts,durationAdvice,durationSuggestions,cycleWindow} = require('../questionFacts.js');
 
 function extractDurationText(content) {
   const match = content.match(/(\d+)\s*(个月|月|年)/);
@@ -83,11 +84,15 @@ function handle(content, intent, latestRecord) {
       const second = matched.find(item => item.category && item.category !== faq.category && item.keywords.some(kw => kw.length >= 4 && content.toLowerCase().includes(kw.toLowerCase())));
       if (second) selected.push(second);
     }
-    const followUps = [...new Set(selected.flatMap(item => item.followUpQuestions || []))].slice(0,3);
+    const duration=faq.id==='plan-duration'?durationAdvice(content,faq.answer):null;
+    const followUps = duration?duration.questions:[...new Set(selected.flatMap(item => item.followUpQuestions || []))].slice(0,3);
+    const answers=duration?[duration.answer]:selected.map(item=>item.answer);
+    const cycleLength=extractFacts(content).cycleLength;
+    if(cycleLength && /排卵/.test(content)) answers.unshift(cycleWindow(cycleLength));
     return {
       skillId: 'knowledge', understanding: '我来说明这个问题的通用注意事项。',
-      analysisLines: [...selected.map(item => item.answer), ...(followUps.length ? ['为了更具体地说明，可以补充：' + followUps.join('；')] : [])],
-      suggestions: [...new Set(selected.flatMap(item => item.suggestions))].slice(0,6),
+      analysisLines: [...answers, ...(followUps.length ? ['为了更具体地说明，可以补充：' + followUps.join('；')] : [])],
+      suggestions: duration?durationSuggestions(content,faq.suggestions):[...new Set(selected.flatMap(item => item.suggestions))].slice(0,6),
       faqIds: selected.map(item => item.id).filter(Boolean), refIds: selected.flatMap(item => item.refIds || []), usedKnowledge: true, usedUserData: false
     };
   }

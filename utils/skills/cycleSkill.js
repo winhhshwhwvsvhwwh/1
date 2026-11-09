@@ -5,9 +5,10 @@
 // 同时调用 ragRetriever 检索周期生理相关的知识片段作为科普背景补充
 
 const ragRetriever = require('../ragRetriever.js');
+const {extractFacts} = require('../questionFacts.js');
 
 /**
- * 简化版周期阶段计算，与 pages/index/index.js 中的 calcCycleStatus 规则保持一致
+ * 简化日期估算；排卵日按平均周期减14天粗估，不用于确认排卵或避孕
  * 注：record 字段为 { startDate, endDate, cycleLength, periodLength, symptoms }
  */
 function calcCyclePhase(record) {
@@ -16,7 +17,7 @@ function calcCyclePhase(record) {
   const today = new Date();
   const diffDays = Math.floor((today - startDate) / (24 * 60 * 60 * 1000));
   const cycleDay = ((diffDays % cycleLength) + cycleLength) % cycleLength + 1;
-  const ovulationDay = Math.round(cycleLength / 2);
+  const ovulationDay = Math.max(1, cycleLength - 14);
 
   let phase = '黄体期';
   if (cycleDay <= 5) {
@@ -42,12 +43,13 @@ function handle(content, latestRecord) {
   // 检索周期生理相关的知识片段（ACOG/教材/小暖FAQ），作为科普背景补充；
   // 检索不到就不加，不会为了凑内容而编一句
   const { chunks } = ragRetriever.retrieve(content, 'B');
-  const refIds = ragRetriever.collectRefIds(chunks);
+  const background=chunks.find(chunk=>chunk.topic==='cycle_physiology')||chunks[0];
+  const refIds = ragRetriever.collectRefIds(background?[background]:[]);
 
   if (!latestRecord) {
     analysisLines.push('目前没有周期记录，暂时不能估算你处于哪个阶段。请先在「周期记录」里填写并保存经期开始日期、结束日期、平均周期长度和经期长度。');
     if (/体温/.test(content)) analysisLines.push('当前记录页不保存连续体温数据，不能据此分析你的体温曲线，也不能仅凭体温判断周期阶段或确认排卵。');
-    chunks.forEach((c) => analysisLines.push(c.text));
+    if(background) analysisLines.push(background.text);
     suggestions.push(
       '先填写并保存经期开始/结束日期、平均周期长度和经期长度',
       '之后每次月经都及时记一下，数据越全，分析就越准',
@@ -64,10 +66,11 @@ function handle(content, latestRecord) {
   }
 
   if (/体温/.test(content)) analysisLines.push('以下只使用已保存的月经日期和周期参数做日期估算，现有记录不包含连续体温数据，不能据此分析体温曲线。');
-  const { cycleDay, cycleLength, ovulationDay, phase } = calcCyclePhase(latestRecord);
-  analysisLines.push(`从你记录的数据来看，你的周期大概${cycleLength}天一次，今天是这个周期的第${cycleDay}天，正处于${phase}。`);
-  analysisLines.push(`照这个周期推算，排卵窗口大概在第${Math.max(ovulationDay - 2, 1)}-${ovulationDay + 2}天左右。`);
-  chunks.forEach((c) => analysisLines.push(c.text));
+  const providedLength=extractFacts(content).cycleLength;
+  const { cycleDay, cycleLength, ovulationDay, phase } = calcCyclePhase(providedLength?{...latestRecord,cycleLength:providedLength}:latestRecord);
+  analysisLines.push(`${providedLength?'按你本次提供的周期长度和已保存的经期日期':'从你记录的数据来看'}，你的周期大概${cycleLength}天一次，今天是这个周期的第${cycleDay}天，根据日期估算目前可能处于${phase}。`);
+  analysisLines.push(`照这个周期推算，排卵日可能在周期第${Math.max(ovulationDay - 2, 1)}-${ovulationDay + 2}天附近。估算，仅供参考，不能确认实际排卵或用于避孕。`);
+  if(background) analysisLines.push(background.text);
 
   if (phase === '排卵期') {
     suggestions.push(

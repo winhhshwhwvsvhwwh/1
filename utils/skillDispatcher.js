@@ -27,6 +27,7 @@ const emotionSkill = require('./skills/emotionSkill.js');
 const humanTransferSkill = require('./skills/humanTransferSkill.js');
 const basicConsultationSkill = require('./skills/basicConsultationSkill.js');
 const qualityCheck = require('./qualityCheck.js');
+const {emotionPrefix} = require('./questionFacts.js');
 
 const SKILL_NAME_MAP = {
   knowledge: 'A 备孕知识咨询Skill',
@@ -152,6 +153,7 @@ function dispatch(content) {
 
     // 第二步：根据类型调用对应处理模块
     const skillResult = callSkillByType(content, intent, latestRecord);
+    if(intent.riskItems.length && emotionPrefix(content)) skillResult.understanding=emotionPrefix(content)+(skillResult.understanding||'');
 
     // 风险提醒始终生成一遍，作为四段式回复固定的第4部分（不管主类型是不是D）
     const riskResult = riskSkill.assessRisk(content);
@@ -159,6 +161,9 @@ function dispatch(content) {
     // 归一化：不管背后是A-E哪个类型，都收敛成四个标准字段
     const normalized = normalizeSkillResult(skillResult, intent.primarySkill);
     const refIds = [].concat(normalized.refIds, riskResult.refIds || []);
+    // 用药安全句已在正文完整展示，不在卡片底部和复制文本中重复。
+    const riskNotice=riskResult.category==='备孕用药'&&normalized.analysis.includes(riskResult.riskNotice)
+      ? '以上为备孕科普参考，不替代医生诊断。' : riskResult.riskNotice;
 
     // 回复质量检测
     // 个性化程度：统一读取每个Skill各自上报的 usedUserData（现在A/C/D/E/B五类都会如实标记
@@ -180,7 +185,7 @@ function dispatch(content) {
       understanding: normalized.understanding,
       analysis: normalized.analysis,
       suggestions: normalized.suggestions,
-      riskNotice: riskResult.riskNotice,
+      riskNotice,
       quality,
       primarySkill: intent.primarySkill,
       refIds
@@ -196,7 +201,7 @@ function dispatch(content) {
         understanding: normalized.understanding,
         analysis: normalized.analysis,
         suggestions: normalized.suggestions,
-        riskNotice: riskResult.riskNotice,
+        riskNotice,
         timestamp: Date.now(),
         // riskLevel/needHandoff：供前端"AI咨询兜底机制"直接判断，不用深挖meta
         riskLevel: riskResult.riskLevel,
