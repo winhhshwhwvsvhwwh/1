@@ -45,10 +45,11 @@ function handle(content, latestRecord) {
   const refIds = ragRetriever.collectRefIds(chunks);
 
   if (!latestRecord) {
-    analysisLines.push('你还没在「周期记录」里加过数据，我暂时摸不准具体是周期第几天，方便的话先记一下最近一次月经的日期，我能分析得更准。');
+    analysisLines.push('目前没有周期记录，暂时不能估算你处于哪个阶段。请先在「周期记录」里填写并保存经期开始日期、结束日期、平均周期长度和经期长度。');
+    if (/体温/.test(content)) analysisLines.push('当前记录页不保存连续体温数据，不能据此分析你的体温曲线，也不能仅凭体温判断周期阶段或确认排卵。');
     chunks.forEach((c) => analysisLines.push(c.text));
     suggestions.push(
-      '先去「周期记录」页加一条最近的月经记录（开始/结束日期、周期长度）',
+      '先填写并保存经期开始/结束日期、平均周期长度和经期长度',
       '之后每次月经都及时记一下，数据越全，分析就越准',
       '也可以配合基础体温、排卵试纸辅助判断排卵窗口'
     );
@@ -62,6 +63,7 @@ function handle(content, latestRecord) {
     };
   }
 
+  if (/体温/.test(content)) analysisLines.push('以下只使用已保存的月经日期和周期参数做日期估算，现有记录不包含连续体温数据，不能据此分析体温曲线。');
   const { cycleDay, cycleLength, ovulationDay, phase } = calcCyclePhase(latestRecord);
   analysisLines.push(`从你记录的数据来看，你的周期大概${cycleLength}天一次，今天是这个周期的第${cycleDay}天，正处于${phase}。`);
   analysisLines.push(`照这个周期推算，排卵窗口大概在第${Math.max(ovulationDay - 2, 1)}-${ovulationDay + 2}天左右。`);
