@@ -45,6 +45,7 @@ _archived/                       归档的早期首页/会员/独立评估与报
 安装 Node.js 后，从项目根目录执行：
 
 ```sh
+node tests/replyInteraction.test.js
 node tests/highlightText.test.js
 node tests/unconceivedQuestion.test.js
 node tests/offlineKnowledge.test.js
@@ -74,3 +75,6 @@ node tests/componentAssets.test.js
 
 
 “小暖分析”中的重点词组按本地显示规则标为主题粉色 #FF4089：正文/折叠预览每段最多3处、每条建议最多1处；否定指令尽量整句标色。原始回答、复制文本、反馈数据及免责声明内容不变，旧消息也支持。未命中词表的文本保持原色；该规则只辅助阅读，不作新的医学判断。
+
+
+文字咨询发送后显示“小暖正在思考中…”，本地Demo约等待1.2秒再回填回答；这是本地演示延时，不是模型推理时间。普通失败会结束加载并提示重试。每张“小暖分析”卡片右上角可“复制文字”，复制该条完整原始回答（含建议和安全提醒），不受折叠或粉色高亮影响；复制成功/失败有提示。

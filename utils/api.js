@@ -37,10 +37,11 @@ function callCloudFunction(name, data) {
  * 模拟AI回复生成函数（USE_CLOUD=false 时使用）
  */
 function sendChatMessageMock(content) {
-  return new Promise((resolve) => {
+  // 本地演示等待，让用户能看清发送与加载状态；不代表模型推理耗时。
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
-      skillDispatcher.dispatch(content).then(resolve);
-    }, 600);
+      Promise.resolve().then(() => skillDispatcher.dispatch(content)).then(resolve, reject);
+    }, 1200);
   });
 }
 

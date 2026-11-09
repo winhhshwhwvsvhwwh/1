@@ -234,7 +234,7 @@
 </view>
 </block>
 </view>
-<view wx:if="{{loading}}" class="loading-bubble">小暖正在思考中...</view>
+<view wx:if="{{loading}}" class="loading-bubble" role="status">小暖正在思考中…</view>
 <view id="chat-bottom" class="scroll-end">
 </view>
 </view>

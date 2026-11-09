@@ -130,7 +130,20 @@ Page({
     wx.showModal({ title: '自评说明', content: '分数按已填写的四项Demo规则计算，每项最多25分；未知项不计算总分。规则未经医学验证，不代表诊断、生育能力或受孕概率。身体不适时请结合具体症状咨询医生。', showCancel: false });
   },
   onReadUnavailable() { wx.showToast({ title: '语音朗读暂未接入', icon: 'none' }); },
-  onCopy(e) { wx.setClipboardData({ data: e.currentTarget.dataset.content || (this.data.assessmentReport && this.data.assessmentReport.summary) || '' }); },
+  copyText(content) {
+    if (typeof content !== 'string' || !content.trim()) {
+      wx.showToast({ title: '暂无可复制的内容', icon: 'none' });
+      return;
+    }
+    wx.setClipboardData({
+      data: content,
+      success: () => wx.showToast({ title: '已复制', icon: 'success' }),
+      fail: () => wx.showToast({ title: '复制失败，请重试', icon: 'none' })
+    });
+  },
+  onCopy(e) {
+    this.copyText(e.currentTarget.dataset.content || (this.data.assessmentReport && this.data.assessmentReport.summary) || '');
+  },
   openAssessment() {
     this._scrollingToEnd = false;
     if (this.data.assessmentSubmitting) return;
@@ -640,6 +653,10 @@ Page({
       this.openRecordPage();
     } else if (action === 'continue') {
       this.focusChatInput();
+    } else if (action === 'copy') {
+      const id = e.currentTarget && e.currentTarget.dataset.id;
+      const message = this.data.messages.find(item => item.role === 'assistant' && String(item.id) === String(id));
+      this.copyText(message ? message.content : '');
     }
   },
 

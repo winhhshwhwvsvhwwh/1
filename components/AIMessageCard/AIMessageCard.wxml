@@ -4,6 +4,7 @@
   <!-- 顶部：icon + 标题 -->
   <view class="ai-card-header">
     <text class="ai-card-title">🌸 小暖分析</text>
+    <view class="ai-card-copy" role="button" aria-label="复制完整回答" data-action="copy" bindtap="onActionTap">复制文字</view>
   </view>
 
   <!-- 内容区域：支持长文本展开/收起 -->

@@ -106,3 +106,15 @@
 
 /* Emphasis uses the existing theme pink; notices keep their muted style. */
 .ai-card-highlight { color:#ff4089; font-weight:600; }
+
+.ai-card-copy {
+  margin-left:auto;
+  flex-shrink:0;
+  padding:10rpx 18rpx;
+  border-radius:24rpx;
+  font-size:22rpx;
+  line-height:1.4;
+  color:#ff4089;
+  background:#fff0f6;
+}
+.ai-card-copy:active { background:#ffe1ed; }
