@@ -99,4 +99,4 @@ node tests/componentAssets.test.js
 
 ## 报告图片解读与逐字显示
 
-新回答收到完整内容后逐字显示，复制仍获取完整原文，高风险回复直接展示。报告图片走独立的通义千问兼容云函数：识别 → 用户核对修改 → 确认后解释。默认 REPORT_VISION.enabled=false；尚未配置或部署真实服务，不能宣称已实现真实图片识别验收。文字咨询继续 USE_CLOUD=false。配置方法、数据边界和待验证项见[报告单解读接入说明](design-reference/report-setup.md)。
+新回答收到完整内容后逐字显示，复制仍获取完整原文，高风险回复直接展示。报告图片走独立的通义千问兼容云函数：识别 → 用户核对修改 → 确认后解释。REPORT_VISION 已启用并绑定用户提供的微信云环境；云函数已由用户部署，模型密钥是否有效及真实图片识别仍待联调验收。文字咨询继续 USE_CLOUD=false。配置方法、数据边界和待验证项见[报告单解读接入说明](design-reference/report-setup.md)。

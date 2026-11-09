@@ -12,6 +12,13 @@ function page(){return {...definition,data:JSON.parse(JSON.stringify(definition.
  recognition=async()=>{throw Error('服务尚未配置')};const failed=page();failed.onReportClick();failed.setData({pendingImage:'test.jpg'});await failed.onImagePreviewSend();assert.equal(failed.data.messages.length,0);assert.equal(failed.data.reportBusy,false);assert(modals.at(-1).content.includes('尚未配置'));
  const generic=page();generic.setData({pendingImage:'test.jpg',pendingCaption:'这是报告单'});generic.onImagePreviewSend();assert.equal(generic.data.imageIntent,'report');assert.equal(generic.data.messages.length,0);
  // Disabled configuration must fail before any local read or external upload.
- const actual=require('../utils/reportClient');await assert.rejects(actual.recognizeReport('never-read.jpg',''),/尚未启用/);
+ const clientSource=fs.readFileSync(require.resolve('../utils/reportClient'),'utf8');
+ const disabledModule={exports:{}};vm.runInNewContext(clientSource,{module:disabledModule,require:()=>({REPORT_VISION:{enabled:false,envId:''}}),wx:{}});
+ await assert.rejects(disabledModule.exports.recognizeReport('never-read.jpg',''),/尚未启用/);
+ const config=require('../utils/constants');assert.equal(config.USE_CLOUD,false);assert(config.REPORT_VISION.enabled);assert.equal(config.REPORT_VISION.envId,'cloud1-d4gc5cmbyc4c65482');
+ const requests=[];const enabledModule={exports:{}};const cloudMock={cloud:{init:options=>requests.push(['init',options]),callFunction:async options=>{requests.push(['call',options]);return {result:{code:0,data:{items:[]}}}}},getFileInfo:options=>options.success({size:12}),getFileSystemManager:()=>({readFile:options=>options.success({data:'/9j/synthetic'})})};
+ vm.runInNewContext(clientSource,{module:enabledModule,require:()=>config,wx:cloudMock});
+ await enabledModule.exports.recognizeReport('synthetic.jpg','测试');
+ assert.equal(requests[0][1].env,config.REPORT_VISION.envId);assert.equal(requests[1][1].name,'reportInterpretation');assert.equal(requests[1][1].config.env,config.REPORT_VISION.envId);assert.equal(requests[1][1].data.action,'recognize');
  console.log('PASS report entrance → recognition → editable confirmation → interpretation; no automatic interpretation, stale request cancellation, service error, disabled config blocks upload, general-report caption switches with notice');
 })().catch(e=>{console.error(e);process.exitCode=1});
