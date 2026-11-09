@@ -39,4 +39,24 @@ assert.equal(joined(state.data.fallbackSegments), state.properties.fallbackConte
 assert(highlighted(state.data.fallbackSegments).includes('遵医嘱'));
 assert.equal(state.data.suggestionRows.length,0);
 assert(Object.keys(definition.observers)[0].includes('suggestions'));
-console.log('PASS unchanged text, limited emphasis, complete negative instructions, old messages, collapsed preview, suggestions and existing actions');
+// Structured emphasis must not be cut off after the ordinary three-keyword limit.
+function covered(text, spans, part) {
+  const start=text.indexOf(part); assert(start>=0);
+  let cursor=0;
+  for(const span of spans){const end=cursor+span.text.length;if(cursor<start+part.length&&end>start)assert(span.highlighted,part);cursor=end;}
+}
+const followUp='为了更具体地说明，可以补充：女方年龄是多少？；目前备孕多久？';
+covered(followUp,highlightText(followUp),'可以补充：女方年龄是多少？；目前备孕多久？');
+const ask='请补充：药名是什么？；什么时候开始使用？';covered(ask,highlightText(ask),'请补充：药名是什么？；什么时候开始使用？');
+const numbered=Array.from({length:6},(_,i)=>(i+1)+'．主题标题'+(i+1)+'\n普通说明正文。').join('\n\n');
+const numberedSpans=highlightText(numbered);assert.equal(joined(numberedSpans),numbered);
+for(let i=1;i<=6;i++)covered(numbered,numberedSpans,i+'．主题标题'+i);
+const stages='第1周｜整理信息\n普通说明正文。\n\n第2周｜建立习惯\n普通说明正文。';
+for(const heading of ['第1周｜整理信息','第2周｜建立习惯'])covered(stages,highlightText(stages),heading);
+const inline='1．作息：普通说明正文。';covered(inline,highlightText(inline),'1．作息：');assert(highlightText(inline).some(s=>!s.highlighted&&s.text.includes('普通说明正文')));
+const action='今天先做：整理资料。';covered(action,highlightText(action,1),'今天先做：');
+assert.equal(highlighted(highlightText('35.5℃，这是普通数字。')).length,0);
+assert.equal(highlighted(highlightText('先把最常用的6个备孕知识点讲清楚：不仅列主题。')).length,0);
+const actual=require('../utils/knowledgeBase').FAQ_LIBRARY;
+for(const id of ['home-preparation-plan','home-preconception-guide']){const body=actual.find(f=>f.id===id).answer;const spans=highlightText(body);assert.equal(joined(spans),body);for(const line of body.split('\n').filter(line=>/^第\d周｜|^\d．/.test(line)))covered(body,spans,line);}
+console.log('PASS unchanged text, limited keywords, all headings/follow-up questions, complete negative instructions, old messages, collapsed preview, suggestions and existing actions');
