@@ -1246,3 +1246,15 @@ page {
   top:22rpx;
   transform:rotate(22deg);
 }
+
+/* Approved complete consultant panel; retain the original panel footprint. */
+.expert-panel.expert-panel-generated {
+  padding:0;
+  height:328rpx;
+  background:transparent;
+}
+.expert-panel-approved-art {
+  display:block;
+  width:100%;
+  height:100%;
+}

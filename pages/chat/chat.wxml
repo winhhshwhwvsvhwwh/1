@@ -31,19 +31,8 @@
 </view>
  <view class="consult-intro">
 <view class="consult-copy"><text>以下为咨询服务示例。</text>结合<text>备孕阶段、周期情况</text>与咨询需求，<text>智能匹配</text>适合您的备孕师，提供<text>周期管理、排卵指导、试纸解读</text>等专业服务</view>
-<view class="expert-panel">
-<image class="expert-promises-art" src="/images/campaign/expert-promises.png" mode="aspectFit"/>
-<view class="expert-team-wrap">
-<image class="expert-side-avatar expert-side-first" src="/images/campaign/advisor-01.png" mode="aspectFit"/>
-<image class="expert-side-avatar expert-side-second" src="/images/campaign/advisor-02.png" mode="aspectFit"/>
-<view class="expert-featured">
-<view class="expert-avatar-halo" aria-hidden="true"></view>
-<view class="expert-avatar-ring"><image class="expert-featured-photo" src="/images/campaign/advisor-featured.png" mode="aspectFit"/></view>
-<view class="expert-featured-label">金牌备孕师</view>
-</view>
-<image class="expert-side-avatar expert-side-third" src="/images/campaign/advisor-03.png" mode="aspectFit"/>
-<image class="expert-side-avatar expert-side-fourth" src="/images/campaign/advisor-04.png" mode="aspectFit"/>
-</view>
+<view class="expert-panel expert-panel-generated">
+<image class="expert-panel-approved-art" src="/images/campaign/expert-panel-approved.webp" mode="aspectFit"/>
 </view>
 </view>
  <view class="consult-card">
