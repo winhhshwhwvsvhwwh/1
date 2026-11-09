@@ -14,7 +14,6 @@
 
 // 参考文献列表（外部文献），编号与产品文档里的"参考文献排版"保持一致
 const OFFLINE_FAQ = require('./offlineFaq.js');
-const {extractFacts} = require('./questionFacts.js');
 
 const REFERENCES = [
   { id: 1, label: '中国营养学会妇幼营养分会.《备孕妇女膳食指南》', url: 'http://www.mcnutri.cn/guifanzn/811800200.html' },
@@ -163,8 +162,7 @@ function normalizeQuestion(content) {
 }
 function matchFAQ(content) {
   const text = normalizeQuestion(content);
-  const durationKnown=extractFacts(content).durationMonths!==null;
-  return FAQ_LIBRARY.map(item => ({ item, length: Math.max(item.id==='plan-duration'&&durationKnown?1:0,...item.keywords.map(kw => normalizeQuestion(kw)).filter(kw => text.includes(kw)).map(kw => kw.length)) }))
+  return FAQ_LIBRARY.map(item => ({ item, length: Math.max(0,...item.keywords.map(kw => normalizeQuestion(kw)).filter(kw => text.includes(kw)).map(kw => kw.length)) }))
     .filter(match => match.length > 0)
     .sort((a,b) => b.length-a.length || (b.item.priority || 0)-(a.item.priority || 0))
     .map(match => match.item);

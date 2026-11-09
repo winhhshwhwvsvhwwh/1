@@ -65,7 +65,7 @@ function analyzeIntent(content, context) {
   const hasHighRisk = riskItems.some((item) => item.level === 'high');
   // 明确要求分析个人数据时优先周期Skill；‘怎么记录/什么时候量’仍由知识FAQ处理。
   const personalCycleAnalysis = /体温|周期|月经|排卵/.test(content)
-    && /我的|我记录|我测|我现在|我这个周期|我目前|周期第几天/.test(content)
+    && /我的|我记录|我测/.test(content)
     && /分析|帮我看|判断|推算|周期阶段|周期第|哪个.*期/.test(content);
 
   let type = 'A';

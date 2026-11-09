@@ -10,7 +10,6 @@
 
 const userContext = require('./userContext.js');
 const knowledgeBase = require('../knowledgeBase.js');
-const {durationAdvice,durationSuggestions} = require('../questionFacts.js');
 
 /**
  * @param {string} content 用户输入
@@ -19,8 +18,7 @@ const {durationAdvice,durationSuggestions} = require('../questionFacts.js');
 function assessRisk(content) {
   const selected = knowledgeBase.matchRisk(content)[0];
   if (!selected) return { riskLevel: 'none', riskNotice: '以上为备孕科普参考，不替代医生诊断。', refIds: [], category: '' };
-  const notice=selected.category==='长期未孕'?'仅凭描述不能诊断不孕，是否需要评估请由医生结合规律未避孕性生活、病史和症状判断；有异常症状时及时就医。':selected.guidance;
-  return { riskLevel: selected.level, riskNotice: notice, refIds: selected.refIds || [], category: selected.category };
+  return { riskLevel: selected.level, riskNotice: selected.guidance, refIds: selected.refIds || [], category: selected.category };
 }
 
 /**
@@ -35,14 +33,13 @@ function handle(content, latestRecord) {
 
   const understanding = risk.category === '长期未孕'
     ? '你想了解备孕一段时间仍未怀孕该怎么办，我们先看何时需要评估，以及可以准备哪些信息。'
-    : risk.riskLevel==='medium'?'你提到的这个情况我认真看了一下，确实需要留意一下~':'这类症状需要尽快由医生评估。';
+    : '你提到的这个情况我认真看了一下，确实需要留意一下~';
   const analysisLines = [risk.riskNotice];
   const durationFAQ = risk.category === '长期未孕'
     ? knowledgeBase.FAQ_LIBRARY.find(item => item.id === 'plan-duration') : null;
   if (durationFAQ) {
-    const personalized=durationAdvice(content,durationFAQ.answer);
-    analysisLines.splice(0, 1, personalized.answer);
-    analysisLines.push('请补充：' + personalized.questions.join('；'));
+    analysisLines.splice(0, 1, durationFAQ.answer);
+    analysisLines.push('请补充：' + durationFAQ.followUpQuestions.join('；'));
   }
   const medicationFAQ = risk.category === '备孕用药'
     ? knowledgeBase.matchFAQ(content).find(item => item.category === 'medication') : null;
@@ -58,9 +55,9 @@ function handle(content, latestRecord) {
     : '就诊前可以把「周期记录」里的数据整理一下带过去，方便医生快速了解情况';
 
   const suggestions = risk.category === '备孕用药'
-    ? (medicationFAQ ? medicationFAQ.suggestions : ['用药前咨询医生或药师，并说明备孕计划。', '整理正在使用的药物和补充剂清单，供专业人员核对。', '不要自行用药、换药或停药。'])
+    ? (medicationFAQ ? medicationFAQ.suggestions : ['用药前咨询医生或药师，并说明备孕计划。', '整理正在使用的药物和补充剂清单，供专业人员核对。', '遵医嘱，不要自行用药、换药或停药。'])
     : durationFAQ
-    ? durationSuggestions(content,durationFAQ.suggestions).concat('双方一起整理既往检查和周期记录，预约妇科或生殖医学门诊咨询；不要自行使用促排药。')
+    ? durationFAQ.suggestions.concat('双方一起整理既往检查和周期记录，预约妇科或生殖医学门诊咨询；不要自行使用促排药。')
     : risk.riskLevel === 'high'
     ? [
         '请按以上提示就医，不依赖Demo判断病因。',
