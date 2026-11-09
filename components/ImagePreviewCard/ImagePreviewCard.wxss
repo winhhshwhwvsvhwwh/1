@@ -88,3 +88,11 @@
   color: #FFFFFF;
   font-weight: 500;
 }
+
+/* New report-review state only; existing image-consultation layout is unchanged. */
+.pc-report-sheet { max-height:90vh; overflow-y:auto; }
+.pc-report-notice,.pc-report-warning { margin-top:16rpx; font-size:22rpx; line-height:1.5; color:#8f6277; }
+.pc-report-warning { color:#b2496f; }
+.pc-report-row { margin-top:16rpx; padding:16rpx; border-radius:16rpx; background:#fff; }
+.pc-report-input { width:100%; box-sizing:border-box; margin-top:8rpx; padding:12rpx; border-radius:12rpx; background:#fff2f7; color:#333; font-size:25rpx; }
+.pc-report-range { height:110rpx; }

@@ -36,7 +36,7 @@ utils/radarTooltip.js            雷达节点状态描述
 images/                          已提供的素材（本次未修改）
 tests/                           Node回归脚本，不参与小程序打包
 design-reference/                设计参考和评审输出，不参与打包
-cloudfunctions/                  现有云函数，未在本次评审中修改或验证
+cloudfunctions/                  云函数；报告图片解读为独立可选接入
 _archived/                       归档的早期首页/会员/独立评估与报告页
 ```
 
@@ -45,6 +45,9 @@ _archived/                       归档的早期首页/会员/独立评估与报
 安装 Node.js 后，从项目根目录执行：
 
 ```sh
+node tests/typewriter.test.js
+node tests/reportInterpretation.test.js
+node tests/reportFlow.test.js
 node tests/menopauseKnowledge.test.js
 node tests/homeGuides.test.js
 node tests/temperatureIntent.test.js
@@ -92,3 +95,8 @@ node tests/componentAssets.test.js
 
 
 围绝经期/绝经作为次级本地科普接入，未新增首页入口或页面：支持区别与定义、月经变化、40岁后备孕、潮热/睡眠/情绪变化，以及绝经后再次出血。明确话题不进入个人周期计算；出血/疼痛和用药仍遵循风险优先级，大量出血、剧痛、腹痛伴出血仍保留原高风险处理。文案见design-reference/menopause-copy.md（本地科普草案，待确认与专业审核）。
+
+
+## 报告图片解读与逐字显示
+
+新回答收到完整内容后逐字显示，复制仍获取完整原文，高风险回复直接展示。报告图片走独立的通义千问兼容云函数：识别 → 用户核对修改 → 确认后解释。默认 REPORT_VISION.enabled=false；尚未配置或部署真实服务，不能宣称已实现真实图片识别验收。文字咨询继续 USE_CLOUD=false。配置方法、数据边界和待验证项见[报告单解读接入说明](design-reference/report-setup.md)。

@@ -8,18 +8,18 @@
   <!-- 识别：基于用户文字描述判断的图片类型（如实标注，不是真的读取了图片像素） -->
   <view class="aim-section">
     <view class="aim-section-label">识别</view>
-    <view class="aim-section-text">{{recognition}}</view>
+    <view class="aim-section-text">{{displayRecognition}}</view>
   </view>
 
   <!-- 分析 -->
   <view class="aim-section">
     <view class="aim-section-label">分析</view>
-    <view class="aim-section-text">{{analysis}}</view>
+    <view class="aim-section-text">{{displayAnalysis}}</view>
   </view>
 
   <!-- 建议 -->
-  <view wx:if="{{suggestions && suggestions.length > 0}}" class="aim-suggestions">
-    <view class="aim-suggestion-item" wx:for="{{suggestions}}" wx:key="*this">
+  <view wx:if="{{displaySuggestions.length > 0}}" class="aim-suggestions">
+    <view class="aim-suggestion-item" wx:for="{{displaySuggestions}}" wx:key="*this">
       <text class="aim-suggestion-check">✓</text>
       <text class="aim-suggestion-text">{{item}}</text>
     </view>

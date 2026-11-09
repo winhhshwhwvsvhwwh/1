@@ -2,6 +2,7 @@
 const api = require('../../utils/api.js');
 const recordStore = require('../../utils/recordStore.js');
 const imageAnalysis = require('../../utils/imageAnalysis.js');
+const reportClient = require('../../utils/reportClient.js');
 const { buildAssessmentReport } = require('../../utils/assessmentReport.js');
 const { tooltipPosition } = require('../../utils/radarTooltip.js');
 
@@ -55,6 +56,7 @@ Page({
     // ============ 图片咨询状态 ============
     showImagePicker: false, // 是否显示"图片咨询/拍摄图片"底部菜单
     pendingImage: '',       // 已选中、还没发送的图片临时路径
+    imageIntent:'general', reportItems:[], reportWarnings:[], reportBusy:false,
     pendingCaption: ''      // 图片预览时用户补充的文字说明
   },
 
@@ -101,8 +103,18 @@ Page({
   onPageBack() {
     if (this.data.assessmentSubmitting) return;
     if (this.data.showDimensions) { this.closeReportDimensions(); return; }
-    this.setData({ pageMode: 'home', assessmentMode: '', showScrollShortcut: false, scrollToId: 'home-top' });
+    this.setData({ pageMode: 'home', assessmentMode: '', showScrollShortcut: false, scrollToId: 'home-top',messages:this.data.messages.map(item=>({...item,animate:false})) });
   },
+  onAnswerTypingProgress() {
+    if(this.data.showScrollShortcut)return;
+    this.setData({scrollToId:''},()=>this.setData({scrollToId:'chat-bottom'}));
+  },
+  onAnswerTypingComplete(e) {
+    const id=e.currentTarget.dataset.id;
+    this.setData({messages:this.data.messages.map(item=>String(item.id)===String(id)?{...item,animate:false}:item)});
+  },
+  onHide() { this.setData({messages:this.data.messages.map(item=>({...item,animate:false}))}); },
+  onUnload() { this._reportRequest=(this._reportRequest||0)+1; },
   onNewConversation() {
     if (this.data.loading || this.data.assessmentSubmitting) return;
     this.setData({ pageMode: 'home', assessmentMode: '', showScrollShortcut: false, messages: [], showDimensions: false, scrollToId: '', unresolvedStreak: 0, showHandoffBanner: false });
@@ -438,6 +450,7 @@ Page({
           id: nextId(),
           role: 'assistant',
           content: res.data.content,
+          animate:res.data.riskLevel!=='high',
           // 结构化字段：接口本来就会返回这些，这次只是存到页面state里给AIMessageCard用
           understanding: res.data.understanding || '',
           analysis: res.data.analysis || '',
@@ -469,9 +482,8 @@ Page({
   /**
    * 点击"+"按钮：弹出"图片咨询/拍摄图片"菜单
    */
-  onPlusClick() {
-    this.setData({ showImagePicker: true });
-  },
+  onPlusClick() { this.setData({ showImagePicker:true,imageIntent:'general',reportItems:[],reportWarnings:[],reportBusy:false }); },
+  onReportClick() { this.setData({ showImagePicker:true,imageIntent:'report',reportItems:[],reportWarnings:[],reportBusy:false }); },
 
   onImagePickerCancel() {
     this.setData({ showImagePicker: false });
@@ -493,7 +505,7 @@ Page({
         // 当前USE_CLOUD=false，直接用本地临时路径展示预览即可；
         // 如果以后接入真实的图片分析后端，这里需要先 wx.cloud.uploadFile 上传，
         // 拿到云端fileID后再传给后端做视觉分析
-        this.setData({ pendingImage: tempFilePath, pendingCaption: '' });
+        this.setData({ pendingImage:tempFilePath,pendingCaption:'',reportItems:[],reportWarnings:[],reportBusy:false });
       },
       fail: (err) => {
         // 用户主动取消选择时err.errMsg会包含cancel，不需要额外提示
@@ -509,7 +521,39 @@ Page({
   },
 
   onImagePreviewCancel() {
-    this.setData({ pendingImage: '', pendingCaption: '' });
+    this._reportRequest=(this._reportRequest||0)+1;
+    this.setData({pendingImage:'',pendingCaption:'',reportItems:[],reportWarnings:[],reportBusy:false});
+  },
+  onReportItemChange(e) {
+    if(this.data.reportBusy)return;
+    const {index,field,value}=e.detail;
+    if(!Number.isInteger(index)||index<0||index>=this.data.reportItems.length||!['name','value','unit','referenceRange','flag'].includes(field))return;
+    this.setData({reportItems:this.data.reportItems.map((item,i)=>i===index?{...item,[field]:value}:item)});
+  },
+  async handleReportPreview() {
+    if(this.data.reportBusy||!this.data.pendingImage)return;
+    const imageUrl=this.data.pendingImage,question=this.data.pendingCaption.trim();
+    const request=(this._reportRequest||0)+1;this._reportRequest=request;
+    this.setData({reportBusy:true});
+    try {
+      if(!this.data.reportItems.length){
+        const result=await reportClient.recognizeReport(imageUrl,question);
+        if(request!==this._reportRequest)return;
+        if(!Array.isArray(result.items)||!result.items.length)throw Error('没有识别到清晰指标，请换图重试');
+        this.setData({reportItems:result.items,reportWarnings:[result.notice,...(result.warnings||[])]});
+      }else{
+        const items=this.data.reportItems;
+        if(items.some(item=>!item.name.trim()||!item.value.trim()))throw Error('请核对每项的项目名称和结果；读不清的项目请重新拍照识别');
+        const result=await reportClient.interpretReport(items,question);
+        if(request!==this._reportRequest)return;
+        if(typeof result.content!=='string'||!result.content)throw Error('报告解读结果为空，请重试');
+        const user={id:nextId(),role:'user',type:'image',imageUrl,content:question||'请解读这份报告',timestamp:Date.now()};
+        const answer={...result,id:nextId(),role:'assistant',type:'report_analysis',animate:result.riskLevel!=='high',dissatisfied:false,timestamp:Date.now()};
+        this.setData({pageMode:'chat',assessmentMode:'',pendingImage:'',pendingCaption:'',reportItems:[],reportWarnings:[],messages:[...this.data.messages,user,answer]});
+        this.scrollToBottom();this.evaluateHandoffTrigger(answer,'ai_signal');
+      }
+    }catch(error){if(request===this._reportRequest)wx.showModal({title:'报告处理未完成',content:error.message||'请稍后重试',showCancel:false});}
+    finally {if(request===this._reportRequest)this.setData({reportBusy:false});}
   },
 
   /**
@@ -520,6 +564,12 @@ Page({
    * 不是真的分析了图片像素内容——项目目前没有接入视觉/OCR模型。
    */
   onImagePreviewSend() {
+    if(this.data.imageIntent==='report')return this.handleReportPreview();
+    if(imageAnalysis.classifyByCaption(this.data.pendingCaption)==='exam_report'){
+      this.setData({imageIntent:'report',reportItems:[],reportWarnings:[]});
+      wx.showToast({title:'已切换报告解读，请核对上传说明',icon:'none'});
+      return;
+    }
     const imageUrl = this.data.pendingImage;
     const caption = this.data.pendingCaption.trim();
     if (!imageUrl || this.data.loading) return;
@@ -554,6 +604,7 @@ Page({
         id: nextId(),
         role: 'assistant',
         type: 'image_analysis',
+        animate:result.riskLevel!=='high',
         recognition: result.recognition,
         analysis: result.analysis,
         suggestions: result.suggestions,

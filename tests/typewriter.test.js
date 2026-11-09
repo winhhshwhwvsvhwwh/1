@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),{createRequire}=require('node:module');
+const {fieldsLength,typingFrame,startTypewriter}=require('../utils/typewriter');
+const fields={understanding:'A🙂',analysis:'B',suggestions:['C','D']};assert.equal(fieldsLength(fields),5);assert.deepEqual(typingFrame(fields,2),{understanding:'A🙂',analysis:'',suggestions:[]});assert.deepEqual(typingFrame(fields,4),{understanding:'A🙂',analysis:'B',suggestions:['C']});
+let now=0,id=0,done=0;const timers=new Map(),frames=[];const options={clock:()=>now,setTimer:fn=>{timers.set(++id,fn);return id},clearTimer:key=>timers.delete(key)};
+const tick=()=>{now+=24;const [key,fn]=timers.entries().next().value;timers.delete(key);fn();};
+const typer=startTypewriter(fields,frame=>frames.push(frame),()=>done++,options);assert.equal(frames[0].understanding,'');while(timers.size)tick();assert.equal(done,1);assert.deepEqual(frames.at(-1),fields);typer.finish();assert.equal(done,1);
+const stopped=startTypewriter(fields,()=>{},()=>done++,options);stopped.cancel();assert.equal(timers.size,0);assert.equal(done,1);
+let definition;const file=require.resolve('../components/AIMessageCard/AIMessageCard.js'),nativeRequire=createRequire(file);
+vm.runInNewContext(fs.readFileSync(file,'utf8'),{Component:d=>definition=d,require:mod=>mod.endsWith('/typewriter.js')?{startTypewriter:(f,render,end)=>startTypewriter(f,render,end,options)}:nativeRequire(mod)});
+const state={...definition.methods,properties:{animate:true,understanding:'开始',analysis:'请遵医嘱。',fallbackContent:'完整内容',suggestions:['记录周期记录'],threshold:3},data:{},setData(d){Object.assign(this.data,d)},triggerEvent(name){this.event=name}};
+definition.methods.computeCollapse.call(state);assert(state.data.typing);assert(state.data.expanded);assert.equal(state.data.analysisSegments.length,0);while(timers.size)tick();assert.equal(state.data.typing,false);assert.equal(state.event,'complete');assert.equal(state.data.analysisSegments.map(s=>s.text).join(''),state.properties.analysis);state.properties.animate=false;definition.methods.computeCollapse.call(state);assert.equal(state.data.expanded,true);
+console.log('PASS Unicode-safe sequential fields, partial suggestions, finish/cancel, no replay or collapse on completion, full highlighted final text');

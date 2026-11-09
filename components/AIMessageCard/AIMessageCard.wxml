@@ -10,22 +10,22 @@
   <!-- 内容区域：支持长文本展开/收起 -->
   <view class="ai-card-body">
     <block wx:if="{{expanded || !isLong}}">
-      <view class="ai-card-text" wx:if="{{understanding}}"><text wx:for="{{understandingSegments}}" wx:for-item="segment" wx:key="id" class="{{segment.highlighted ? 'ai-card-highlight' : ''}}">{{segment.text}}</text></view>
-      <view class="ai-card-text" wx:if="{{analysis}}"><text wx:for="{{analysisSegments}}" wx:for-item="segment" wx:key="id" class="{{segment.highlighted ? 'ai-card-highlight' : ''}}">{{segment.text}}</text></view>
+      <view class="ai-card-text" wx:if="{{understandingSegments.length}}"><text wx:for="{{understandingSegments}}" wx:for-item="segment" wx:key="id" class="{{segment.highlighted ? 'ai-card-highlight' : ''}}">{{segment.text}}</text></view>
+      <view class="ai-card-text" wx:if="{{analysisSegments.length}}"><text wx:for="{{analysisSegments}}" wx:for-item="segment" wx:key="id" class="{{segment.highlighted ? 'ai-card-highlight' : ''}}">{{segment.text}}</text></view>
       <view class="ai-card-text" wx:if="{{!understanding && !analysis && fallbackContent}}"><text wx:for="{{fallbackSegments}}" wx:for-item="segment" wx:key="id" class="{{segment.highlighted ? 'ai-card-highlight' : ''}}">{{segment.text}}</text></view>
     </block>
     <block wx:else>
       <view class="ai-card-text"><text wx:for="{{previewSegments}}" wx:for-item="segment" wx:key="id" class="{{segment.highlighted ? 'ai-card-highlight' : ''}}">{{segment.text}}</text></view>
     </block>
 
-    <view wx:if="{{isLong}}" class="ai-card-toggle" bindtap="onToggleExpand">
+    <view wx:if="{{isLong && !typing}}" class="ai-card-toggle" bindtap="onToggleExpand">
       {{expanded ? '收起' : '展开全部'}}
       <text class="ai-card-toggle-arrow">{{expanded ? '︿' : '﹀'}}</text>
     </view>
   </view>
 
   <!-- 建议：小暖建议 -->
-  <view wx:if="{{suggestions && suggestions.length > 0}}" class="ai-card-suggestions">
+  <view wx:if="{{suggestionRows.length > 0}}" class="ai-card-suggestions">
     <view class="ai-card-suggestion-item" wx:for="{{suggestionRows}}" wx:key="id">
       <text class="ai-card-suggestion-check">✓</text>
       <text class="ai-card-suggestion-text"><text wx:for="{{item.segments}}" wx:for-item="segment" wx:key="id" class="{{segment.highlighted ? 'ai-card-highlight' : ''}}">{{segment.text}}</text></text>

@@ -1,24 +1,41 @@
 <!--components/ImagePreviewCard/ImagePreviewCard.wxml-->
 <view class="pc-mask" wx:if="{{show}}">
-  <view class="pc-sheet">
+  <view class="pc-sheet {{reportMode ? 'pc-report-sheet' : ''}}">
     <view class="pc-header">
-      <text class="pc-title">图片咨询</text>
+      <text class="pc-title">{{reportMode ? (reportItems.length ? '核对报告数据' : '报告单解读') : '图片咨询'}}</text>
       <text class="pc-close" bindtap="onCancel">×</text>
     </view>
 
     <image class="pc-image" src="{{imageUrl}}" mode="aspectFit" />
 
-    <view class="pc-caption-label">补充你的问题（可选）</view>
+    <view wx:if="{{reportMode}}" class="pc-report-notice">图片将发送至配置的识别服务。请先遮挡姓名、证件号和条码；识别后须核对数据再解读。</view>
+    <view class="pc-caption-label">{{reportMode ? '补充检测背景或想问的问题（可选）' : '补充你的问题（可选）'}}</view>
     <input
       class="pc-caption-input"
-      placeholder="例如：帮我看看这个排卵试纸结果"
+      placeholder="{{reportMode ? '例如：采样在月经第几天、想了解哪项指标' : '例如：帮我看看这个排卵试纸结果'}}"
       value="{{caption}}"
       bindinput="onCaptionInput"
     />
 
+    <block wx:if="{{reportMode && reportItems.length}}">
+      <view class="pc-report-notice">请对照原图核对每一项。没有参考范围就留空；有多个周期阶段范围时保留原文，不自行选择。看不清的结果请换图重识别。</view>
+      <view class="pc-report-warning" wx:for="{{reportWarnings}}" wx:key="*this">{{item}}</view>
+      <view class="pc-report-row" wx:for="{{reportItems}}" wx:key="id">
+        <view class="pc-caption-label">指标 {{index + 1}} · 项目名称</view>
+        <input class="pc-report-input" value="{{item.name}}" maxlength="80" disabled="{{busy}}" data-index="{{index}}" data-field="name" bindinput="onReportItemInput"/>
+        <view class="pc-caption-label">结果（保留原文的 &lt;、&gt; 或阴阳性）</view>
+        <input class="pc-report-input" value="{{item.value}}" maxlength="80" disabled="{{busy}}" data-index="{{index}}" data-field="value" bindinput="onReportItemInput"/>
+        <view class="pc-caption-label">单位（按原报告，没有则留空）</view>
+        <input class="pc-report-input" value="{{item.unit}}" maxlength="40" disabled="{{busy}}" data-index="{{index}}" data-field="unit" bindinput="onReportItemInput"/>
+        <view class="pc-caption-label">本报告参考范围</view>
+        <textarea class="pc-report-input pc-report-range" value="{{item.referenceRange}}" maxlength="240" disabled="{{busy}}" data-index="{{index}}" data-field="referenceRange" bindinput="onReportItemInput"/>
+        <view class="pc-caption-label">异常／危急标记（按原文，没有则留空）</view>
+        <input class="pc-report-input" value="{{item.flag}}" maxlength="40" disabled="{{busy}}" data-index="{{index}}" data-field="flag" bindinput="onReportItemInput"/>
+      </view>
+    </block>
     <view class="pc-actions">
       <view class="pc-btn pc-btn-cancel" bindtap="onCancel">取消</view>
-      <view class="pc-btn pc-btn-send" bindtap="onSend">发送给小暖分析</view>
+      <view class="pc-btn pc-btn-send" bindtap="onSend">{{reportMode ? (busy ? (reportItems.length ? '正在解读…' : '正在识别…') : (reportItems.length ? '确认数据并解读' : '识别报告数据')) : '发送给小暖分析'}}</view>
     </view>
   </view>
 </view>
