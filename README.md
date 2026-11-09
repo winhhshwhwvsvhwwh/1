@@ -45,6 +45,7 @@ _archived/                       归档的早期首页/会员/独立评估与报
 安装 Node.js 后，从项目根目录执行：
 
 ```sh
+node tests/recordSymptoms.test.js
 node tests/chatMemory.test.js
 node tests/typewriter.test.js
 node tests/reportInterpretation.test.js
@@ -111,3 +112,6 @@ node tests/componentAssets.test.js
 
 
 逐字回答期间聊天区持续跟随底部，避免把内容增长误判为用户离开底部；手指下拉查看旧消息时暂停跟随，点原有回到底部按钮恢复。逐字期间关闭重复的滚动动画以减少追赶延迟，回答结束后恢复原滚动动画。只改滚动绑定与逻辑，不改页面样式。已通过模拟滚动/触摸测试，微信原生滚动手感及键盘联动仍待真机复核。
+
+
+周期记录的身体状态标签由JS计算选中映射，历史记录由JS生成状态文字，避免WXML调用不支持的indexOf/join；原标签样式与布局保持不变。多选、取消、保存数据和保存后重置已通过模拟测试，微信实际点击待复核。

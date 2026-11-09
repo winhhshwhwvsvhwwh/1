@@ -1,0 +1,13 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+let definition,saved;let records=[];
+const store={getRecords:async()=>records,saveRecord:async record=>{saved=JSON.parse(JSON.stringify(record));records=[{...saved,id:'1'}];},deleteRecord:async()=>[]};
+vm.runInNewContext(fs.readFileSync(require.resolve('../pages/record/record'),'utf8'),{Page:d=>definition=d,require:()=>store,wx:{showToast(){}}});
+const p={...definition,data:JSON.parse(JSON.stringify(definition.data)),setData(d){Object.assign(this.data,d)}};
+const toggle=value=>p.onSymptomToggle({currentTarget:{dataset:{value}}});
+toggle('腹痛');toggle('疲劳');assert.deepEqual(Array.from(p.data.symptoms),['腹痛','疲劳']);assert(p.data.symptomSelected['腹痛']);assert(p.data.symptomSelected['疲劳']);
+toggle('腹痛');assert(!p.data.symptomSelected['腹痛']);assert(p.data.symptomSelected['疲劳']);
+toggle('睡眠不足');toggle('情绪波动');toggle('invalid');assert.equal(p.data.symptoms.length,3);
+p.setData({startDate:'2026-10-01',endDate:'2026-10-05',cycleLength:'28',periodLength:'5'});p.onSave();
+(async()=>{await new Promise(resolve=>setImmediate(resolve));assert.deepEqual(saved.symptoms,['疲劳','睡眠不足','情绪波动']);assert.equal(p.data.symptoms.length,0);assert.equal(Object.keys(p.data.symptomSelected).length,0);assert.equal(p.data.records[0].symptomText,'疲劳、睡眠不足、情绪波动');
+const template=fs.readFileSync(require.resolve('../pages/record/record.wxml'),'utf8');assert(!template.includes('.indexOf('));assert(!template.includes('.join('));assert(template.includes('symptomSelected[item]'));
+console.log('PASS symptom multi-select, deselect, invalid input, saved values, visual reset and history labels; no unsupported WXML array methods');})().catch(e=>{console.error(e);process.exitCode=1});

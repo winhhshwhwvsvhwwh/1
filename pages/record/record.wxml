@@ -64,7 +64,7 @@
       <view
         wx:for="{{symptomOptions}}"
         wx:key="*this"
-        class="symptom-tag {{symptoms.indexOf(item) > -1 ? 'symptom-tag-active' : ''}}"
+        class="symptom-tag {{symptomSelected[item] ? 'symptom-tag-active' : ''}}"
         data-value="{{item}}"
         bindtap="onSymptomToggle"
       >
@@ -93,7 +93,7 @@
           <view class="record-date">{{item.startDate}} 至 {{item.endDate}}</view>
           <view class="record-meta">
             周期 {{item.cycleLength}} 天 · 经期 {{item.periodLength}} 天
-            <block wx:if="{{item.symptoms.length}}"> · {{item.symptoms.join('、')}}</block>
+            <block wx:if="{{item.symptomText}}"> · {{item.symptomText}}</block>
           </view>
         </view>
         <view class="record-delete" data-id="{{item.id}}" bindtap="onDeleteRecord">删除</view>

@@ -23,6 +23,7 @@ Page({
     // 第三部分：身体状态（多选）
     symptomOptions: ['腹痛', '疲劳', '睡眠不足', '情绪波动'],
     symptoms: [],
+    symptomSelected: {},
 
     // 历史记录列表
     records: [],
@@ -61,7 +62,7 @@ Page({
   loadRecords() {
     recordStore
       .getRecords()
-      .then((records) => this.setData({ records }))
+      .then((records) => this.setData({ records: records.map(record => ({...record, symptomText: (record.symptoms || []).join('、')})) }))
       .catch((err) => {
         console.error('loadRecords error', err);
         wx.showToast({ title: '记录加载失败', icon: 'none' });
@@ -92,11 +93,14 @@ Page({
 
   onSymptomToggle(e) {
     const { value } = e.currentTarget.dataset;
+    if (!this.data.symptomOptions.includes(value)) return;
     const { symptoms } = this.data;
     const next = symptoms.includes(value)
       ? symptoms.filter((item) => item !== value)
       : [...symptoms, value];
-    this.setData({ symptoms: next });
+    const symptomSelected = {};
+    next.forEach(symptom => { symptomSelected[symptom] = true; });
+    this.setData({ symptoms: next, symptomSelected });
   },
 
   /* ============ 第四部分：保存数据 ============ */
@@ -148,6 +152,7 @@ Page({
           cycleLength: '',
           periodLength: '',
           symptoms: [],
+          symptomSelected: {},
           loading: false
         });
         this.loadRecords();
@@ -171,7 +176,7 @@ Page({
         if (!res.confirm) return;
         recordStore
           .deleteRecord(id)
-          .then((records) => this.setData({ records }))
+          .then((records) => this.setData({ records: records.map(record => ({...record, symptomText: (record.symptoms || []).join('、')})) }))
           .catch((err) => {
             console.error('deleteRecord error', err);
             wx.showToast({ title: '删除失败，请稍后重试', icon: 'none' });
