@@ -1,5 +1,6 @@
 // pages/chat/chat.js
 const api = require('../../utils/api.js');
+const chatMemory = require('../../utils/chatMemory.js');
 const recordStore = require('../../utils/recordStore.js');
 const imageAnalysis = require('../../utils/imageAnalysis.js');
 const reportClient = require('../../utils/reportClient.js');
@@ -113,11 +114,14 @@ Page({
     const id=e.currentTarget.dataset.id;
     this.setData({messages:this.data.messages.map(item=>String(item.id)===String(id)?{...item,animate:false}:item)});
   },
-  onHide() { this.setData({messages:this.data.messages.map(item=>({...item,animate:false}))}); },
-  onUnload() { this._reportRequest=(this._reportRequest||0)+1; },
+  onHide() { chatMemory.save(this.data.messages); this.setData({messages:this.data.messages.map(item=>({...item,animate:false}))}); },
+  onUnload() { chatMemory.save(this.data.messages); this._reportRequest=(this._reportRequest||0)+1; },
   onNewConversation() {
     if (this.data.loading || this.data.assessmentSubmitting) return;
-    this.setData({ pageMode: 'home', assessmentMode: '', showScrollShortcut: false, messages: [], showDimensions: false, scrollToId: '', unresolvedStreak: 0, showHandoffBanner: false });
+    const reset=()=>{try{chatMemory.clear();}catch(e){wx.showToast({title:'清除失败，请重试',icon:'none'});return;}
+      this.setData({ pageMode:'home',assessmentMode:'',showScrollShortcut:false,messages:[],showDimensions:false,scrollToId:'',unresolvedStreak:0,showHandoffBanner:false });};
+    if(!this.data.messages.length){reset();return;}
+    wx.showModal({title:'开始新对话',content:'将清除本机保存的聊天记录，周期记录会保留。是否继续？',success:res=>{if(res.confirm)reset();}});
   },
   onDimensionsHistory() {
     this.closeReportDimensions();
@@ -317,6 +321,8 @@ Page({
    * 加载历史聊天记录
    */
   loadHistory() {
+    const local=chatMemory.read();
+    if(local.length){msgId=Math.max(msgId,...local.map(m=>Number(m.id)||0));this.setData({messages:local});return;}
     api.getChatHistory().then((res) => {
       if (res.code === 0 && res.data.length) {
         msgId = Math.max(msgId, ...res.data.map(m => Number(m.id) || 0));
@@ -780,6 +786,7 @@ Page({
   },
 
   scrollToBottom() {
+    chatMemory.save(this.data.messages);
     const list = this.data.messages;
     if (!list.length) return;
     const lastId = list[list.length - 1].id;

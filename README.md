@@ -45,6 +45,7 @@ _archived/                       归档的早期首页/会员/独立评估与报
 安装 Node.js 后，从项目根目录执行：
 
 ```sh
+node tests/chatMemory.test.js
 node tests/typewriter.test.js
 node tests/reportInterpretation.test.js
 node tests/reportModelErrors.test.js
@@ -102,3 +103,8 @@ node tests/componentAssets.test.js
 ## 报告图片解读与逐字显示
 
 新回答收到完整内容后逐字显示，复制仍获取完整原文，高风险回复直接展示。报告图片走独立的通义千问兼容云函数：识别 → 用户核对修改 → 确认后解释。REPORT_VISION 已启用并绑定用户提供的微信云环境；云函数已由用户部署，模型密钥是否有效及真实图片识别仍待联调验收。文字咨询继续 USE_CLOUD=false。配置方法、数据边界和待验证项见[报告单解读接入说明](design-reference/report-setup.md)。
+
+
+## 本机聊天记忆
+
+最近100条文字消息保存在微信本机缓存，回答回填及页面退出时保存。重新打开保持首页，通过顶部时钟查看；旧回答不重播逐字动画。顶部加号开始新对话前确认清除聊天记录，周期记录保留。图片/报告类消息不进入该文字缓存，不保存图片文件；当前不是云端同步或任意多轮语义记忆，不跨设备，清除小程序数据后会丢失。不新增个人健康档案或自动推断个人信息。微信真机重启、清除确认和存储空间不足仍需实际复核。
