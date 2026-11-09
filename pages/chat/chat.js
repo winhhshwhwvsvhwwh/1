@@ -27,7 +27,7 @@ const UNRESOLVED_STREAK_LIMIT = 2;
 Page({
   data: {
     // { id, role, content, understanding, analysis, suggestions, timestamp, needHandoff, riskLevel, dissatisfied }
-    pageMode: 'home', showDimensions: false, reportScore: null, scoreLabel: '信息待补充', pointerAngle: null, reportAnalysis: [],
+    answerTyping: false, pageMode: 'home', showDimensions: false, reportScore: null, scoreLabel: '信息待补充', pointerAngle: null, reportAnalysis: [],
     assessmentIntro: '为了更全面地了解您的备孕状态，可以参与这套AI备孕评估。我们将结合您的周期情况、备孕阶段及生活习惯，为您生成个性化备孕报告…',
     radarNodes: [], radarTooltip: null,
     optionItems: [], selectedOptions: [], hasSelection: false,
@@ -78,7 +78,7 @@ Page({
         this.setData({ scrollShortcutBottom: windowInfo.windowHeight - rects[2].top + 20 });
       }
       const eligible = this.data.pageMode === 'consult' || this.data.pageMode === 'chat' || (this.data.pageMode === 'assessment' && this.data.assessmentMode === 'result');
-      this.setData({ showScrollShortcut: eligible && !this.data.showDimensions && !this._scrollingToEnd && rects[1].bottom - rects[0].bottom > 16 });
+      this.setData({ showScrollShortcut: eligible && !this.data.showDimensions && !this._scrollingToEnd && !(this.data.answerTyping && !this._answerFollowPaused) && rects[1].bottom - rects[0].bottom > 16 });
     });
   },
   onMessageScroll(e) {
@@ -90,14 +90,27 @@ Page({
     if (!this._scrollViewportHeight) { this.refreshScrollShortcut(); return; }
     const remaining = e.detail.scrollHeight - e.detail.scrollTop - this._scrollViewportHeight;
     if (this._scrollingToEnd && remaining <= 16) this._scrollingToEnd = false;
-    const show = !this._scrollingToEnd && remaining > 16;
+    const show = !this._scrollingToEnd && !(this.data.answerTyping && !this._answerFollowPaused) && remaining > 16;
     if (show !== this.data.showScrollShortcut) this.setData({ showScrollShortcut: show });
   },
   onScrollShortcut() {
+    this._answerFollowPaused=false;
     this._scrollingToEnd = true;
     this.setData({ scrollToId: '', showScrollShortcut: false }, () => this.setData({ scrollToId: 'chat-bottom' }));
   },
-  onScrollTouchStart() { this._scrollingToEnd = false; },
+  onScrollTouchStart(e) {
+    this._scrollingToEnd=false;
+    this._scrollTouchY=e&&e.touches&&e.touches[0]?e.touches[0].clientY:null;
+  },
+  onScrollTouchMove(e) {
+    const touch=e.touches&&e.touches[0];
+    // A finger moving down scrolls toward older messages. Pause before the next typing tick.
+    if(touch&&this._scrollTouchY!==null&&this._scrollTouchY!==undefined&&touch.clientY-this._scrollTouchY>6){
+      this._answerFollowPaused=true;this._scrollingToEnd=false;
+      this.setData({scrollToId:'',showScrollShortcut:true});
+    }
+  },
+  onScrollTouchEnd() { this._scrollTouchY=null; },
   onReady() { this.refreshScrollShortcut(); },
   onResize() { if (this.data.showDimensions) this.drawRadar(); else this.refreshScrollShortcut(); },
   changeConsultTab(e) { this.setData({ consultTab: e.currentTarget.dataset.tab }); },
@@ -107,14 +120,19 @@ Page({
     this.setData({ pageMode: 'home', assessmentMode: '', showScrollShortcut: false, scrollToId: 'home-top',messages:this.data.messages.map(item=>({...item,animate:false})) });
   },
   onAnswerTypingProgress() {
-    if(this.data.showScrollShortcut)return;
-    this.setData({scrollToId:''},()=>this.setData({scrollToId:'chat-bottom'}));
+    if(!this.data.answerTyping)this.setData({answerTyping:true});
+    if(this._answerFollowPaused)return;
+    this._scrollingToEnd=true;
+    this.setData({scrollToId:'',showScrollShortcut:false},()=>{
+      if(!this._answerFollowPaused)this.setData({scrollToId:'chat-bottom'});
+    });
   },
   onAnswerTypingComplete(e) {
     const id=e.currentTarget.dataset.id;
-    this.setData({messages:this.data.messages.map(item=>String(item.id)===String(id)?{...item,animate:false}:item)});
+    this.setData({answerTyping:false,messages:this.data.messages.map(item=>String(item.id)===String(id)?{...item,animate:false}:item)});
+    if(!this._answerFollowPaused){this._scrollingToEnd=true;this.setData({scrollToId:''},()=>{if(!this._answerFollowPaused)this.setData({scrollToId:'chat-bottom'});});}
   },
-  onHide() { chatMemory.save(this.data.messages); this.setData({messages:this.data.messages.map(item=>({...item,animate:false}))}); },
+  onHide() { chatMemory.save(this.data.messages); this.setData({answerTyping:false,messages:this.data.messages.map(item=>({...item,animate:false}))}); },
   onUnload() { chatMemory.save(this.data.messages); this._reportRequest=(this._reportRequest||0)+1; },
   onNewConversation() {
     if (this.data.loading || this.data.assessmentSubmitting) return;
@@ -789,7 +807,8 @@ Page({
     chatMemory.save(this.data.messages);
     const list = this.data.messages;
     if (!list.length) return;
-    const lastId = list[list.length - 1].id;
-    this.setData({ scrollToId: '', showScrollShortcut: false }, () => { this.setData({ scrollToId: `msg-${lastId}` }); });
+    this._answerFollowPaused=false;
+    this._scrollingToEnd=true;
+    this.setData({ scrollToId:'',showScrollShortcut:false },()=>this.setData({scrollToId:'chat-bottom'}));
   }
 });

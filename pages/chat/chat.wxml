@@ -1,6 +1,6 @@
 <view class="chat-page">
 <xiaonuan-header show-back="{{pageMode !== 'home'}}" bindback="onPageBack" bindnew="onNewConversation" bindhistory="onHistoryClick" bindmore="onHeaderMore"/>
-<scroll-view class="msg-list" scroll-y scroll-into-view="{{scrollToId}}" scroll-with-animation bindscroll="onMessageScroll" bindtouchstart="onScrollTouchStart">
+<scroll-view class="msg-list" scroll-y scroll-into-view="{{scrollToId}}" scroll-with-animation="{{!answerTyping}}" bindscroll="onMessageScroll" bindtouchstart="onScrollTouchStart" bindtouchmove="onScrollTouchMove" bindtouchend="onScrollTouchEnd" bindtouchcancel="onScrollTouchEnd">
 <view class="scroll-content">
 <view wx:if="{{pageMode === 'home'}}" id="home-top" class="home-content">
  <view class="welcome-banner">
