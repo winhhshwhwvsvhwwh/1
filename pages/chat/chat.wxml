@@ -162,8 +162,8 @@
 </view>
  <view wx:if="{{assessmentMode !== 'result'}}" id="assessment-panel" class="assessment-card">
 <view class="assessment-head">
-<view class="assessment-icon">
-<image src="/images/campaign/assessment-calendar.png" mode="aspectFit"/>
+<view class="assessment-icon calendar-icon-art">
+<image src="/images/campaign/assessment-calendar-hd.webp" mode="aspectFit"/>
 </view>
 <view class="assessment-heading">备孕状态评估表<view class="muted">请根据您的实际情况进行填写</view>
 </view>
@@ -184,7 +184,7 @@
  <view wx:if="{{assessmentMode === 'quiz'}}" class="small-rating"><view class="quiz-feedback-wrap"><image class="quiz-feedback-art" src="/images/campaign/quiz-feedback.png" mode="aspectFit"/><view class="quiz-feedback-hotspots"><view role="button" aria-label="满意" data-positive="{{true}}" bindtap="openFeedback"></view><view role="button" aria-label="不满意" data-positive="{{false}}" bindtap="openFeedback"></view></view></view></view>
  <block wx:if="{{assessmentMode === 'result'}}">
 <view class="completion-banner">
-<image class="completion-icon" src="/images/campaign/assessment-calendar.png" mode="aspectFit"/>
+<view class="completion-icon calendar-icon-art"><image src="/images/campaign/assessment-calendar-hd.webp" mode="aspectFit"/></view>
 <view class="completion-copy">
 <text class="completion-title">自测完成：备孕状态评估表</text>
 <view class="completion-subtitle">已完成检测，将结合询问给出建议</view>
