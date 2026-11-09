@@ -310,7 +310,7 @@
 <view class="dimension-summary">
 <view>{{reportScore === null ? '信息不足，暂无法计算总分' : '本次自评 ' + reportScore + ' 分'}}</view>
 <view wx:if="{{reportScore !== null}}" class="dimension-progress">
-<view style="width:{{reportScore}}%">
+<view style="width:{{reportScore}}%;">
 </view>
 </view>
 <view class="muted">{{assessmentReport.summary}}</view>
