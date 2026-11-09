@@ -1,5 +1,7 @@
 // components/AIMessageCard/AIMessageCard.js
 
+const { highlightText } = require('../../utils/highlightText.js');
+
 const COLLAPSE_THRESHOLD = 120; // 超过这个字数就默认折叠，可通过 threshold 属性覆盖
 
 Component({
@@ -16,23 +18,30 @@ Component({
   data: {
     expanded: false,
     isLong: false,
-    previewText: ''
+    previewText: '',
+    understandingSegments: [], analysisSegments: [], fallbackSegments: [], previewSegments: [],
+    suggestionRows: []
   },
 
   observers: {
-    'understanding, analysis, fallbackContent, threshold': function () {
+    'understanding, analysis, fallbackContent, threshold, suggestions': function () {
       this.computeCollapse();
     }
   },
 
   methods: {
     computeCollapse() {
-      const { understanding, analysis, fallbackContent, threshold } = this.properties;
+      const { understanding, analysis, fallbackContent, threshold, suggestions } = this.properties;
       const fullText = [understanding, analysis].filter(Boolean).join('\n') || fallbackContent || '';
       const isLong = fullText.length > threshold;
+      const previewText = isLong ? fullText.slice(0, threshold) + '...' : fullText;
       this.setData({
-        isLong,
-        previewText: isLong ? fullText.slice(0, threshold) + '...' : fullText,
+        isLong, previewText,
+        understandingSegments: highlightText(understanding),
+        analysisSegments: highlightText(analysis),
+        fallbackSegments: highlightText(fallbackContent),
+        previewSegments: highlightText(previewText),
+        suggestionRows: (suggestions || []).map((text, id) => ({id, segments: highlightText(text, 1)})),
         expanded: false
       });
     },

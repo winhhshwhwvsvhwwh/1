@@ -9,12 +9,12 @@
   <!-- 内容区域：支持长文本展开/收起 -->
   <view class="ai-card-body">
     <block wx:if="{{expanded || !isLong}}">
-      <view class="ai-card-text" wx:if="{{understanding}}">{{understanding}}</view>
-      <view class="ai-card-text" wx:if="{{analysis}}">{{analysis}}</view>
-      <view class="ai-card-text" wx:if="{{!understanding && !analysis && fallbackContent}}">{{fallbackContent}}</view>
+      <view class="ai-card-text" wx:if="{{understanding}}"><text wx:for="{{understandingSegments}}" wx:for-item="segment" wx:key="id" class="{{segment.highlighted ? 'ai-card-highlight' : ''}}">{{segment.text}}</text></view>
+      <view class="ai-card-text" wx:if="{{analysis}}"><text wx:for="{{analysisSegments}}" wx:for-item="segment" wx:key="id" class="{{segment.highlighted ? 'ai-card-highlight' : ''}}">{{segment.text}}</text></view>
+      <view class="ai-card-text" wx:if="{{!understanding && !analysis && fallbackContent}}"><text wx:for="{{fallbackSegments}}" wx:for-item="segment" wx:key="id" class="{{segment.highlighted ? 'ai-card-highlight' : ''}}">{{segment.text}}</text></view>
     </block>
     <block wx:else>
-      <view class="ai-card-text">{{previewText}}</view>
+      <view class="ai-card-text"><text wx:for="{{previewSegments}}" wx:for-item="segment" wx:key="id" class="{{segment.highlighted ? 'ai-card-highlight' : ''}}">{{segment.text}}</text></view>
     </block>
 
     <view wx:if="{{isLong}}" class="ai-card-toggle" bindtap="onToggleExpand">
@@ -25,9 +25,9 @@
 
   <!-- 建议：小暖建议 -->
   <view wx:if="{{suggestions && suggestions.length > 0}}" class="ai-card-suggestions">
-    <view class="ai-card-suggestion-item" wx:for="{{suggestions}}" wx:key="*this">
+    <view class="ai-card-suggestion-item" wx:for="{{suggestionRows}}" wx:key="id">
       <text class="ai-card-suggestion-check">✓</text>
-      <text class="ai-card-suggestion-text">{{item}}</text>
+      <text class="ai-card-suggestion-text"><text wx:for="{{item.segments}}" wx:for-item="segment" wx:key="id" class="{{segment.highlighted ? 'ai-card-highlight' : ''}}">{{segment.text}}</text></text>
     </view>
   </view>
 

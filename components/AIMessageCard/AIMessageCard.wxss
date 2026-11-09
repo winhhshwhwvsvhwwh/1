@@ -103,3 +103,6 @@
 .ai-card { width:100%; box-shadow:none; border-radius:26rpx; }.ai-card-title,.ai-card-suggestion-check { color:#ff4089; }
 
 .ai-card-disclaimer { margin-top:16rpx;font-size:22rpx;line-height:1.5;color:#888; }
+
+/* Emphasis uses the existing theme pink; notices keep their muted style. */
+.ai-card-highlight { color:#ff4089; font-weight:600; }
