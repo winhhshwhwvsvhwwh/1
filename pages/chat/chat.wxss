@@ -1195,8 +1195,3 @@ page {
   top:22rpx;
   transform:rotate(22deg);
 }
-
-/* High-resolution calendar: retain the existing layout and a clean rounded tile. */
-.calendar-icon-art { position:relative; overflow:hidden; border-radius:20rpx; background:#faf0f4; }
-.calendar-icon-art image { position:absolute; display:block; width:112%; height:112%; left:-6%; top:-6%; }
-.completion-banner .calendar-icon-art { border-radius:6rpx; }
