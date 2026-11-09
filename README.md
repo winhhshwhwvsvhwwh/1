@@ -47,6 +47,8 @@ _archived/                       归档的早期首页/会员/独立评估与报
 ```sh
 node tests/typewriter.test.js
 node tests/reportInterpretation.test.js
+node tests/reportModelErrors.test.js
+node tests/reportResponseFormat.test.js
 node tests/reportFlow.test.js
 node tests/menopauseKnowledge.test.js
 node tests/homeGuides.test.js

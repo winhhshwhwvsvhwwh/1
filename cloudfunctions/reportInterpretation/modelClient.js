@@ -24,7 +24,11 @@ function callModel(messages,env=process.env){
     const req=https.request(url,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key,'Content-Length':Buffer.byteLength(body)}},res=>{
       res.setEncoding('utf8');
       let data='';res.on('data',chunk=>{data+=chunk;if(Buffer.byteLength(data)>1024*1024){req.destroy();reject(Error('报告服务响应过大'));}});
-      res.on('end',()=>{if(res.statusCode<200||res.statusCode>=300){reject(Error(providerFailure(res.statusCode,data)));return;}try{const value=JSON.parse(data);const text=value.choices[0].message.content;if(typeof text!=='string')throw Error();resolve(text);}catch(e){reject(Error('报告服务返回格式无效'));}});
+      res.on('end',()=>{if(res.statusCode<200||res.statusCode>=300){reject(Error(providerFailure(res.statusCode,data)));return;}try{const value=JSON.parse(data);const choice=value.choices&&value.choices[0];
+        if(choice&&choice.finish_reason==='length'){reject(Error('报告模型输出被截断（RPT-TRUNCATED），请裁剪为较少指标，或按模型限制调整 REPORT_MAX_TOKENS'));return;}
+        if(choice&&choice.finish_reason==='content_filter'){reject(Error('报告模型未提供内容（RPT-FILTERED），请核对服务限制'));return;}
+        const text=choice&&choice.message&&choice.message.content;if(typeof text!=='string')throw Error();resolve(text);
+      }catch(e){reject(Error('报告服务返回格式无效（RPT-RESPONSE），请检查是否使用OpenAI兼容接口'));}});
     });
     req.setTimeout(25000,()=>req.destroy(Error('报告服务响应超时，请重试')));
     req.on('error',()=>reject(Error('报告服务连接失败或超时，请重试')));req.end(body);

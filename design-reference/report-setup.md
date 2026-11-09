@@ -33,3 +33,7 @@ Node契约测试使用注入的模拟模型；390×844浏览器模拟验证了�
 ## 医疗文案审核范围
 
 新增医疗相关文字位于 cloudfunctions/reportInterpretation/core.js（NOTICE、识别/解释提示词、参考范围判断与高风险固定回复）及 components/ImagePreviewCard/ImagePreviewCard.wxml（报告核对提示）。包括：科普参考不替代诊断；核对数值、单位和参考范围；缺少/复杂参考范围不能直接判断；危急标记或严重症状需尽快就医；不根据报告自行用药或停药。均为待专业审核草案，请确认后用于真实服务。
+
+## 返回格式故障排查
+
+RPT-JSON 表示模型文本不是完整JSON；RPT-TRUNCATED 表示模型明确返回长度截断；RPT-SCHEMA 表示返回结构不符合报告字段要求；RPT-EMPTY/RESPONSE 表示空内容或接口响应结构不匹配。可先裁剪至少量清晰指标并核对视觉模型及输出长度设置。不自动修补缺失数值、不展示原始模型错误内容。RPT-RECOGNIZE/INTERPRET 为未分类异常所在阶段，不代表已查明实际故障原因。此部分仅通过模拟测试，需重新部署云函数后联调。
