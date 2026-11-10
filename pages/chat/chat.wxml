@@ -6,7 +6,7 @@
  <view class="welcome-banner">
 <view class="hero-copy">
 <view class="hero-title">Hi,我是小暖</view>
-<view class="hero-description">随时为你提供备孕知识和科学建议，陪你记录每一步备孕过程~</view>
+<view class="hero-description">随时为您提供孕期知识和科学建议，陪你记录每一步备孕过程~</view>
 </view>
 <image class="hero-ip" src="/images/campaign/xiaonuan-heart.png" mode="aspectFit"/>
 </view>
