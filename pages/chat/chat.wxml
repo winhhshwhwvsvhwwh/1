@@ -30,7 +30,7 @@
 <view class="request-bubble">找备孕师咨询</view>
 </view>
  <view class="consult-intro">
-<view class="consult-copy"><text>以下为咨询服务示例。</text>结合<text>备孕阶段、周期情况</text>与咨询需求，<text>智能匹配</text>适合您的备孕师，提供<text>周期管理、排卵指导、试纸解读</text>等专业服务</view>
+<view class="consult-copy"><text></text>结合<text>备孕阶段、周期情况</text>与咨询需求，<text>智能匹配</text>适合您的备孕师，提供<text>周期管理、排卵指导、试纸解读</text>等专业服务</view>
 <view class="expert-panel">
 <image class="expert-promises-art" src="/images/campaign/expert-promises.png" mode="aspectFit"/>
 <view class="expert-team-wrap">
@@ -48,9 +48,9 @@
 </view>
  <view class="consult-card">
 <view class="consult-top">
-<view>备孕咨询（示例）<view class="consult-sub">Demo展示 · 未接入真人服务</view>
+<view>AI匹配备孕师 · 深圳<view class="consult-sub">服务示例 · 未接入真人服务</view>
 </view>
-<view class="service-history" bindtap="onHistoryClick">咨询记录</view>
+<view class="service-history" bindtap="onHistoryClick">服务记录</view>
 </view>
 <view class="consult-body">
 <view class="consult-tabs">
