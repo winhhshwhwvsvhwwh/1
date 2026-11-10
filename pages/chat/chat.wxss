@@ -154,6 +154,9 @@ page {
   border-radius:50%;
   padding:4rpx;
 }
+.consult-content {
+  padding-top:56rpx;
+}
 .request-row {
   display:flex;
   justify-content:flex-end;
