@@ -439,6 +439,9 @@ page {
   font-weight:500}
 .pink-button::after,.soft-button::after {
   border:0}
+.assessment-body .pink-button {
+  width:100%;
+}
 .assessment-body button.pink-button[disabled] {
   color:white;
   background:#f4b2cb;
