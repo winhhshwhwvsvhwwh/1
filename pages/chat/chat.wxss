@@ -20,10 +20,10 @@ page {
   box-sizing:border-box;
   padding:16rpx 32rpx 0}
 .home-content {
-  padding-top:66rpx}
+  padding-top:126rpx}
 .welcome-banner {
   position:relative;
-  height:222rpx;
+  height:224rpx;
   background:#ffd3e5;
   border:2rpx solid white;
   border-radius:32rpx 32rpx 0 0;
@@ -32,15 +32,15 @@ page {
 .hero-copy {
   position:relative;
   z-index:1;
-  width:57%;
-  padding:36rpx 20rpx}
+  width:58%;
+  padding:40rpx 22rpx}
 .hero-title {
   font-size:34rpx;
   font-weight:700;
   color:#9d2d54}
 .hero-description {
   font-size:24rpx;
-  line-height:1.55;
+  line-height:1.5;
   color:#462431;
   margin-top:14rpx}
 .hero-ip {
@@ -77,7 +77,7 @@ page {
   justify-content:space-between;
   color:#aaa;
   font-size:24rpx;
-  margin:48rpx 0 26rpx}
+  margin:44rpx 0 24rpx}
 .faq-heading view {
   display:flex;
   align-items:center}
@@ -90,7 +90,7 @@ page {
   font-size:27rpx;
   color:#282828;
   background:white;
-  padding:20rpx 32rpx;
+  padding:18rpx 32rpx;
   border-radius:50rpx;
   margin-bottom:18rpx;
   font-weight:500}
