@@ -798,7 +798,9 @@ page {
   font-size:24rpx;
   color:#555}
 .feedback-sheet .pink-button {
-  margin-top:58rpx}
+  width:100%;
+  margin-top:58rpx;
+}
 .dimensions-page {
   position:fixed;
   inset:0;
