@@ -6,7 +6,7 @@ const config = JSON.parse(fs.readFileSync(path.join(root,'project.config.json'),
 const excluded = relative => config.packOptions.ignore.some(e => e.type === 'folder' ? relative.startsWith(e.value+'/') : relative === e.value);
 const walk = directory => fs.readdirSync(directory,{withFileTypes:true}).flatMap(e => e.name === '.git' ? [] : e.isDirectory() ? walk(path.join(directory,e.name)) : [path.join(directory,e.name)]);
 let references = 0;
-for (const file of walk(root).filter(f=>f.endsWith('.wxml')&&!f.includes('/_archived/'))) {
+for (const file of walk(root).filter(f=>f.endsWith('.wxml')&&!f.startsWith(path.join(root, '_archived') + path.sep))) {
  const source = fs.readFileSync(file,'utf8');
  for (const match of source.matchAll(/\/images\/[a-zA-Z0-9/_-]+\.(?:png|svg|webp)/g)) {
   const relative = match[0].slice(1);
