@@ -45,6 +45,7 @@ _archived/                       归档的早期首页/会员/独立评估与报
 安装 Node.js 后，从项目根目录执行：
 
 ```sh
+node tests/memoryProviderErrors.test.js
 node tests/cloudMemory.test.js
 node tests/memoryClient.test.js
 node tests/profileFacts.test.js

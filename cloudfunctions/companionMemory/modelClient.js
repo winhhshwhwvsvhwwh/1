@@ -1,13 +1,17 @@
 const https=require('https');
 function providerFailure(status,data){
   let code='';try{const body=JSON.parse(data);code=String(body.error&&body.error.code||body.code||'').toLowerCase();}catch(e){}
-  const suffix='（HTTP '+status+'）';
+  // Only show a bounded diagnostic code, never provider messages, headers or response bodies.
+  const safeCode=/^(?:access[._-]?denied|workspace|model|invalid|forbidden|unauthorized|arrearage|insufficient|allocation|account|permission|throttling|quota|service)[a-z0-9_.-]{0,64}$/i.test(code)?code:'';
+  const suffix='（HTTP '+status+(safeCode?'；'+safeCode:'')+'）';
   if(status===401||/invalid_api_key|invalidapikey/.test(code))return '对话模型密钥无效或地域不匹配，请核对云函数 AI_API_KEY 与服务地域'+suffix;
   if(status===402||/arrearage|insufficient_quota|insufficient_balance/.test(code))return '对话模型服务额度不足或账号欠费，请检查百炼额度与账单'+suffix;
+  if(/accessdenied[._-]unpurchased|service[._-]not[._-]activated|model[._-]not[._-]activated/.test(code))return '对话模型服务尚未开通或无该模型使用资格，请在百炼检查模型服务开通状态'+suffix;
+  if(/workspace.*denied|workspace.*forbidden|accessdenied[._-]workspace/.test(code))return '对话模型业务空间访问被拒绝，请核对密钥与接口域名是否属于同一空间'+suffix;
   if(status===403)return '对话模型访问被拒绝，请检查服务开通状态、模型权限和密钥所属空间'+suffix;
   if(status===404||/modelnotfound|model_not_found/.test(code))return '对话模型或接口地址不可用，请检查 AI_MODEL 和 AI_API_URL'+suffix;
   if(status===429)return '对话模型请求受限，请检查服务额度和限流设置后重试'+suffix;
-  if(status===400)return '对话模型拒绝请求参数，请检查文字模型是否支持图片输入及当前参数'+suffix;
+  if(status===400)return '对话模型拒绝请求参数，请检查接口地址及文字模型支持的请求参数'+suffix;
   if(status>=500)return '对话模型服务暂时异常，请稍后重试'+suffix;
   return '对话模型请求失败，请核对服务配置'+suffix;
 }
