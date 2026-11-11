@@ -112,7 +112,7 @@ function callSkillByType(content, intent, latestRecord) {
  * @param {string} content 用户输入
  * @returns {Promise<{ code: number, data: { role: string, content: string, timestamp: number, meta: object } }>}
  */
-function dispatch(content) {
+function dispatch(content,context={}) {
   // ============ 新增：基础咨询Skill前置短路判断 ============
   // 在进入A-E专业路由之前，先问一下BasicConsultationSkill这是不是打招呼/问身份/模糊问题。
   // 是 → 直接用它的回复，不再跑后面的知识检索/周期分析等专业逻辑。
@@ -145,7 +145,7 @@ function dispatch(content) {
   }
 
   return recordStore.getRecords().then((records) => {
-    const latestRecord = records && records[0];
+    const latestRecord = context.cycleRecord || (records && records[0]);
 
     // 第一步：识别用户需求类型（A/B/C/D/E）
     const intent = intentRouter.analyzeIntent(content, { hasRecord: !!latestRecord });

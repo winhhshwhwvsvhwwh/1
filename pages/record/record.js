@@ -1,5 +1,6 @@
 // pages/record/record.js
 const recordStore = require('../../utils/recordStore.js');
+const memoryClient = require('../../utils/memoryClient.js');
 
 function formatDate(date) {
   const y = date.getFullYear();
@@ -34,15 +35,15 @@ Page({
   onHeaderNew() { this.returnToChat('onNewConversation'); },
   onHeaderHistory() { this.returnToChat('onHistoryClick'); },
 
-  returnToChat(action) {
+  returnToChat(action, payload) {
     const pages = getCurrentPages();
     const previous = pages[pages.length - 2];
     if (previous && previous.route === 'pages/chat/chat') {
       wx.navigateBack({ success: () => {
-        if (action && typeof previous[action] === 'function') previous[action]();
+        if (action && typeof previous[action] === 'function') previous[action](payload);
       } });
     } else {
-      wx.redirectTo({ url: '/pages/chat/chat' });
+      wx.redirectTo({ url: '/pages/chat/chat'+(action==='onCycleInterpretation'?'?interpretCycle=1&recordId='+encodeURIComponent(payload&&payload.id||''):'') });
     }
   },
 
@@ -121,6 +122,7 @@ Page({
       wx.showToast({ title: '请选择经期结束日期', icon: 'none' });
       return;
     }
+    if(!Number.isFinite(Date.parse(startDate))||!Number.isFinite(Date.parse(endDate))||!/^\d{4}-\d{2}-\d{2}$/.test(startDate)||!/^\d{4}-\d{2}-\d{2}$/.test(endDate)||new Date(startDate).toISOString().slice(0,10)!==startDate||new Date(endDate).toISOString().slice(0,10)!==endDate||endDate>this.data.today){wx.showToast({title:'请核对日期，不能晚于今天',icon:'none'});return;}
     if (endDate < startDate) {
       wx.showToast({ title: '结束日期不能早于开始日期', icon: 'none' });
       return;
@@ -134,6 +136,7 @@ Page({
       return;
     }
 
+    if(!Number.isInteger(Number(cycleLength))||Number(cycleLength)<15||Number(cycleLength)>90||!Number.isInteger(Number(periodLength))||Number(periodLength)<1||Number(periodLength)>20||Number(periodLength)>Number(cycleLength)){wx.showToast({title:'请核对周期及经期天数',icon:'none'});return;}
     this.setData({ loading: true });
 
     recordStore
@@ -144,7 +147,9 @@ Page({
         periodLength,
         symptoms
       })
-      .then(() => {
+      .then(async (savedRecord) => {
+        let synced=false;
+        try{synced=await memoryClient.saveCycleRecord(savedRecord||{startDate,endDate,cycleLength,periodLength,symptoms});}catch(e){wx.showToast({title:'已保存本机，云端同步未完成',icon:'none'});}
         wx.showToast({ title: '保存成功', icon: 'success' });
         this.setData({
           startDate: '',
@@ -156,6 +161,7 @@ Page({
           loading: false
         });
         this.loadRecords();
+        wx.showModal({title:'周期信息已保存',content:(synced?'已保存到本机及云端档案。':'已保存到本机。')+'现在可以用刚保存的数据查看周期估算。',confirmText:'查看解读',cancelText:'继续记录',success:res=>{if(res.confirm)this.returnToChat('onCycleInterpretation',savedRecord);}});
       })
       .catch((err) => {
         console.error('saveRecord error', err);

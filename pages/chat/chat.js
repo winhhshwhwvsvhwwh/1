@@ -1,9 +1,9 @@
 // pages/chat/chat.js
 const api = require('../../utils/api.js');
 const chatMemory = require('../../utils/chatMemory.js');
+const memoryClient = require('../../utils/memoryClient.js');
 const recordStore = require('../../utils/recordStore.js');
 const imageAnalysis = require('../../utils/imageAnalysis.js');
-const reportClient = require('../../utils/reportClient.js');
 const { buildAssessmentReport } = require('../../utils/assessmentReport.js');
 const { tooltipPosition } = require('../../utils/radarTooltip.js');
 
@@ -136,10 +136,10 @@ Page({
   onUnload() { chatMemory.save(this.data.messages); this._reportRequest=(this._reportRequest||0)+1; },
   onNewConversation() {
     if (this.data.loading || this.data.assessmentSubmitting) return;
-    const reset=()=>{try{chatMemory.clear();}catch(e){wx.showToast({title:'清除失败，请重试',icon:'none'});return;}
+    const reset=async()=>{try{await memoryClient.resetHistory();chatMemory.clear();}catch(e){wx.showToast({title:'清除失败，请重试',icon:'none'});return;}
       this.setData({ pageMode:'home',assessmentMode:'',showScrollShortcut:false,messages:[],showDimensions:false,scrollToId:'',unresolvedStreak:0,showHandoffBanner:false });};
     if(!this.data.messages.length){reset();return;}
-    wx.showModal({title:'开始新对话',content:'将清除本机保存的聊天记录，周期记录会保留。是否继续？',success:res=>{if(res.confirm)reset();}});
+    wx.showModal({title:'开始新对话',content:'将清除本机聊天；已启用云端记忆时也清除云端聊天，个人档案和周期记录保留。是否继续？',success:res=>{if(res.confirm)reset();}});
   },
   onDimensionsHistory() {
     this.closeReportDimensions();
@@ -149,6 +149,7 @@ Page({
     if (!this.data.messages.length) { wx.showToast({ title: '暂无咨询记录', icon: 'none' }); return; }
     this.setData({ pageMode: 'chat' }); this.scrollToBottom();
   },
+  onCycleInterpretation(record) { this.sendMessage('我现在处于周期哪个阶段？',{cycleRecord:record}); },
   openConsult() { this._scrollingToEnd = false; this.setData({ pageMode: 'consult', assessmentMode: '', scrollToId: 'consult-top' }, () => this.refreshScrollShortcut()); },
   refreshQuestions() {
     const first = this.data.welcomeQuestions[0] === '备孕多久正常？';
@@ -331,8 +332,9 @@ Page({
     } catch (err) { wx.showToast({ title: '保存失败，请重试', icon: 'none' }); }
   },
 
-  onLoad() {
+  onLoad(options={}) {
     this.loadHistory();
+    if(options.interpretCycle==='1')recordStore.getRecords().then(records=>this.onCycleInterpretation(records.find(record=>record.id===options.recordId))).catch(()=>wx.showToast({title:'周期记录读取失败',icon:'none'}));
   },
 
   /**
@@ -453,7 +455,7 @@ Page({
    * 统一的发送逻辑：手动输入发送 / 欢迎卡片 / 快捷问题，都走这一个方法，
    * 调用的还是原来的 api.sendChatMessage，接口和数据处理没有变化。
    */
-  sendMessage(content) {
+  sendMessage(content, context) {
     this.setData({ pageMode: 'chat', assessmentMode: '' }, () => this.refreshScrollShortcut());
     const userMsg = {
       id: nextId(),
@@ -468,7 +470,7 @@ Page({
     });
     this.scrollToBottom();
 
-    api.sendChatMessage(content).then((res) => {
+    api.sendChatMessage(content,context).then((res) => {
       if (res.code === 0) {
         const assistantMsg = {
           id: nextId(),
@@ -507,7 +509,12 @@ Page({
    * 点击"+"按钮：弹出"图片咨询/拍摄图片"菜单
    */
   onPlusClick() { this.setData({ showImagePicker:true,imageIntent:'general',reportItems:[],reportWarnings:[],reportBusy:false }); },
-  onReportClick() { this.setData({ showImagePicker:true,imageIntent:'report',reportItems:[],reportWarnings:[],reportBusy:false }); },
+  onReportClick() { wx.showToast({title:'报告解读已停用，请使用个人档案',icon:'none'}); },
+  async onProfileClick() {
+    if(this.data.loading)return;
+    try{const history=await memoryClient.manage();if(history){msgId=Math.max(msgId,...history.map(m=>Number(m.id)||0));this.setData({messages:history.map(m=>({...m,animate:false})),pageMode:history.length?'chat':'home'});chatMemory.save(this.data.messages);if(history.length)this.scrollToBottom();}}
+    catch(e){wx.showModal({title:'个人档案未完成',content:e.message||'连接失败，请重试',showCancel:false});}
+  },
 
   onImagePickerCancel() {
     this.setData({ showImagePicker: false });
@@ -554,31 +561,7 @@ Page({
     if(!Number.isInteger(index)||index<0||index>=this.data.reportItems.length||!['name','value','unit','referenceRange','flag'].includes(field))return;
     this.setData({reportItems:this.data.reportItems.map((item,i)=>i===index?{...item,[field]:value}:item)});
   },
-  async handleReportPreview() {
-    if(this.data.reportBusy||!this.data.pendingImage)return;
-    const imageUrl=this.data.pendingImage,question=this.data.pendingCaption.trim();
-    const request=(this._reportRequest||0)+1;this._reportRequest=request;
-    this.setData({reportBusy:true});
-    try {
-      if(!this.data.reportItems.length){
-        const result=await reportClient.recognizeReport(imageUrl,question);
-        if(request!==this._reportRequest)return;
-        if(!Array.isArray(result.items)||!result.items.length)throw Error('没有识别到清晰指标，请换图重试');
-        this.setData({reportItems:result.items,reportWarnings:[result.notice,...(result.warnings||[])]});
-      }else{
-        const items=this.data.reportItems;
-        if(items.some(item=>!item.name.trim()||!item.value.trim()))throw Error('请核对每项的项目名称和结果；读不清的项目请重新拍照识别');
-        const result=await reportClient.interpretReport(items,question);
-        if(request!==this._reportRequest)return;
-        if(typeof result.content!=='string'||!result.content)throw Error('报告解读结果为空，请重试');
-        const user={id:nextId(),role:'user',type:'image',imageUrl,content:question||'请解读这份报告',timestamp:Date.now()};
-        const answer={...result,id:nextId(),role:'assistant',type:'report_analysis',animate:result.riskLevel!=='high',dissatisfied:false,timestamp:Date.now()};
-        this.setData({pageMode:'chat',assessmentMode:'',pendingImage:'',pendingCaption:'',reportItems:[],reportWarnings:[],messages:[...this.data.messages,user,answer]});
-        this.scrollToBottom();this.evaluateHandoffTrigger(answer,'ai_signal');
-      }
-    }catch(error){if(request===this._reportRequest)wx.showModal({title:'报告处理未完成',content:error.message||'请稍后重试',showCancel:false});}
-    finally {if(request===this._reportRequest)this.setData({reportBusy:false});}
-  },
+  async handleReportPreview() { wx.showToast({title:'报告图片解读已停用',icon:'none'}); },
 
   /**
    * 发送图片给小暖分析：
@@ -590,8 +573,7 @@ Page({
   onImagePreviewSend() {
     if(this.data.imageIntent==='report')return this.handleReportPreview();
     if(imageAnalysis.classifyByCaption(this.data.pendingCaption)==='exam_report'){
-      this.setData({imageIntent:'report',reportItems:[],reportWarnings:[]});
-      wx.showToast({title:'已切换报告解读，请核对上传说明',icon:'none'});
+      wx.showToast({title:'报告图片解读已停用，请使用文字咨询或个人档案',icon:'none'});
       return;
     }
     const imageUrl = this.data.pendingImage;

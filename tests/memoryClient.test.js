@@ -1,0 +1,10 @@
+const assert=require('node:assert/strict'),vm=require('node:vm'),fs=require('node:fs');const facts=require('../utils/profileFacts');
+function client(choices,fail=false){const storage=new Map(),calls=[],modals=[];let profile={};const wx={getStorageSync:k=>storage.get(k),setStorageSync:(k,v)=>storage.set(k,v),showToast(){},showModal:o=>{modals.push(o);o.success({confirm:choices.shift()||false});},cloud:{init(){},callFunction:async options=>{calls.push(options.data);if(fail)throw Error('private');const a=options.data.action;if(a==='status')return {result:{code:0,data:{profile,history:[]}}};if(a==='saveProfile')profile={...profile,...options.data.profile};return {result:{code:0,data:a==='chat'?{content:'模型回答',understanding:'回应',analysis:'分析',suggestions:[],riskNotice:'参考'}:{profile}}};}}};const module={exports:{}};vm.runInNewContext(fs.readFileSync(require.resolve('../utils/memoryClient'),'utf8'),{module,wx,require:id=>id==='./profileFacts'?facts:{MEMORY_CLOUD:{enabled:true,envId:'test-env',functionName:'companionMemory'}}});return {...module.exports,calls,storage,modals};}
+const local={code:0,data:{content:'本地回答',understanding:'本地',analysis:'规则',suggestions:[],riskNotice:'科普'}};
+(async()=>{
+ let c=client([false]);assert.equal((await c.chat('我32岁',local)).data.content,'本地回答');assert.equal(c.calls.length,0);
+ c=client([true,false]);await c.chat('我32岁，备孕半年',local);assert(!c.calls.some(x=>x.action==='saveProfile'));assert(c.calls.some(x=>x.action==='chat'));
+ c=client([true,true]);const result=await c.chat('我32岁，备孕半年',local);assert.equal(result.data.content,'模型回答');assert.equal(c.calls.find(x=>x.action==='saveProfile').profile.age,32);assert(c.modals[0].content.includes('发给模型'));
+ c=client([true],true);const fallback=await c.chat('继续',local);assert.equal(fallback.data.meta.memoryFallback,true);assert(fallback.data.content.includes('本地规则'));
+ console.log('PASS no uploads before consent, profile confirmation/decline, model response, honest local fallback; no secrets or live service used');
+})().catch(e=>{console.error(e);process.exitCode=1});

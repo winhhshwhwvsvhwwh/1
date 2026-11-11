@@ -65,13 +65,13 @@ function handle(content, latestRecord) {
 
   if (/体温/.test(content)) analysisLines.push('以下只使用已保存的月经日期和周期参数做日期估算，现有记录不包含连续体温数据，不能据此分析体温曲线。');
   const { cycleDay, cycleLength, ovulationDay, phase } = calcCyclePhase(latestRecord);
-  analysisLines.push(`从你记录的数据来看，你的周期大概${cycleLength}天一次，今天是这个周期的第${cycleDay}天，正处于${phase}。`);
+  analysisLines.push(`本次使用你保存的 ${latestRecord.startDate} 至 ${latestRecord.endDate} 记录：平均周期 ${cycleLength} 天，经期 ${latestRecord.periodLength} 天，身体状态为 ${(latestRecord.symptoms || []).join('、') || '未填写'}。\n按这条记录和周期仍规律的假设估算，今天是这个周期的第${cycleDay}天，目前可能处于${phase}；这不是排卵确认。`);
   analysisLines.push(`照这个周期推算，排卵窗口大概在第${Math.max(ovulationDay - 2, 1)}-${ovulationDay + 2}天左右。`);
   chunks.forEach((c) => analysisLines.push(c.text));
 
   if (phase === '排卵期') {
     suggestions.push(
-      '当前正处于排卵窗口期，是同房的较佳时机，建议隔天安排一次',
+      '按记录估算可能接近排卵窗口，可结合自身情况安排，不必把估算日当作必须受孕的期限',
       '可结合排卵试纸或基础体温监测，进一步确认排卵时间点',
       '保持心情放松，避免因刻意安排而增加双方压力'
     );
@@ -83,7 +83,7 @@ function handle(content, latestRecord) {
     );
   } else {
     suggestions.push(
-      '当前不在排卵窗口期，可以先专注调理作息和饮食',
+      '按记录估算可能不在排卵窗口，仍需留意周期变化并保持规律生活',
       '临近排卵窗口时再重点安排同房和体温/试纸监测',
       '持续记录周期数据，几个周期后规律会更清晰'
     );

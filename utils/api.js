@@ -10,6 +10,7 @@ const { USE_CLOUD, CLOUD_FUNCTION } = require('./constants.js');
 const skillDispatcher = require('./skillDispatcher.js');
 const imageSkillRouter = require('./imageSkillRouter.js');
 const recordStore = require('./recordStore.js');
+const memoryClient = require('./memoryClient.js');
 
 function callCloudFunction(name, data) {
   return new Promise((resolve, reject) => {
@@ -36,11 +37,11 @@ function callCloudFunction(name, data) {
 /**
  * 模拟AI回复生成函数（USE_CLOUD=false 时使用）
  */
-function sendChatMessageMock(content) {
+function sendChatMessageMock(content,context) {
   // 本地演示等待，让用户能看清发送与加载状态；不代表模型推理耗时。
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      Promise.resolve().then(() => skillDispatcher.dispatch(content)).then(resolve, reject);
+      Promise.resolve().then(() => skillDispatcher.dispatch(content,context)).then(resolve, reject);
     }, 1200);
   });
 }
@@ -78,11 +79,14 @@ function sendImageMessage(caption) {
   });
 }
 
-function sendChatMessage(content) {
+function sendChatMessage(content,context) {
   if (USE_CLOUD) {
     return callCloudFunction(CLOUD_FUNCTION.AI_CHAT, { content });
   }
-  return sendChatMessageMock(content);
+  return sendChatMessageMock(content,context).then(localReply => {
+    if(localReply.data.riskLevel === 'high'||localReply.data.meta&&localReply.data.meta.skill==='human_transfer') return localReply;
+    return memoryClient.chat(content,localReply);
+  });
 }
 
 function getChatHistory() {

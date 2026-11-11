@@ -6,12 +6,12 @@
 
 1. 下载并解压项目，在微信开发者工具中导入包含 `app.json` 和 `project.config.json` 的目录。
 2. 使用你有开发者权限的小程序 AppID；当前项目已保留配置的正式 AppID。不要上传 AppSecret 或服务端密钥。
-3. 保持 `utils/constants.js` 的 `USE_CLOUD=false`，点击编译即可查看 Demo，无需安装前端依赖或部署云函数。
+3. 保持 `utils/constants.js` 的 `USE_CLOUD=false`，点击编译可使用本地能力。云端个人档案和连续对话需另按[当前接入说明](design-reference/cloud-memory-setup.md)部署 companionMemory；不要再部署或开启旧报告服务。
 4. 真机预览/调试需登录有权限的微信账号。实际代码包大小以开发者工具为准；`packOptions.ignore` 已排除设计参考、测试和说明文件，避免把开发资料打进2MB主包。
 
 ## 当前行为与限制
 
-- 文字咨询由本地规则、固定问答和知识点生成，不调用真实大模型。
+- 文字咨询先走本地Skill；经用户启用并完成 companionMemory 部署配置后，普通问题使用确认档案及近期云端对话生成回答。高风险优先本地规则，云端失败明确降级。
 - 首页和咨询标签使用完整预设问句；报告中的“生成备孕计划”直接整理当前报告的建议与分析，不重新走关键词路由。
 - 反馈保存在本机最近50条，尚无服务端反馈通道。普通“没帮到我”反馈提示补充问法；内容准确性反馈提示核实；高风险只保留消息内风险卡，不重复显示底部横幅。
 - 咨询服务卡为示例，尚未接入真人备孕师预约或服务记录系统。
@@ -45,6 +45,10 @@ _archived/                       归档的早期首页/会员/独立评估与报
 安装 Node.js 后，从项目根目录执行：
 
 ```sh
+node tests/cloudMemory.test.js
+node tests/memoryClient.test.js
+node tests/profileFacts.test.js
+node tests/structuredCycleFlow.test.js
 node tests/recordSymptoms.test.js
 node tests/chatMemory.test.js
 node tests/typewriter.test.js
@@ -115,3 +119,10 @@ node tests/componentAssets.test.js
 
 
 周期记录的身体状态标签由JS计算选中映射，历史记录由JS生成状态文字，避免WXML调用不支持的indexOf/join；原标签样式与布局保持不变。多选、取消、保存数据和保存后重置已通过模拟测试，微信实际点击待复核。
+
+
+## 当前重点：个人档案云记忆与结构化采集
+
+报告图片解读已停用，第三个入口改为个人档案。新增独立 companionMemory 云函数：确认档案、按微信用户存储、近期对话传入文字模型、查看/删除/关闭。周期表单保存后可直接返回解读，并优先使用刚保存的实际记录；可另行确认同步到云端档案。全局 USE_CLOUD=false 保持。历史章节中的报告部署流程仅为历史说明，本轮不要按旧流程重新开启报告。
+
+[部署、字段、隐私边界、复验及作品集说明](design-reference/cloud-memory-setup.md)。当前仅完成代码与模拟验证，真实云函数、数据库权限、密钥和模型调用仍需部署后复核，不宣称已完成真实多轮模型验收。

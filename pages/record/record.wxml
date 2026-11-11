@@ -5,8 +5,8 @@
 
   <!-- 记录表单 -->
   <view class="card">
-    <view class="title">我的周期记录</view>
-    <view class="subtitle mt-16">记录经期与身体状态，帮助你更了解自己的备孕情况</view>
+    <view class="title">结构化信息采集</view>
+    <view class="subtitle mt-16">补全经期记录、周期参数和身体状态，为后续个性化周期解读提供依据</view>
 
     <!-- 第一部分：月经记录 -->
     <view class="section-title mt-32">月经记录</view>

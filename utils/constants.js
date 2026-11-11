@@ -8,7 +8,8 @@
 // CLOUD_ENV_ID   : 云开发环境ID，在微信开发者工具「云开发」控制台可以查到
 module.exports = {
   // 图片报告独立开关：不改变文字咨询和记录的本地模式。密钥仅放云函数环境变量。
-  REPORT_VISION: { enabled:true, envId:'cloud1-d4gc5cmbyc4c65482', functionName:'reportInterpretation' },
+  REPORT_VISION: { enabled:false, envId:'cloud1-d4gc5cmbyc4c65482', functionName:'reportInterpretation' },
+  MEMORY_CLOUD: { enabled:true, envId:'cloud1-d4gc5cmbyc4c65482', functionName:'companionMemory' },
   USE_CLOUD: false,                    // TODO: 完成云开发配置后改为 true
   CLOUD_ENV_ID: 'your-cloud-env-id',   // TODO: 替换为你的云开发环境ID
 
