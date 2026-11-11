@@ -1,7 +1,6 @@
 // pages/chat/chat.js
 const api = require('../../utils/api.js');
 const chatMemory = require('../../utils/chatMemory.js');
-const memoryClient = require('../../utils/memoryClient.js');
 const recordStore = require('../../utils/recordStore.js');
 const imageAnalysis = require('../../utils/imageAnalysis.js');
 const { buildAssessmentReport } = require('../../utils/assessmentReport.js');
@@ -136,10 +135,10 @@ Page({
   onUnload() { chatMemory.save(this.data.messages); this._reportRequest=(this._reportRequest||0)+1; },
   onNewConversation() {
     if (this.data.loading || this.data.assessmentSubmitting) return;
-    const reset=async()=>{try{await memoryClient.resetHistory();chatMemory.clear();}catch(e){wx.showToast({title:'清除失败，请重试',icon:'none'});return;}
+    const reset=()=>{try{chatMemory.clear();}catch(e){wx.showToast({title:'清除失败，请重试',icon:'none'});return;}
       this.setData({ pageMode:'home',assessmentMode:'',showScrollShortcut:false,messages:[],showDimensions:false,scrollToId:'',unresolvedStreak:0,showHandoffBanner:false });};
     if(!this.data.messages.length){reset();return;}
-    wx.showModal({title:'开始新对话',content:'将清除本机聊天；已启用云端记忆时也清除云端聊天，个人档案和周期记录保留。是否继续？',success:res=>{if(res.confirm)reset();}});
+    wx.showModal({title:'开始新对话',content:'将清除本机保存的聊天记录，周期记录会保留。是否继续？',success:res=>{if(res.confirm)reset();}});
   },
   onDimensionsHistory() {
     this.closeReportDimensions();
@@ -510,10 +509,12 @@ Page({
    */
   onPlusClick() { this.setData({ showImagePicker:true,imageIntent:'general',reportItems:[],reportWarnings:[],reportBusy:false }); },
   onReportClick() { wx.showToast({title:'报告解读已停用，请使用个人档案',icon:'none'}); },
-  async onProfileClick() {
-    if(this.data.loading)return;
-    try{const history=await memoryClient.manage();if(history){msgId=Math.max(msgId,...history.map(m=>Number(m.id)||0));this.setData({messages:history.map(m=>({...m,animate:false})),pageMode:history.length?'chat':'home'});chatMemory.save(this.data.messages);if(history.length)this.scrollToBottom();}}
-    catch(e){wx.showModal({title:'个人档案未完成',content:e.message||'连接失败，请重试',showCancel:false});}
+  onProfileClick() {
+    wx.showActionSheet({itemList:['查看本机周期记录','查看本机聊天记录','存储说明'],success:res=>{
+      if(res.tapIndex===0)this.openRecordPage();
+      if(res.tapIndex===1)this.onHistoryClick();
+      if(res.tapIndex===2)wx.showModal({title:'本机存储',content:'周期记录和文字聊天保存在当前设备，不上传云端，不跨设备同步。清除小程序数据后会丢失。',showCancel:false});
+    }});
   },
 
   onImagePickerCancel() {

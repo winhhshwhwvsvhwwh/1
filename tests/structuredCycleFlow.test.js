@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),{createRequire}=require('node:module');
 let saved,definition,analysis,selected;let records=[];const modals=[];
 global.wx={getStorageSync:()=>[],showToast(){}};
-const dispatcher=require('../utils/skillDispatcher');const {extract}=require('../utils/profileFacts');
+const dispatcher=require('../utils/skillDispatcher');
 const store={getRecords:async()=>records,saveRecord:async data=>{saved={...data,id:'fresh'};records=[{id:'other',startDate:'2026-11-10',endDate:'2026-11-11',cycleLength:30,periodLength:2,symptoms:[]},saved];return saved;}};
 const previous={route:'pages/chat/chat',onCycleInterpretation(record){selected=record;analysis=dispatcher.dispatch('我现在处于周期哪个阶段？',{cycleRecord:record});}};
 const wxMock={showToast(){},showModal:options=>{modals.push(options);options.success({confirm:true});},navigateBack:options=>options.success()};

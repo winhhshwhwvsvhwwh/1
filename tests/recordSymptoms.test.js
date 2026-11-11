@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 let definition,saved;let records=[];
 const store={getRecords:async()=>records,saveRecord:async record=>{saved=JSON.parse(JSON.stringify(record));records=[{...saved,id:'1'}];},deleteRecord:async()=>[]};
-vm.runInNewContext(fs.readFileSync(require.resolve('../pages/record/record'),'utf8'),{Page:d=>definition=d,require:id=>id.includes('memoryClient')?{saveCycleRecord:async()=>false}:store,wx:{showToast(){},showModal(){}}});
+vm.runInNewContext(fs.readFileSync(require.resolve('../pages/record/record'),'utf8'),{Page:d=>definition=d,require:()=>store,wx:{showToast(){},showModal(){}}});
 const p={...definition,data:JSON.parse(JSON.stringify(definition.data)),setData(d){Object.assign(this.data,d)}};
 const toggle=value=>p.onSymptomToggle({currentTarget:{dataset:{value}}});
 toggle('腹痛');toggle('疲劳');assert.deepEqual(Array.from(p.data.symptoms),['腹痛','疲劳']);assert(p.data.symptomSelected['腹痛']);assert(p.data.symptomSelected['疲劳']);

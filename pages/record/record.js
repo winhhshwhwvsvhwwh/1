@@ -1,6 +1,5 @@
 // pages/record/record.js
 const recordStore = require('../../utils/recordStore.js');
-const memoryClient = require('../../utils/memoryClient.js');
 
 function formatDate(date) {
   const y = date.getFullYear();
@@ -147,9 +146,7 @@ Page({
         periodLength,
         symptoms
       })
-      .then(async (savedRecord) => {
-        let synced=false;
-        try{synced=await memoryClient.saveCycleRecord(savedRecord||{startDate,endDate,cycleLength,periodLength,symptoms});}catch(e){wx.showToast({title:'已保存本机，云端同步未完成',icon:'none'});}
+      .then((savedRecord) => {
         wx.showToast({ title: '保存成功', icon: 'success' });
         this.setData({
           startDate: '',
@@ -161,7 +158,7 @@ Page({
           loading: false
         });
         this.loadRecords();
-        wx.showModal({title:'周期信息已保存',content:(synced?'已保存到本机及云端档案。':'已保存到本机。')+'现在可以用刚保存的数据查看周期估算。',confirmText:'查看解读',cancelText:'继续记录',success:res=>{if(res.confirm)this.returnToChat('onCycleInterpretation',savedRecord);}});
+        wx.showModal({title:'周期信息已保存',content:'已保存到本机。现在可以用刚保存的数据查看周期估算。',confirmText:'查看解读',cancelText:'继续记录',success:res=>{if(res.confirm)this.returnToChat('onCycleInterpretation',savedRecord);}});
       })
       .catch((err) => {
         console.error('saveRecord error', err);

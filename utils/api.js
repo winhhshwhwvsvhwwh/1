@@ -10,7 +10,6 @@ const { USE_CLOUD, CLOUD_FUNCTION } = require('./constants.js');
 const skillDispatcher = require('./skillDispatcher.js');
 const imageSkillRouter = require('./imageSkillRouter.js');
 const recordStore = require('./recordStore.js');
-const memoryClient = require('./memoryClient.js');
 
 function callCloudFunction(name, data) {
   return new Promise((resolve, reject) => {
@@ -83,10 +82,7 @@ function sendChatMessage(content,context) {
   if (USE_CLOUD) {
     return callCloudFunction(CLOUD_FUNCTION.AI_CHAT, { content });
   }
-  return sendChatMessageMock(content,context).then(localReply => {
-    if(localReply.data.riskLevel === 'high'||localReply.data.meta&&localReply.data.meta.skill==='human_transfer') return localReply;
-    return memoryClient.chat(content,localReply);
-  });
+  return sendChatMessageMock(content,context);
 }
 
 function getChatHistory() {
