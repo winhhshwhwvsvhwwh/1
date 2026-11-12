@@ -508,7 +508,7 @@ Page({
    * 点击"+"按钮：弹出"图片咨询/拍摄图片"菜单
    */
   onPlusClick() { this.setData({ showImagePicker:true,imageIntent:'general',reportItems:[],reportWarnings:[],reportBusy:false }); },
-  onReportClick() { wx.showToast({title:'报告解读已停用，请使用个人档案',icon:'none'}); },
+  onReportClick() { wx.showToast({title:'报告图片识别暂未开启',icon:'none'}); },
   onProfileClick() {
     wx.showActionSheet({itemList:['查看本机周期记录','查看本机聊天记录','存储说明'],success:res=>{
       if(res.tapIndex===0)this.openRecordPage();
