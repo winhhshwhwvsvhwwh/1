@@ -49,6 +49,7 @@ node tests/localOnlyRollback.test.js
 node tests/structuredCycleFlow.test.js
 node tests/recordSymptoms.test.js
 node tests/chatMemory.test.js
+node tests/shortcutBar.test.js
 node tests/thinkingEntrypoints.test.js
 node tests/typewriter.test.js
 node tests/reportInterpretation.test.js
@@ -122,12 +123,15 @@ node tests/componentAssets.test.js
 
 ## 当前状态：撤回API和云端记忆
 
-已移除 companionMemory 接入代码及新云函数源码，应用不再发起该云函数调用。全局 USE_CLOUD=false、REPORT_VISION.enabled=false 保持。底部第三入口已恢复原始“报告单解读”图片按钮；图片识别保持停用，点击仅提示尚未开启，不再询问云端记忆授权。不删除用户本机记录。
+已移除 companionMemory 接入代码及新云函数源码，应用不再发起该云函数调用。全局 USE_CLOUD=false、REPORT_VISION.enabled=false 保持。底部第三入口为“周期解读”，自动进入现有周期咨询；报告图片识别和云端记忆保持停用。不删除用户本机记录。
 
 结构化信息采集 → 保存到本机 → 查看周期解读仍保留，并优先使用刚保存的记录。问答来自本地规则，历史可查看不等于任意多轮语义理解。此前云端部署和数据不会因更新本地代码自动删除。如需移除已部署函数，在微信云开发云函数列表删除 companionMemory；不要删除数据库集合或其他函数。数据库已保存内容保留，不再被本版本访问。
 
 
-底部快捷栏使用增强 scroll-view，启用横向滚动与边缘回弹，关闭快速减速以保留松手后的惯性；四项宽度显式为964rpx，避免被压成一屏。按钮大小、素材和输入框样式不变。390×844触屏浏览器已实际拖动验证横向位移、输入框固定及无误触；微信原生惯性/回弹手感待真机验证（平台可能有差异）。
+底部快捷栏使用增强 scroll-view，启用横向滚动与边缘回弹，关闭快速减速以保留松手后的惯性；按钮改为原生文字与独立渐变图标，宽度按内容自适应且不收缩，输入框样式不变。390×844触屏浏览器已实际拖动验证横向位移、输入框固定及无误触；微信原生惯性/回弹手感待真机验证（平台可能有差异）。
 
 
 主要入口统一三点等待反馈：咨询、评估、开始/下一题、周期记录、报告入口和生成计划先显示气泡再继续。图片本地说明和语音能力说明保留可见等待，高风险提示不额外延时；返回/关闭取消尚未完成的入口跳转。原有API停用状态保持，不新增模型或云函数请求。
+
+
+快捷栏顺序为咨询备孕师、AI备孕评估、周期解读、用药建议。使用白底胶囊、26rpx深色文字、36rpx独立粉色渐变SVG（主色#FD3273），统一64rpx高及12rpx间距；宽度按文字自适应，保持单行横滑及隐藏滚动条。周期解读自动发送“我现在处于周期哪个阶段？”，已有记录按现有周期Skill处理，缺少记录时提示填写；不再从第三入口进入报告图片识别。390×844浏览器已验证样式、触屏横滑、输入框固定、无记录时的实际回复及无业务网络请求；原生微信需复核。

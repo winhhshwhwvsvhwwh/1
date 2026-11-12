@@ -272,10 +272,10 @@
 <view class="bottom-dock">
 <scroll-view scroll-x="{{true}}" class="service-bar" enhanced="{{true}}" bounces="{{true}}" fast-deceleration="{{false}}" show-scrollbar="{{false}}">
 <view class="service-track">
-<view class="service-chip service-chip-art" role="button" aria-label="咨询备孕师" bindtap="openConsult"><image src="/images/campaign/shortcut-consult.png" mode="aspectFit"/></view>
-<view class="service-chip service-chip-art" role="button" aria-label="AI备孕评估" bindtap="openAssessment"><image src="/images/campaign/shortcut-assessment.png" mode="aspectFit"/></view>
-<view class="service-chip service-chip-art" role="button" aria-label="报告单解读" bindtap="onReportClick"><image src="/images/campaign/shortcut-report.png" mode="aspectFit"/></view>
-<view class="service-chip service-chip-art" role="button" aria-label="用药建议" bindtap="onMedicationAdvice"><image src="/images/campaign/shortcut-medication.png" mode="aspectFit"/></view>
+<view class="service-chip" role="button" aria-label="咨询备孕师" bindtap="openConsult"><image src="/images/ui/shortcut-consult.svg" mode="aspectFit"/><text class="service-label">咨询备孕师</text></view>
+<view class="service-chip" role="button" aria-label="AI备孕评估" bindtap="openAssessment"><image src="/images/ui/shortcut-assessment.svg" mode="aspectFit"/><text class="service-label">AI备孕评估</text></view>
+<view class="service-chip" role="button" aria-label="周期解读" bindtap="onCycleShortcut"><image src="/images/ui/shortcut-cycle.svg" mode="aspectFit"/><text class="service-label">周期解读</text></view>
+<view class="service-chip" role="button" aria-label="用药建议" bindtap="onMedicationAdvice"><image src="/images/ui/shortcut-medication.svg" mode="aspectFit"/><text class="service-label">用药建议</text></view>
 </view>
 </scroll-view>
 <chat-input focused="{{inputFocused}}" bindblur="onInputBlur" value="{{inputValue}}" bindinput="onInputChange" bindconfirm="onSend" bindunavailable="onInputUnavailable" bindplus="onPlusClick" bindvoicesend="onVoiceSend"/>

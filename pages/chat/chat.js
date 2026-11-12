@@ -81,6 +81,11 @@ Page({
     return remaining?new Promise(resolve=>setTimeout(resolve,remaining)):Promise.resolve();
   },
 
+  onCycleShortcut() {
+    if(this.data.loading||this.data.assessmentSubmitting)return;
+    this.sendMessage('我现在处于周期哪个阶段？');
+  },
+
   onMedicationAdvice() {
     if (!this.data.loading) this.sendMessage('备孕期间用药有哪些注意事项？');
   },
