@@ -115,7 +115,8 @@ page {
 }
 .service-track {
   display:inline-flex;
-  flex-shrink:0;
+  /* Four 216rpx buttons + three 12rpx gaps + 32rpx padding on both sides. */
+  width:964rpx;
   min-width:100%;
   align-items:center;
   gap:12rpx;
@@ -124,31 +125,31 @@ page {
 }
 .service-chip {
   display:flex;
-  flex:0 0 auto;
+  flex:0 0 216rpx;
+  min-width:216rpx;
   align-items:center;
   justify-content:center;
   gap:12rpx;
   box-sizing:border-box;
-  width:auto;
+  width:216rpx;
   height:64rpx;
-  padding:0 20rpx;
-  border-radius:999rpx;
-  background:#fff;
-  color:#292929;
-  white-space:nowrap;
+  padding:0 18rpx;
+  border-radius:50rpx;
+  background:white;
+  color:#333;
 }
 .service-label {
   flex:0 0 auto;
-  font-size:26rpx;
-  font-weight:400;
-  line-height:36rpx;
+  font-size:24rpx;
+  line-height:32rpx;
   white-space:nowrap;
 }
 .service-chip image {
   display:block;
-  flex:0 0 36rpx;
-  width:36rpx;
-  height:36rpx;
+  flex:0 0 32rpx;
+  box-sizing:border-box;
+  width:32rpx;
+  height:32rpx;
 }
 .service-chip .chip-icon {
   background:#ff71a4;
