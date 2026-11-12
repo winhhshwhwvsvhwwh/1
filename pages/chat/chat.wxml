@@ -334,3 +334,12 @@
 </view>
 </view>
 </view>
+
+<!-- Play the supplied celebration once after a successful assessment; the file has no audio track and is pre-encoded at 2x. -->
+<view wx:if="{{showAssessmentCelebration}}" class="assessment-celebration-mask" role="dialog" aria-label="评估完成庆祝动效" catchtouchmove="stopTap">
+<view class="assessment-celebration-dialog" catchtap="stopTap">
+<video id="assessment-celebration-video" class="assessment-celebration-video" src="/videos/assessment-complete-2x.mp4" autoplay="{{true}}" muted="{{true}}" controls="{{false}}" loop="{{false}}" show-fullscreen-btn="{{false}}" show-center-play-btn="{{false}}" show-play-btn="{{false}}" enable-progress-gesture="{{false}}" object-fit="contain" bindended="closeAssessmentCelebration" binderror="onAssessmentCelebrationError">
+<cover-view class="assessment-celebration-skip" role="button" aria-label="跳过动效" bindtap="closeAssessmentCelebration">跳过</cover-view>
+</video>
+</view>
+</view>

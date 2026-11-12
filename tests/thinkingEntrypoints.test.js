@@ -12,7 +12,7 @@ async function settle(){for(let i=0;i<20;i++)await Promise.resolve();}
  const api=nativeRequire('../../utils/api.js'),oldSubmit=api.submitAssessment,oldReport=api.getReportDetail;
  api.submitAssessment=async()=>({code:0,data:{assessmentId:'synthetic'}});api.getReportDetail=async()=>({code:0,data:{}});
  for(let q=1;q<5;q++){p.selectAssessmentOption({currentTarget:{dataset:{index:0}}});const changing=p.confirmAssessment();tick();await changing;}
- p.selectAssessmentOption({currentTarget:{dataset:{index:0}}});const final=p.confirmAssessment();await settle();assert(p.data.loading);assert(p.data.assessmentSubmitting);tick();await final;assert.equal(p.data.assessmentMode,'result');assert.equal(p.data.loading,false);assert.equal(p.data.assessmentSubmitting,false);
+ p.selectAssessmentOption({currentTarget:{dataset:{index:0}}});const final=p.confirmAssessment();await settle();assert(p.data.loading);assert(p.data.assessmentSubmitting);tick();await final;assert.equal(p.data.assessmentMode,'result');assert.equal(p.data.loading,false);assert.equal(p.data.assessmentSubmitting,false);assert.equal(p.data.showAssessmentCelebration,true);p.closeAssessmentCelebration();
  api.submitAssessment=oldSubmit;api.getReportDetail=oldReport;
  p=page();p.openRecordPage();assert(p.data.loading);assert.equal(navigations,0);tick();assert.equal(navigations,1);
  p=page();const report=p.onReportClick();assert(p.data.loading);tick();await report;assert(p.data.showImagePicker||toasts.includes('报告图片识别暂未开启'));

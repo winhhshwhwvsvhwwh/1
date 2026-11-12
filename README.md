@@ -65,6 +65,7 @@ node tests/offlineKnowledge.test.js
 node tests/reviewFlows.test.js
 node tests/feedback.test.js
 node tests/scrollShortcut.test.js
+node tests/assessmentCelebration.test.js
 node tests/assessmentReport.test.js
 node tests/radarTooltip.test.js
 node tests/componentAssets.test.js
@@ -131,3 +132,10 @@ node tests/componentAssets.test.js
 
 
 主要入口统一三点等待反馈：咨询、评估、开始/下一题、周期记录、报告入口和生成计划先显示气泡再继续。图片本地说明和语音能力说明保留可见等待，高风险提示不额外延时；返回/关闭取消尚未完成的入口跳转。原有API停用状态保持，不新增模型或云函数请求。
+
+
+## 评估完成庆祝动效
+
+每次成功生成本次评估结果后，弹窗播放用户提供的视频一次，结束自动关闭，也可点“跳过”。源视频约10.08秒；videos/assessment-complete-2x.mp4已删除音轨并在文件中编码为两倍速，实际约5.04秒、179212字节，运行时按正常速率播放即可。无循环、无控制栏；失败时不弹，切到后台/返回时关闭，视频异常时直接保留评估结果，设有8秒兜底关闭。计分规则、报告内容及原页面布局不改。
+
+Node生命周期测试与390×844浏览器视频实播已验证；微信原生video/cover-view层级、跳过按钮与真机自动播放仍需复核。无须新增API或云函数配置。

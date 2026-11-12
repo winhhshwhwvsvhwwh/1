@@ -1267,3 +1267,40 @@ page {
   top:22rpx;
   transform:rotate(22deg);
 }
+
+/* Assessment completion overlay only; the existing report layout remains untouched. */
+.assessment-celebration-mask {
+  position:fixed;
+  inset:0;
+  z-index:200;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(53,22,42,.3);
+}
+.assessment-celebration-dialog {
+  position:relative;
+  width:690rpx;
+  max-width:92vw;
+  height:389rpx;
+  border-radius:28rpx;
+  overflow:hidden;
+  background:#fff4f9;
+}
+.assessment-celebration-video {
+  width:100%;
+  height:100%;
+}
+.assessment-celebration-skip {
+  position:absolute;
+  top:12rpx;
+  right:12rpx;
+  padding:0 18rpx;
+  height:44rpx;
+  line-height:44rpx;
+  border-radius:24rpx;
+  color:#741330;
+  background:rgba(255,255,255,.92);
+  font-size:24rpx;
+  text-align:center;
+}
