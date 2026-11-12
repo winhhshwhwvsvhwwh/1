@@ -115,6 +115,8 @@ page {
 }
 .service-track {
   display:inline-flex;
+  /* Four 216rpx buttons + three 12rpx gaps + 32rpx padding on both sides. */
+  width:964rpx;
   min-width:100%;
   align-items:center;
   gap:12rpx;

@@ -270,7 +270,7 @@
 <view wx:if="{{pageMode === 'home' || assessmentMode === 'quiz'}}" class="privacy-note">继续沟通代表您已阅读并同意 <text bindtap="onServiceNotice">《服务声明》</text>
 </view>
 <view class="bottom-dock">
-<scroll-view scroll-x class="service-bar" show-scrollbar="{{false}}">
+<scroll-view scroll-x="{{true}}" class="service-bar" enhanced="{{true}}" bounces="{{true}}" fast-deceleration="{{false}}" show-scrollbar="{{false}}">
 <view class="service-track">
 <view class="service-chip service-chip-art" role="button" aria-label="咨询备孕师" bindtap="openConsult"><image src="/images/campaign/shortcut-consult.png" mode="aspectFit"/></view>
 <view class="service-chip service-chip-art" role="button" aria-label="AI备孕评估" bindtap="openAssessment"><image src="/images/campaign/shortcut-assessment.png" mode="aspectFit"/></view>
