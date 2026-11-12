@@ -60,6 +60,27 @@ Page({
     pendingCaption: ''      // 图片预览时用户补充的文字说明
   },
 
+  cancelThinkingAction() {
+    if(this._thinkingActionTimer){clearTimeout(this._thinkingActionTimer);this._thinkingActionTimer=null;}
+    if(this._thinkingActionResolve){this._thinkingActionResolve(false);this._thinkingActionResolve=null;}
+  },
+  showThinkingThen(action, before={}) {
+    if(this.data.loading||this.data.assessmentSubmitting)return Promise.resolve(false);
+    this.setData({...before,loading:true,scrollToId:'',showScrollShortcut:false},()=>this.setData({scrollToId:'chat-bottom'}));
+    return new Promise(resolve=>{
+      this._thinkingActionResolve=resolve;
+      this._thinkingActionTimer=setTimeout(()=>{
+        this._thinkingActionTimer=null;this._thinkingActionResolve=null;
+        this.setData({loading:false});
+        try{action();resolve(true);}catch(e){wx.showToast({title:'暂时无法完成，请重试',icon:'none'});resolve(false);}
+      },900);
+    });
+  },
+  waitForThinking(started,riskLevel) {
+    const remaining=riskLevel==='high'?0:Math.max(0,900-(Date.now()-started));
+    return remaining?new Promise(resolve=>setTimeout(resolve,remaining)):Promise.resolve();
+  },
+
   onMedicationAdvice() {
     if (!this.data.loading) this.sendMessage('备孕期间用药有哪些注意事项？');
   },
@@ -115,8 +136,9 @@ Page({
   changeConsultTab(e) { this.setData({ consultTab: e.currentTarget.dataset.tab }); },
   onPageBack() {
     if (this.data.assessmentSubmitting) return;
+    const cancelWait=!!this._thinkingActionTimer;this.cancelThinkingAction();
     if (this.data.showDimensions) { this.closeReportDimensions(); return; }
-    this.setData({ pageMode: 'home', assessmentMode: '', showScrollShortcut: false, scrollToId: 'home-top',messages:this.data.messages.map(item=>({...item,animate:false})) });
+    this.setData({ loading:cancelWait?false:this.data.loading,pageMode: 'home', assessmentMode: '', showScrollShortcut: false, scrollToId: 'home-top',messages:this.data.messages.map(item=>({...item,animate:false})) });
   },
   onAnswerTypingProgress() {
     if(!this.data.answerTyping)this.setData({answerTyping:true});
@@ -131,8 +153,8 @@ Page({
     this.setData({answerTyping:false,messages:this.data.messages.map(item=>String(item.id)===String(id)?{...item,animate:false}:item)});
     if(!this._answerFollowPaused){this._scrollingToEnd=true;this.setData({scrollToId:''},()=>{if(!this._answerFollowPaused)this.setData({scrollToId:'chat-bottom'});});}
   },
-  onHide() { chatMemory.save(this.data.messages); this.setData({answerTyping:false,messages:this.data.messages.map(item=>({...item,animate:false}))}); },
-  onUnload() { chatMemory.save(this.data.messages); this._reportRequest=(this._reportRequest||0)+1; },
+  onHide() { const cancelWait=!!(this._thinkingActionTimer||this._voiceReplyTimer);this.cancelThinkingAction();if(this._voiceReplyTimer){clearTimeout(this._voiceReplyTimer);this._voiceReplyTimer=null;}chatMemory.save(this.data.messages); this.setData({answerTyping:false,loading:cancelWait?false:this.data.loading,messages:this.data.messages.map(item=>({...item,animate:false}))}); },
+  onUnload() { this._pageGone=true;this.cancelThinkingAction();if(this._voiceReplyTimer)clearTimeout(this._voiceReplyTimer);chatMemory.save(this.data.messages); this._reportRequest=(this._reportRequest||0)+1; },
   onNewConversation() {
     if (this.data.loading || this.data.assessmentSubmitting) return;
     const reset=()=>{try{chatMemory.clear();}catch(e){wx.showToast({title:'清除失败，请重试',icon:'none'});return;}
@@ -149,7 +171,7 @@ Page({
     this.setData({ pageMode: 'chat' }); this.scrollToBottom();
   },
   onCycleInterpretation(record) { this.sendMessage('我现在处于周期哪个阶段？',{cycleRecord:record}); },
-  openConsult() { this._scrollingToEnd = false; this.setData({ pageMode: 'consult', assessmentMode: '', scrollToId: 'consult-top' }, () => this.refreshScrollShortcut()); },
+  openConsult() { return this.showThinkingThen(()=>{this._scrollingToEnd=false;this.setData({pageMode:'consult',assessmentMode:'',scrollToId:'consult-top'},()=>this.refreshScrollShortcut());}); },
   refreshQuestions() {
     const first = this.data.welcomeQuestions[0] === '备孕多久正常？';
     this.setData({ welcomeQuestions: first ? ['排卵日总是算不准怎么办？','孕前检查有哪些项目？','备孕时如何调整作息？'] : ['备孕多久正常？','如何提高受孕几率？','备孕期间需要补充什么营养？'] });
@@ -181,7 +203,7 @@ Page({
   openAssessment() {
     this._scrollingToEnd = false;
     if (this.data.assessmentSubmitting) return;
-    this.setData({ pageMode: 'assessment', assessmentMode: 'intro', showScrollShortcut: false, questionIndex: 0, scrollToId: 'assessment-top' });
+    return this.showThinkingThen(()=>this.setData({ pageMode:'assessment',assessmentMode:'intro',showScrollShortcut:false,questionIndex:0,scrollToId:'assessment-top' }));
   },
   setQuestion(index) {
     const q = ASSESSMENT_QUESTIONS[index];
@@ -191,13 +213,10 @@ Page({
       selectedOption: selectedOptions.length ? selectedOptions[0] : -1, hasSelection: selectedOptions.length > 0,
       optionItems: q.options.map((label, i) => ({ label, selected: selectedOptions.indexOf(i) >= 0 })) });
   },
-  beginAssessment() {
-    this.setData({ pageMode: 'assessment', assessmentMode: 'quiz', showScrollShortcut: false, assessmentAnswers: [], scrollToId: 'assessment-panel' });
-    this.setQuestion(0);
-  },
+  beginAssessment() { return this.showThinkingThen(()=>{this.setData({pageMode:'assessment',assessmentMode:'quiz',showScrollShortcut:false,assessmentAnswers:[],scrollToId:'assessment-panel'});this.setQuestion(0);}); },
   restartAssessment() { if (!this.data.assessmentSubmitting) this.beginAssessment(); },
   selectAssessmentOption(e) {
-    if (this.data.assessmentSubmitting) return;
+    if (this.data.assessmentSubmitting||this.data.loading) return;
     const index = Number(e.currentTarget.dataset.index);
     if (!Number.isInteger(index) || index < 0 || index > 3) return;
     let selected = this.data.selectedOptions.slice();
@@ -211,7 +230,7 @@ Page({
       optionItems: this.data.currentQuestion.options.map((label, i) => ({ label, selected: selected.indexOf(i) >= 0 })) });
   },
   previousAssessment() {
-    if (this.data.assessmentSubmitting || this.data.questionIndex === 0) return;
+    if (this.data.assessmentSubmitting || this.data.loading || this.data.questionIndex === 0) return;
     this.saveCurrentAnswer(); this.setQuestion(this.data.questionIndex - 1);
   },
   saveCurrentAnswer() {
@@ -222,23 +241,26 @@ Page({
     this.setData({ assessmentAnswers: answers });
   },
   async confirmAssessment() {
-    if (!this.data.hasSelection || this.data.assessmentSubmitting) return;
+    if (!this.data.hasSelection || this.data.assessmentSubmitting||this.data.loading) return;
     this.saveCurrentAnswer();
-    if (this.data.questionIndex < 5) { this.setQuestion(this.data.questionIndex + 1); return; }
-    this.setData({ assessmentSubmitting: true });
+    if (this.data.questionIndex < 5) return this.showThinkingThen(()=>this.setQuestion(this.data.questionIndex+1));
+    const thinkingStarted=Date.now();
+    this.setData({assessmentSubmitting:true,loading:true,scrollToId:''},()=>this.setData({scrollToId:'chat-bottom'}));
     try {
       const answers = this.data.assessmentAnswers.map(a => ({ title: a.title, answer: a.answer }));
       const result = await api.submitAssessment(answers);
       if (result.code !== 0 || !result.data || !result.data.assessmentId) throw new Error('submit');
       const report = await api.getReportDetail(result.data.assessmentId);
       if (report.code !== 0 || !report.data) throw new Error('report');
+      await this.waitForThinking(thinkingStarted);
+      if(this._pageGone)return;
       const calculated = buildAssessmentReport(this.data.assessmentAnswers);
       const data = { ...report.data, ...calculated };
       const a = this.data.assessmentAnswers;
       const reportAnalysis = [{ title:'周期状态', content:a[2].answer.slice(2) }, { title:'备孕时间', content:a[1].answer.slice(2) }, { title:'生活状态', content:a[4].answer.slice(2) }];
       this.setData({ assessmentReport: data, reportScore: calculated.score, scoreLabel: calculated.label, pointerAngle: calculated.pointerAngle, reportAnalysis, assessmentMode: 'result', scrollToId: 'assessment-report' }, () => this.refreshScrollShortcut());
     } catch (err) { wx.showToast({ title: '报告生成失败，点击确认可重试', icon: 'none' }); }
-    finally { this.setData({ assessmentSubmitting: false }); }
+    finally { if(!this._pageGone)this.setData({assessmentSubmitting:false,loading:false}); }
   },
   openReportDimensions() {
     if (!this.data.assessmentReport) return;
@@ -297,8 +319,7 @@ Page({
       analysis, suggestions, riskNotice: notice, riskLevel: 'none', needHandoff: false, dissatisfied: false, timestamp: Date.now()
     };
     reply.content = [reply.understanding, analysis, ...suggestions.map((text,i) => (i+1) + '. ' + text), notice].filter(Boolean).join('\n\n');
-    this.setData({ showDimensions: false, pageMode: 'chat', assessmentMode: '', messages: [...this.data.messages, userMessage, reply], showHandoffBanner: false });
-    this.scrollToBottom();
+    return this.showThinkingThen(()=>{reply.animate=true;this.setData({messages:[...this.data.messages,reply]});this.scrollToBottom();},{showDimensions:false,pageMode:'chat',assessmentMode:'',messages:[...this.data.messages,userMessage],showHandoffBanner:false});
   },
   openFeedback(e) {
     const { id, positive } = e.currentTarget.dataset;
@@ -332,6 +353,7 @@ Page({
   },
 
   onLoad(options={}) {
+    this._pageGone=false;
     this.loadHistory();
     if(options.interpretCycle==='1')recordStore.getRecords().then(records=>this.onCycleInterpretation(records.find(record=>record.id===options.recordId))).catch(()=>wx.showToast({title:'周期记录读取失败',icon:'none'}));
   },
@@ -374,7 +396,7 @@ Page({
    * 直接 navigateTo 即可（自带返回按钮，返回后聊天记录还在）。
    */
   openRecordPage() {
-    wx.navigateTo({ url: '/pages/record/record' });
+    return this.showThinkingThen(()=>wx.navigateTo({url:'/pages/record/record'}));
   },
 
   /* ============ 输入区域 ============ */
@@ -470,6 +492,7 @@ Page({
     this.scrollToBottom();
 
     api.sendChatMessage(content,context).then((res) => {
+      if(this._pageGone)return;
       if (res.code === 0) {
         const assistantMsg = {
           id: nextId(),
@@ -508,7 +531,7 @@ Page({
    * 点击"+"按钮：弹出"图片咨询/拍摄图片"菜单
    */
   onPlusClick() { this.setData({ showImagePicker:true,imageIntent:'general',reportItems:[],reportWarnings:[],reportBusy:false }); },
-  onReportClick() { wx.showToast({title:'报告图片识别暂未开启',icon:'none'}); },
+  onReportClick() { return this.showThinkingThen(()=>wx.showToast({title:'报告图片识别暂未开启',icon:'none'})); },
   onProfileClick() {
     wx.showActionSheet({itemList:['查看本机周期记录','查看本机聊天记录','存储说明'],success:res=>{
       if(res.tapIndex===0)this.openRecordPage();
@@ -599,9 +622,12 @@ Page({
     });
     this.scrollToBottom();
 
-    recordStore.getRecords().then((records) => {
+    const thinkingStarted=Date.now();
+    recordStore.getRecords().then(async (records) => {
       const latestRecord = records && records[0];
       const result = imageAnalysis.analyzeImage(caption, latestRecord);
+      await this.waitForThinking(thinkingStarted,result.riskLevel);
+      if(this._pageGone)return;
 
       // "无法确定类型"时，和文字咨询里"知识库检索不到"是同一种"没能真正帮上忙"的信号，
       // 计入AI咨询兜底机制的连续无法解决次数
@@ -678,11 +704,13 @@ Page({
 
     // 不需要真的调用AI接口分析语音内容（没有这个能力），本地直接生成一句诚实的回复，
     // 但依然接入AI咨询兜底机制的判断逻辑，保持行为一致
-    setTimeout(() => {
+    this._voiceReplyTimer=setTimeout(() => {
+      this._voiceReplyTimer=null;
+      if(this._pageGone)return;
       const assistantMsg = {
         id: nextId(),
         role: 'assistant',
-        type: 'text',
+        type: 'text',animate:true,
         content: '收到你的语音啦~不过AI目前还没法直接听懂语音里说的内容（这需要接入语音转文字的能力，现在还没有），麻烦你用文字告诉我具体想问什么，我能更准确地帮你分析哦。',
         understanding: '收到你的语音啦~不过AI目前还没法直接听懂语音里说的内容（这需要接入语音转文字的能力，现在还没有），麻烦你用文字告诉我具体想问什么，我能更准确地帮你分析哦。',
         analysis: '',
@@ -699,7 +727,7 @@ Page({
       });
       this.scrollToBottom();
       this.evaluateHandoffTrigger(assistantMsg, 'ai_signal');
-    }, 400);
+    }, 900);
   },
 
   /**

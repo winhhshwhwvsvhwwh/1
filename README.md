@@ -49,6 +49,7 @@ node tests/localOnlyRollback.test.js
 node tests/structuredCycleFlow.test.js
 node tests/recordSymptoms.test.js
 node tests/chatMemory.test.js
+node tests/thinkingEntrypoints.test.js
 node tests/typewriter.test.js
 node tests/reportInterpretation.test.js
 node tests/reportModelErrors.test.js
@@ -127,3 +128,6 @@ node tests/componentAssets.test.js
 
 
 底部快捷栏使用增强 scroll-view，启用横向滚动与边缘回弹，关闭快速减速以保留松手后的惯性；四项宽度显式为964rpx，避免被压成一屏。按钮大小、素材和输入框样式不变。390×844触屏浏览器已实际拖动验证横向位移、输入框固定及无误触；微信原生惯性/回弹手感待真机验证（平台可能有差异）。
+
+
+主要入口统一三点等待反馈：咨询、评估、开始/下一题、周期记录、报告入口和生成计划先显示气泡再继续。图片本地说明和语音能力说明保留可见等待，高风险提示不额外延时；返回/关闭取消尚未完成的入口跳转。原有API停用状态保持，不新增模型或云函数请求。
