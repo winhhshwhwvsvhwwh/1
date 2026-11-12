@@ -656,11 +656,30 @@ page {
   color:#8f526b;
 }
 .loading-bubble {
-  background:white;
-  padding:24rpx;
-  border-radius:24rpx;
-  color:#aaa;
-  font-size:26rpx}
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:14rpx;
+  width:164rpx;
+  height:100rpx;
+  margin:12rpx 0 24rpx;
+  box-sizing:border-box;
+  background:rgba(255,255,255,.92);
+  border-radius:16rpx 64rpx 64rpx 64rpx;
+}
+.thinking-dot {
+  flex-shrink:0;
+  border-radius:50%;
+  background:#ff4089;
+  animation:xiaonuan-thinking 1s ease-in-out infinite;
+}
+.thinking-dot-first { width:10rpx;height:10rpx;animation-delay:0s; }
+.thinking-dot-second { width:14rpx;height:14rpx;animation-delay:.15s; }
+.thinking-dot-third { width:18rpx;height:18rpx;animation-delay:.3s; }
+@keyframes xiaonuan-thinking {
+  0%,60%,100% { opacity:.3;transform:translateY(0) scale(.85); }
+  30% { opacity:1;transform:translateY(-6rpx) scale(1); }
+}
 .scroll-end {
   height:20rpx}
 .handoff-banner {
