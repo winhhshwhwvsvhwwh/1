@@ -303,7 +303,8 @@
 <view wx:if="{{showDimensions}}" class="dimensions-page">
 <view class="dimensions-navigation"><xiaonuan-header bindback="closeReportDimensions" bindnew="onNewConversation" bindhistory="onDimensionsHistory"/></view>
 <view class="dimensions-hero">
-<image class="dimensions-ip" src="/images/campaign/xiaonuan-celebration-scene.png" mode="aspectFit"/>
+<image wx:if="{{dimensionsMotionPlaying}}" class="dimensions-ip" src="/images/campaign/dimensions-ip-motion.webp" mode="aspectFit" bindload="onDimensionsMotionLoaded" binderror="stopDimensionsMotion"/>
+<image wx:else class="dimensions-ip" src="/images/campaign/xiaonuan-celebration-scene.png" mode="aspectFit"/>
 <view class="dimensions-status">{{scoreLabel}}</view>
 <view class="muted">备孕状态自评维度 · Demo规则</view>
 </view>
@@ -332,14 +333,5 @@
 <button class="pink-button" bindtap="onPlanFromReport">生成备孕计划</button>
 </view>
 </view>
-</view>
-</view>
-
-<!-- Play the supplied celebration once after a successful assessment; the file has no audio track and is pre-encoded at 2x. -->
-<view wx:if="{{showAssessmentCelebration}}" class="assessment-celebration-mask" role="dialog" aria-label="评估完成庆祝动效" catchtouchmove="stopTap">
-<view class="assessment-celebration-dialog" catchtap="stopTap">
-<video id="assessment-celebration-video" class="assessment-celebration-video" src="/videos/assessment-complete-2x.mp4" autoplay="{{true}}" muted="{{true}}" controls="{{false}}" loop="{{false}}" show-fullscreen-btn="{{false}}" show-center-play-btn="{{false}}" show-play-btn="{{false}}" enable-progress-gesture="{{false}}" object-fit="contain" bindended="closeAssessmentCelebration" binderror="onAssessmentCelebrationError">
-<cover-view class="assessment-celebration-skip" role="button" aria-label="跳过动效" bindtap="closeAssessmentCelebration">跳过</cover-view>
-</video>
 </view>
 </view>

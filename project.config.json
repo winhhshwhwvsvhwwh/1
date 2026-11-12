@@ -45,6 +45,14 @@
       {
         "type": "file",
         "value": "组件审核清单.md"
+      },
+      {
+        "type": "file",
+        "value": "images/campaign/expert-team.png"
+      },
+      {
+        "type": "folder",
+        "value": "cloudfunctions"
       }
     ],
     "include": []

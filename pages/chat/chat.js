@@ -44,7 +44,7 @@ Page({
     messages: [],
     inputValue: '', inputFocused: false,
     loading: false,
-    showAssessmentCelebration: false,
+    dimensionsMotionPlaying: false,
     scrollToId: '',
     showScrollShortcut: false,
     scrollShortcutBottom: 140,
@@ -136,7 +136,7 @@ Page({
   onResize() { if (this.data.showDimensions) this.drawRadar(); else this.refreshScrollShortcut(); },
   changeConsultTab(e) { this.setData({ consultTab: e.currentTarget.dataset.tab }); },
   onPageBack() {
-    this.closeAssessmentCelebration();
+    this.stopDimensionsMotion();
     if (this.data.assessmentSubmitting) return;
     const cancelWait=!!this._thinkingActionTimer;this.cancelThinkingAction();
     if (this.data.showDimensions) { this.closeReportDimensions(); return; }
@@ -155,10 +155,11 @@ Page({
     this.setData({answerTyping:false,messages:this.data.messages.map(item=>String(item.id)===String(id)?{...item,animate:false}:item)});
     if(!this._answerFollowPaused){this._scrollingToEnd=true;this.setData({scrollToId:''},()=>{if(!this._answerFollowPaused)this.setData({scrollToId:'chat-bottom'});});}
   },
-  onHide() { this.closeAssessmentCelebration();const cancelWait=!!(this._thinkingActionTimer||this._voiceReplyTimer);this.cancelThinkingAction();if(this._voiceReplyTimer){clearTimeout(this._voiceReplyTimer);this._voiceReplyTimer=null;}chatMemory.save(this.data.messages); this.setData({answerTyping:false,loading:cancelWait?false:this.data.loading,messages:this.data.messages.map(item=>({...item,animate:false}))}); },
-  onUnload() { this._pageGone=true;if(this._celebrationTimer){clearTimeout(this._celebrationTimer);this._celebrationTimer=null;}this.cancelThinkingAction();if(this._voiceReplyTimer)clearTimeout(this._voiceReplyTimer);chatMemory.save(this.data.messages); this._reportRequest=(this._reportRequest||0)+1; },
+  onHide() { this.stopDimensionsMotion();const cancelWait=!!(this._thinkingActionTimer||this._voiceReplyTimer);this.cancelThinkingAction();if(this._voiceReplyTimer){clearTimeout(this._voiceReplyTimer);this._voiceReplyTimer=null;}chatMemory.save(this.data.messages); this.setData({answerTyping:false,loading:cancelWait?false:this.data.loading,messages:this.data.messages.map(item=>({...item,animate:false}))}); },
+  onUnload() { this._pageGone=true;if(this._dimensionsMotionTimer){clearTimeout(this._dimensionsMotionTimer);this._dimensionsMotionTimer=null;}this.cancelThinkingAction();if(this._voiceReplyTimer)clearTimeout(this._voiceReplyTimer);chatMemory.save(this.data.messages); this._reportRequest=(this._reportRequest||0)+1; },
   onNewConversation() {
     if (this.data.loading || this.data.assessmentSubmitting) return;
+    this.stopDimensionsMotion();
     const reset=()=>{try{chatMemory.clear();}catch(e){wx.showToast({title:'清除失败，请重试',icon:'none'});return;}
       this.setData({ pageMode:'home',assessmentMode:'',showScrollShortcut:false,messages:[],showDimensions:false,scrollToId:'',unresolvedStreak:0,showHandoffBanner:false });};
     if(!this.data.messages.length){reset();return;}
@@ -260,31 +261,28 @@ Page({
       const data = { ...report.data, ...calculated };
       const a = this.data.assessmentAnswers;
       const reportAnalysis = [{ title:'周期状态', content:a[2].answer.slice(2) }, { title:'备孕时间', content:a[1].answer.slice(2) }, { title:'生活状态', content:a[4].answer.slice(2) }];
-      this.setData({ assessmentReport: data, reportScore: calculated.score, scoreLabel: calculated.label, pointerAngle: calculated.pointerAngle, reportAnalysis, assessmentMode: 'result', scrollToId: 'assessment-report' }, () => {this.refreshScrollShortcut();this.startAssessmentCelebration();});
+      this.setData({ assessmentReport: data, reportScore: calculated.score, scoreLabel: calculated.label, pointerAngle: calculated.pointerAngle, reportAnalysis, assessmentMode: 'result', scrollToId: 'assessment-report' }, () => this.refreshScrollShortcut());
     } catch (err) { wx.showToast({ title: '报告生成失败，点击确认可重试', icon: 'none' }); }
     finally { if(!this._pageGone)this.setData({assessmentSubmitting:false,loading:false}); }
   },
-  startAssessmentCelebration() {
-    if(this._pageGone)return;
-    if(this._celebrationTimer)clearTimeout(this._celebrationTimer);
-    this.setData({showAssessmentCelebration:true});
-    this._celebrationTimer=setTimeout(()=>this.closeAssessmentCelebration(),8000);
+  onDimensionsMotionLoaded() {
+    if(this._pageGone||!this.data.showDimensions||!this.data.dimensionsMotionPlaying||this._dimensionsMotionLoaded)return;
+    this._dimensionsMotionLoaded=true;
+    if(this._dimensionsMotionTimer)clearTimeout(this._dimensionsMotionTimer);
+    this._dimensionsMotionTimer=setTimeout(()=>this.stopDimensionsMotion(),5100);
   },
-  closeAssessmentCelebration() {
-    if(this._celebrationTimer){clearTimeout(this._celebrationTimer);this._celebrationTimer=null;}
-    if(this.data.showAssessmentCelebration)this.setData({showAssessmentCelebration:false});
+  stopDimensionsMotion() {
+    if(this._dimensionsMotionTimer){clearTimeout(this._dimensionsMotionTimer);this._dimensionsMotionTimer=null;}
+    if(this.data.dimensionsMotionPlaying&&!this._pageGone)this.setData({dimensionsMotionPlaying:false});
   },
-  onAssessmentCelebrationError() {
-    if(!this.data.showAssessmentCelebration)return;
-    this.closeAssessmentCelebration();
-    wx.showToast({title:'动效未播放，评估结果已生成',icon:'none'});
-  },
-
   openReportDimensions() {
-    if (!this.data.assessmentReport) return;
-    this.setData({ showDimensions: true, showScrollShortcut: false, radarTooltip: null, radarNodes: [] }, () => wx.nextTick(() => this.drawRadar()));
+    if (!this.data.assessmentReport || this._pageGone) return;
+    this.stopDimensionsMotion();
+    this._dimensionsMotionLoaded=false;
+    this.setData({showDimensions:true,dimensionsMotionPlaying:true,showScrollShortcut:false,radarTooltip:null,radarNodes:[]},()=>wx.nextTick(()=>this.drawRadar()));
+    this._dimensionsMotionTimer=setTimeout(()=>this.stopDimensionsMotion(),8000);
   },
-  closeReportDimensions() { this.setData({ showDimensions: false, radarTooltip: null }, () => this.refreshScrollShortcut()); },
+  closeReportDimensions() { this.stopDimensionsMotion();this.setData({showDimensions:false,radarTooltip:null},()=>this.refreshScrollShortcut()); },
   onRadarNodeTap(e) { this.selectRadarNode(Number(e.currentTarget.dataset.index)); },
   selectRadarNode(index) {
     const node = this.data.radarNodes[index];
