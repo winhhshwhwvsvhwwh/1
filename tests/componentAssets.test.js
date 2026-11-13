@@ -18,5 +18,5 @@ for (const file of walk(root).filter(f=>f.endsWith('.wxml')&&!f.startsWith(path.
 assert.equal(config.appid,'wx19e17d6811ea8c83');
 for(const folder of ['design-reference','tests'])assert(excluded(folder+'/sample'));
 const size=walk(root).filter(f=>!excluded(path.relative(root,f).split(path.sep).join('/'))).reduce((n,f)=>n+fs.statSync(f).size,0);
-assert(size<2*1024*1024, 'Estimated source package too large: '+size);
+assert(size<1800*1024, 'Estimated source package too large: '+size);
 console.log('PASS '+references+' image references included; AppID and source-size checks ('+size+' bytes). Actual WeChat upload size still needs device-tool verification.');
