@@ -303,7 +303,7 @@
 <view wx:if="{{showDimensions}}" class="dimensions-page">
 <view class="dimensions-navigation"><xiaonuan-header bindback="closeReportDimensions" bindnew="onNewConversation" bindhistory="onDimensionsHistory"/></view>
 <view class="dimensions-hero">
-<image wx:if="{{dimensionsMotionPlaying}}" class="dimensions-ip" src="/images/campaign/dimensions-ip-motion.webp" mode="aspectFit" bindload="onDimensionsMotionLoaded" binderror="stopDimensionsMotion"/>
+<image wx:if="{{dimensionsMotionPlaying}}" class="dimensions-ip" src="/images/campaign/dimensions-ip-motion.gif" mode="aspectFit" bindload="onDimensionsMotionLoaded" binderror="stopDimensionsMotion"/>
 <image wx:else class="dimensions-ip" src="/images/campaign/xiaonuan-celebration-scene.png" mode="aspectFit"/>
 <view class="dimensions-status">{{scoreLabel}}</view>
 <view class="muted">备孕状态自评维度 · Demo规则</view>

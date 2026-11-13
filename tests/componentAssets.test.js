@@ -8,7 +8,7 @@ const walk = directory => fs.readdirSync(directory,{withFileTypes:true}).flatMap
 let references = 0;
 for (const file of walk(root).filter(f=>f.endsWith('.wxml')&&!f.startsWith(path.join(root, '_archived') + path.sep))) {
  const source = fs.readFileSync(file,'utf8');
- for (const match of source.matchAll(/\/images\/[a-zA-Z0-9/_-]+\.(?:png|svg|webp)/g)) {
+ for (const match of source.matchAll(/\/images\/[a-zA-Z0-9/_-]+\.(?:png|svg|webp|gif)/g)) {
   const relative = match[0].slice(1);
   assert(fs.existsSync(path.join(root,relative)), 'Missing '+relative);
   assert(!excluded(relative), 'Runtime asset excluded: '+relative);
