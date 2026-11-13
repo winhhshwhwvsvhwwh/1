@@ -1198,22 +1198,23 @@ page {
   left:-326rpx;
 }
 
-/* Independent crisp mascot, soft light behind it, and one confetti pass. */
-.dimensions-hero { text-align:center;background:transparent;border:0;box-shadow:none; }
-.dimensions-motion-stage { position:relative;width:400rpx;height:354rpx;margin:0 auto;overflow:hidden;isolation:isolate;pointer-events:none; }
-.dimensions-soft-glow { position:absolute;z-index:0;left:9%;top:9%;width:82%;height:82%;border-radius:50%;background:radial-gradient(ellipse at center,rgba(253,50,115,.14) 0%,rgba(255,179,207,.09) 42%,rgba(255,214,230,0) 72%);animation:dimensions-glow-breathe 4200ms ease-in-out infinite; }
-.dimensions-ip { position:relative;z-index:2;display:block;width:400rpx;height:354rpx;margin:0 auto;border:0;border-radius:0;background:transparent;box-shadow:none; }
-.dimensions-ip-enter { animation:dimensions-mascot-enter 420ms cubic-bezier(.2,.7,.3,1) both; }
-.dimensions-confetti { position:absolute;z-index:1;inset:0;overflow:hidden;pointer-events:none; }
-.confetti-fall { position:absolute;top:-24rpx;opacity:0;animation-timing-function:cubic-bezier(.25,.12,.55,1);animation-fill-mode:both;animation-iteration-count:1; }
-.confetti-drift-0 { animation-name:dimensions-confetti-left; }
-.confetti-drift-1 { animation-name:dimensions-confetti-right; }
-.confetti-piece { border-radius:2rpx;animation:dimensions-confetti-spin 1200ms linear infinite; }
-@keyframes dimensions-mascot-enter { from { opacity:0;transform:scale(.96); } to { opacity:1;transform:scale(1); } }
-@keyframes dimensions-glow-breathe { 0%,100% { opacity:.55; } 50% { opacity:1; } }
-@keyframes dimensions-confetti-left { 0% { opacity:0;transform:translate(0,0); } 12% { opacity:1; } 78% { opacity:.9; } 100% { opacity:0;transform:translate(-28rpx,375rpx); } }
-@keyframes dimensions-confetti-right { 0% { opacity:0;transform:translate(0,0); } 12% { opacity:1; } 78% { opacity:.9; } 100% { opacity:0;transform:translate(30rpx,375rpx); } }
-@keyframes dimensions-confetti-spin { 0% { transform:rotate(15deg) rotateY(0deg); } 50% { transform:rotate(170deg) rotateY(140deg); } 100% { transform:rotate(335deg) rotateY(300deg); } }
+/* The transparent celebration scene shares the page background, without a tile. */
+.dimensions-hero {
+  text-align:center;
+  background:transparent;
+  border:0;
+  box-shadow:none;
+}
+.dimensions-ip {
+  display:block;
+  width:400rpx;
+  height:354rpx;
+  margin:0 auto;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+}
 
 .radar-stage { position:relative; }
 .radar-node-hit { position:absolute;width:36px;height:36px;transform:translate(-50%,-50%);border-radius:50%;z-index:2; }

@@ -14,13 +14,14 @@ function fill(p){p.setData({pageMode:'assessment',assessmentMode:'quiz',assessme
  p.openReportDimensions();p.onUnload();assert.equal(timers.size,0);p.openReportDimensions();assert.equal(timers.size,0);
  const failed=page();fill(failed);fail=true;await failed.confirmAssessment();assert(!failed.data.dimensionsMotionPlaying);assert(!failed.data.showDimensions);
  const template=fs.readFileSync(path.join(__dirname,'../pages/chat/chat.wxml'),'utf8');
- assert(!template.includes('assessment-celebration-mask'));assert(!template.includes('<video'));assert(!template.includes('dimensions-ip-motion.gif'));
- assert(template.includes('/images/campaign/dimensions-ip-clean.png'));assert(template.includes('bindload="onDimensionsMotionLoaded"'));
- assert.equal(p.data.dimensionsConfetti.length,10);
- for(const piece of p.data.dimensionsConfetti)assert(piece.duration+piece.delay<=2800);
- const css=fs.readFileSync(path.join(__dirname,'../pages/chat/chat.wxss'),'utf8');
- const motion=css.slice(css.indexOf('/* Independent crisp mascot'),css.indexOf('.radar-stage'));
- assert(!motion.includes('blur('));assert(motion.includes('animation-iteration-count:1'));assert(motion.includes('radial-gradient'));
- const png=fs.readFileSync(path.join(__dirname,'../images/campaign/dimensions-ip-clean.png'));assert.equal(png.readUInt32BE(16),630);assert.equal(png.readUInt32BE(20),558);
+ assert(template.includes('/images/campaign/dimensions-ip-motion.gif'));assert(template.includes('/images/campaign/dimensions-ip-rest.png'));assert(!template.includes('dimensions-ip-clean.png'));assert(!template.includes('dimensions-confetti'));assert(!template.includes('<video'));
+ const gif=fs.readFileSync(path.join(__dirname,'../images/campaign/dimensions-ip-motion.gif'));assert.equal(gif.readUInt16LE(6),320);assert.equal(gif.readUInt16LE(8),283);
+ let cursor=13,frames=0,duration=0;if(gif[10]&128)cursor+=3*(2**((gif[10]&7)+1));
+ while(cursor<gif.length&&gif[cursor]!==0x3b){
+  if(gif[cursor]===0x21){if(gif[cursor+1]===0xf9)duration+=gif.readUInt16LE(cursor+4)*10;cursor+=2;}
+  else if(gif[cursor]===0x2c){const flags=gif[cursor+9];cursor+=10;if(flags&128)cursor+=3*(2**((flags&7)+1));cursor++;frames++;}else throw Error('Unexpected GIF block');
+  while(gif[cursor])cursor+=gif[cursor]+1;cursor++;
+ }
+ assert.equal(frames,40);assert.equal(duration,2800);
  console.log('PASS no popup after assessment, transparent silent IP starts only on opening dimensions, replays on each entry, ends/error restores static, close/hide/unload clean up; original report and geometry retained');
 })().catch(e=>{console.error(e);process.exitCode=1});

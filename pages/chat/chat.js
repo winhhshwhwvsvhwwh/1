@@ -45,18 +45,6 @@ Page({
     inputValue: '', inputFocused: false,
     loading: false,
     dimensionsMotionPlaying: false,
-    dimensionsConfetti: [
-      {id:0,left:9,drift:0,duration:2100,delay:0,width:13,height:22,color:'#FD3273',spin:1100},
-      {id:1,left:24,drift:1,duration:2350,delay:120,width:12,height:19,color:'#F8AAC7',spin:1350},
-      {id:2,left:42,drift:0,duration:2000,delay:80,width:10,height:18,color:'#E8CC93',spin:1000},
-      {id:3,left:61,drift:1,duration:2400,delay:180,width:13,height:23,color:'#FF80AE',spin:1500},
-      {id:4,left:83,drift:0,duration:2150,delay:50,width:12,height:20,color:'#F8AAC7',spin:1250},
-      {id:5,left:16,drift:1,duration:2200,delay:350,width:11,height:19,color:'#FF80AE',spin:1450},
-      {id:6,left:35,drift:0,duration:2300,delay:300,width:13,height:21,color:'#F8AAC7',spin:1150},
-      {id:7,left:55,drift:1,duration:2050,delay:340,width:10,height:17,color:'#FD3273',spin:1300},
-      {id:8,left:75,drift:0,duration:2250,delay:260,width:11,height:20,color:'#E8CC93',spin:1600},
-      {id:9,left:91,drift:1,duration:2100,delay:320,width:13,height:22,color:'#FF80AE',spin:1200}
-    ],
     scrollToId: '',
     showScrollShortcut: false,
     scrollShortcutBottom: 140,

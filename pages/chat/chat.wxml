@@ -303,13 +303,8 @@
 <view wx:if="{{showDimensions}}" class="dimensions-page">
 <view class="dimensions-navigation"><xiaonuan-header bindback="closeReportDimensions" bindnew="onNewConversation" bindhistory="onDimensionsHistory"/></view>
 <view class="dimensions-hero">
-<view class="dimensions-motion-stage">
-<view class="dimensions-soft-glow" aria-hidden="true"></view>
-<image class="dimensions-ip {{dimensionsMotionPlaying ? 'dimensions-ip-enter' : ''}}" src="/images/campaign/dimensions-ip-clean.png" mode="aspectFit" bindload="onDimensionsMotionLoaded" binderror="stopDimensionsMotion"/>
-<view wx:if="{{dimensionsMotionPlaying}}" class="dimensions-confetti" aria-hidden="true">
-<view wx:for="{{dimensionsConfetti}}" wx:key="id" class="confetti-fall confetti-drift-{{item.drift}}" style="left:{{item.left}}%;animation-duration:{{item.duration}}ms;animation-delay:{{item.delay}}ms;"><view class="confetti-piece" style="width:{{item.width}}rpx;height:{{item.height}}rpx;background:{{item.color}};animation-duration:{{item.spin}}ms;"></view></view>
-</view>
-</view>
+<image wx:if="{{dimensionsMotionPlaying}}" class="dimensions-ip" src="/images/campaign/dimensions-ip-motion.gif" mode="aspectFit" bindload="onDimensionsMotionLoaded" binderror="stopDimensionsMotion"/>
+<image wx:else class="dimensions-ip" src="/images/campaign/dimensions-ip-rest.png" mode="aspectFit"/>
 <view class="dimensions-status">{{scoreLabel}}</view>
 <view class="muted">备孕状态自评维度 · Demo规则</view>
 </view>
