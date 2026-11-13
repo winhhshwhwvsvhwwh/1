@@ -61,6 +61,10 @@
       {
         "type": "file",
         "value": "images/campaign/dimensions-ip-rest.png"
+      },
+      {
+        "type": "file",
+        "value": "images/campaign/xiaonuan-celebration-scene.png"
       }
     ],
     "include": []

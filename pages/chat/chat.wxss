@@ -820,10 +820,7 @@ page {
   z-index:110;
   overflow-y:auto;
   text-align:center;
-  background:linear-gradient(180deg,transparent 0,#f5f5f5 650rpx),linear-gradient(115deg,#ffdfed,#efdafa);
-  background-size:100% 650rpx;
-  background-repeat:no-repeat;
-  background-color:#f5f5f5;
+  background:#f5f5f5;
   padding:0 32rpx calc(28rpx + env(safe-area-inset-bottom));
   box-sizing:border-box}
 .dimensions-navigation { margin:0 -32rpx; text-align:left; }
@@ -1198,38 +1195,14 @@ page {
   left:-326rpx;
 }
 
-/* Keep the supplied clip intact; reveal the original transparent celebration artwork afterward. */
-.dimensions-hero {
-  text-align:center;
-  background:transparent;
-  border:0;
-  box-shadow:none;
-}
-.dimensions-ip-stage {
-  position:relative;
-  width:640rpx;
-  height:360rpx;
-  margin:0 auto;
-
-}
-.dimensions-ip {
-  display:block;
-  position:absolute;
-  left:0;
-  top:0;
-  width:640rpx;
-  height:360rpx;
-  border:0;
-  border-radius:0;
-  background:transparent;
-  box-shadow:none;
-}
-/* Keep one fixed stage: animation completion cannot move the score or report. */
-.dimensions-ip-rest { left:120rpx;top:3rpx;width:400rpx;height:354rpx; }
-.dimensions-ip-play { z-index:1;
-  -webkit-mask-image:radial-gradient(ellipse closest-side at 50% 50%,#000 70%,rgba(0,0,0,0) 100%);
-  mask-image:radial-gradient(ellipse closest-side at 50% 50%,#000 70%,rgba(0,0,0,0) 100%);
-}
+/* The pink-purple gradient and animation are ONE full-width page background.
+   Both states have identical backdrop pixels; no local tile, mask, blur or feathered edge. */
+.dimensions-background { position:absolute;left:0;top:0;width:100%;height:650rpx;pointer-events:none;z-index:0;overflow:hidden; }
+.dimensions-background-image { position:absolute;left:0;top:0;display:block;width:100%;height:650rpx; }
+.dimensions-background-play { z-index:1; }
+.dimensions-navigation,.dimensions-hero,.dimensions-card { position:relative;z-index:1; }
+.dimensions-hero { text-align:center;background:transparent;border:0;box-shadow:none; }
+.dimensions-ip-stage { width:640rpx;height:360rpx;margin:0 auto;pointer-events:none; }
 
 .radar-stage { position:relative; }
 .radar-node-hit { position:absolute;width:36px;height:36px;transform:translate(-50%,-50%);border-radius:50%;z-index:2; }

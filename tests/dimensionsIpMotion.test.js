@@ -14,8 +14,10 @@ function fill(p){p.setData({pageMode:'assessment',assessmentMode:'quiz',assessme
  p.openReportDimensions();p.onUnload();assert.equal(timers.size,0);p.openReportDimensions();assert.equal(timers.size,0);
  const failed=page();fill(failed);fail=true;await failed.confirmAssessment();assert(!failed.data.dimensionsMotionPlaying);assert(!failed.data.showDimensions);
  const template=fs.readFileSync(path.join(__dirname,'../pages/chat/chat.wxml'),'utf8');
- assert(template.includes('/images/campaign/dimensions-ip-motion.gif'));assert(template.includes('/images/campaign/xiaonuan-celebration-scene.png'));assert(!template.includes('dimensions-ip-end.jpg'));assert(template.indexOf('xiaonuan-celebration-scene.png')<template.indexOf('dimensions-ip-motion.gif'));assert(!template.includes('dimensions-ip-clean.png'));assert(!template.includes('dimensions-confetti'));assert(!template.includes('<video'));
- const gif=fs.readFileSync(path.join(__dirname,'../images/campaign/dimensions-ip-motion.gif'));assert.equal(gif.readUInt16LE(6),400);assert.equal(gif.readUInt16LE(8),225);assert(!gif.includes('NETSCAPE2.0'));
+ assert(template.includes('/images/campaign/dimensions-ip-motion.gif'));assert(template.includes('/images/campaign/dimensions-page-rest.png'));assert(template.indexOf('dimensions-page-rest.png')<template.indexOf('dimensions-ip-motion.gif'));assert(!template.includes('dimensions-confetti'));assert(!template.includes('<video'));
+ const css=fs.readFileSync(path.join(__dirname,'../pages/chat/chat.wxss'),'utf8');const background=css.slice(css.indexOf('/* The pink-purple gradient'),css.indexOf('.radar-stage'));
+ assert(!background.includes('mask-image'));assert(!background.includes('blur('));assert(background.includes('width:100%;height:650rpx'));
+ const gif=fs.readFileSync(path.join(__dirname,'../images/campaign/dimensions-ip-motion.gif'));assert.equal(gif.readUInt16LE(6),400);assert.equal(gif.readUInt16LE(8),347);assert(!gif.includes('NETSCAPE2.0'));
  let cursor=13,frames=0,duration=0;if(gif[10]&128)cursor+=3*(2**((gif[10]&7)+1));
  while(cursor<gif.length&&gif[cursor]!==0x3b){
   if(gif[cursor]===0x21){if(gif[cursor+1]===0xf9)duration+=gif.readUInt16LE(cursor+4)*10;cursor+=2;}

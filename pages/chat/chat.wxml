@@ -301,12 +301,13 @@
 </view>
 </view>
 <view wx:if="{{showDimensions}}" class="dimensions-page">
+<view class="dimensions-background" aria-hidden="true">
+<image class="dimensions-background-image dimensions-background-rest" src="/images/campaign/dimensions-page-rest.png" mode="scaleToFill"/>
+<image wx:if="{{dimensionsMotionPlaying}}" class="dimensions-background-image dimensions-background-play" src="/images/campaign/dimensions-ip-motion.gif" mode="scaleToFill" bindload="onDimensionsMotionLoaded" binderror="stopDimensionsMotion"/>
+</view>
 <view class="dimensions-navigation"><xiaonuan-header bindback="closeReportDimensions" bindnew="onNewConversation" bindhistory="onDimensionsHistory"/></view>
 <view class="dimensions-hero">
-<view class="dimensions-ip-stage">
-<image class="dimensions-ip dimensions-ip-rest" src="/images/campaign/xiaonuan-celebration-scene.png" mode="aspectFit"/>
-<image wx:if="{{dimensionsMotionPlaying}}" class="dimensions-ip dimensions-ip-play" src="/images/campaign/dimensions-ip-motion.gif" mode="aspectFill" bindload="onDimensionsMotionLoaded" binderror="stopDimensionsMotion"/>
-</view>
+<view class="dimensions-ip-stage" aria-hidden="true"></view>
 <view class="dimensions-status">{{scoreLabel}}</view>
 <view class="muted">备孕状态自评维度 · Demo规则</view>
 </view>
