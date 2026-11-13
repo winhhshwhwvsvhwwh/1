@@ -1198,22 +1198,37 @@ page {
   left:-326rpx;
 }
 
-/* The transparent celebration scene shares the page background, without a tile. */
+/* Keep the supplied clip intact; reveal the original transparent celebration artwork afterward. */
 .dimensions-hero {
   text-align:center;
   background:transparent;
   border:0;
   box-shadow:none;
 }
+.dimensions-ip-stage {
+  position:relative;
+  width:640rpx;
+  height:360rpx;
+  margin:0 auto;
+
+}
 .dimensions-ip {
   display:block;
-  width:400rpx;
-  height:354rpx;
-  margin:0 auto;
+  position:absolute;
+  left:0;
+  top:0;
+  width:640rpx;
+  height:360rpx;
   border:0;
   border-radius:0;
   background:transparent;
   box-shadow:none;
+}
+/* Keep one fixed stage: animation completion cannot move the score or report. */
+.dimensions-ip-rest { left:120rpx;top:3rpx;width:400rpx;height:354rpx; }
+.dimensions-ip-play { z-index:1;
+  -webkit-mask-image:radial-gradient(ellipse closest-side at 50% 50%,#000 70%,rgba(0,0,0,0) 100%);
+  mask-image:radial-gradient(ellipse closest-side at 50% 50%,#000 70%,rgba(0,0,0,0) 100%);
 }
 
 .radar-stage { position:relative; }

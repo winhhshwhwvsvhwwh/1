@@ -269,7 +269,7 @@ Page({
     if(this._pageGone||!this.data.showDimensions||!this.data.dimensionsMotionPlaying||this._dimensionsMotionLoaded)return;
     this._dimensionsMotionLoaded=true;
     if(this._dimensionsMotionTimer)clearTimeout(this._dimensionsMotionTimer);
-    this._dimensionsMotionTimer=setTimeout(()=>this.stopDimensionsMotion(),2800);
+    this._dimensionsMotionTimer=setTimeout(()=>this.stopDimensionsMotion(),2150);
   },
   stopDimensionsMotion() {
     if(this._dimensionsMotionTimer){clearTimeout(this._dimensionsMotionTimer);this._dimensionsMotionTimer=null;}
